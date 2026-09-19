@@ -1,0 +1,40 @@
+{
+  "project_info" : {
+    "project_number" : "432800517369",
+    "firebase_url" : "https://poopak-msc.firebaseio.com",
+    "project_id" : "poopak-msc",
+    "storage_bucket" : "poopak-msc.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:432800517369:android:740d4933c2fa5f0e346628",
+        "android_client_info" : {
+          "package_name" : "ir.mymsc.poopak2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "432800517369-ltgrmic7jqtn4s9mp0fuh7bl4bi4u7cn.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyDnmgd_CXb-EkUFFhBmrkTmdOAmDVHHvNQ"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "432800517369-ltgrmic7jqtn4s9mp0fuh7bl4bi4u7cn.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

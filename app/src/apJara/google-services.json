@@ -1,0 +1,29 @@
+{
+  "project_info" : {
+    "project_number" : "114803834772",
+    "project_id" : "poopak-jahanara",
+    "storage_bucket" : "poopak-jahanara.firebasestorage.app"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:114803834772:android:7c88130e5bd228a9475981",
+        "android_client_info" : {
+          "package_name" : "net.jahanara.poopak"
+        }
+      },
+      "oauth_client" : [],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyBjOBNhAhwPAfSI5H9gCuQhV-v6d6fxV5Y"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : []
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

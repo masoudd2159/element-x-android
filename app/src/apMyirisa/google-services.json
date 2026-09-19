@@ -1,0 +1,40 @@
+{
+  "project_info" : {
+    "project_number" : "96057959159",
+    "firebase_url" : "https://poopak-irisa.firebaseio.com",
+    "project_id" : "poopak-irisa",
+    "storage_bucket" : "poopak-irisa.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:96057959159:android:2d71227f1d147fb93a29f2",
+        "android_client_info" : {
+          "package_name" : "com.irisaco.im2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "96057959159-p2hdkuj2mg5eajofpukhqfefje5lalfv.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyBvhl1cdcz1yvojh9NyE6boqERW309RbiI"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "96057959159-p2hdkuj2mg5eajofpukhqfefje5lalfv.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

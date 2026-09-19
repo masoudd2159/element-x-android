@@ -1,0 +1,39 @@
+{
+  "project_info" : {
+    "project_number" : "907410479735",
+    "project_id" : "poopak-hosco",
+    "storage_bucket" : "poopak-hosco.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:907410479735:android:714e2cd460a91049e8c472",
+        "android_client_info" : {
+          "package_name" : "ir.hosco.poopak2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "907410479735-a1ioehf1pia4ri5lenrvfinq0n99s5o9.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyBVIkX72MursGVqVu2X3ryU1jlvX_o89Io"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "907410479735-a1ioehf1pia4ri5lenrvfinq0n99s5o9.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

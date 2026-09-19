@@ -42,6 +42,7 @@ captures/
 
 # IntelliJ
 *.iml
+.idea/
 .idea/.name
 .idea/androidTestResultsUserPreferences.xml
 .idea/assetWizardSettings.xml

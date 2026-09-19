@@ -1,0 +1,39 @@
+{
+  "project_info" : {
+    "project_number" : "959248957666",
+    "project_id" : "poopak-sdsteel",
+    "storage_bucket" : "poopak-sdsteel.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:959248957666:android:392f14b9efedd21c275ebb",
+        "android_client_info" : {
+          "package_name" : "ir.sdsteel.poopak2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "959248957666-3kl81a3j3tuh3jp6stqhqvpb0pjaq6hd.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyBQeCB6-2M4nGR6VGI2R_5_By8EtdAi4vM"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "959248957666-3kl81a3j3tuh3jp6stqhqvpb0pjaq6hd.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

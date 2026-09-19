@@ -241,7 +241,7 @@ fun Project.setupKover() {
 
 fun KoverVariantCreateConfig.defaultVariants(project: Project) {
     if (project.path == ":app") {
-        addWithDependencies("gplayDebug")
+        addWithDependencies("apPoopakDebug")
     } else {
         addWithDependencies("debug", "jvm", optional = true)
     }

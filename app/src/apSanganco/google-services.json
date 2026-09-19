@@ -1,0 +1,40 @@
+{
+  "project_info" : {
+    "project_number" : "301980572385",
+    "firebase_url" : "https://poopak-sangan.firebaseio.com",
+    "project_id" : "poopak-sangan",
+    "storage_bucket" : "poopak-sangan.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:301980572385:android:b24220b6fc1c18884a35a0",
+        "android_client_info" : {
+          "package_name" : "ir.sanganco.poopak2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "301980572385-9n4s8s458q6es3g2fl6cmurkrg4cuhik.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyDgRFKZLK71LkGyNK4--49ifAi1wOFF0C0"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "301980572385-9n4s8s458q6es3g2fl6cmurkrg4cuhik.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

@@ -11,7 +11,6 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.GenerateBuildConfig
-import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import config.BuildTimeConfig
 import extension.AssetCopyTask
 import extension.GitBranchNameValueSource
@@ -29,13 +28,14 @@ import java.util.Locale
 
 plugins {
     id("io.element.android-compose-application")
+    id("ir.mypoopak.android-brands")
     // When using precompiled plugins, we need to apply the firebase plugin like this
     id(libs.plugins.firebaseAppDistribution.get().pluginId)
     id("kotlin-parcelize")
     alias(libs.plugins.licensee)
     alias(libs.plugins.kotlin.serialization)
-    // To be able to update the firebase.xml files, uncomment and build the project
-    // alias(libs.plugins.gms.google.services)
+    // Generate Firebase resources from each brand's google-services.json.
+    alias(libs.plugins.gms.google.services)
 }
 
 android {
@@ -111,7 +111,6 @@ android {
                 "login_redirect_scheme",
                 "$oAuthRedirectSchemeBase.debug",
             )
-            applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
         }
 
@@ -138,7 +137,6 @@ android {
         register("nightly") {
             val release = getByName("release")
             initWith(release)
-            applicationIdSuffix = ".nightly"
             versionNameSuffix = "-nightly"
             resValue("string", "app_name", "$baseAppName nightly")
             resValue(
@@ -148,29 +146,6 @@ android {
             )
             matchingFallbacks += listOf("release")
             signingConfig = signingConfigs.getByName("nightly")
-
-            firebaseAppDistribution {
-                artifactType = "APK"
-                // We upload the universal APK to fix this error:
-                // "App Distribution found more than 1 output file for this variant.
-                // Please contact firebase-support@google.com for help using APK splits with App Distribution."
-                artifactPath = "$rootDir/app/build/outputs/apk/gplay/nightly/app-gplay-universal-nightly.apk"
-                // artifactType = "AAB"
-                // artifactPath = "$rootDir/app/build/outputs/bundle/nightly/app-nightly.aab"
-                releaseNotesFile = "tools/release/ReleaseNotesNightly.md"
-                groups = if (isEnterpriseBuild) {
-                    "enterprise-testers"
-                } else {
-                    "external-testers"
-                }
-                // This should not be required, but if I do not add the appId, I get this error:
-                // "App Distribution halted because it had a problem uploading the APK: [404] Requested entity was not found."
-                appId = if (isEnterpriseBuild) {
-                    "1:912726360885:android:3f7e1fe644d99d5a00427c"
-                } else {
-                    "1:912726360885:android:e17435e0beb0303000427c"
-                }
-            }
         }
     }
 
@@ -178,21 +153,6 @@ android {
         buildConfig = true
         resValues = true
     }
-    flavorDimensions += "store"
-    productFlavors {
-        create("gplay") {
-            dimension = "store"
-            isDefault = true
-            buildConfigFieldStr("SHORT_FLAVOR_DESCRIPTION", "G")
-            buildConfigFieldStr("FLAVOR_DESCRIPTION", "GooglePlay")
-        }
-        create("fdroid") {
-            dimension = "store"
-            buildConfigFieldStr("SHORT_FLAVOR_DESCRIPTION", "F")
-            buildConfigFieldStr("FLAVOR_DESCRIPTION", "FDroid")
-        }
-    }
-
     packaging {
         resources.pickFirsts += setOf(
             "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
@@ -259,7 +219,7 @@ androidComponents {
 
 // Configure the SonarQube plugin to wait for the resource generation tasks to complete before running the analysis.
 tasks.withType<SonarResolverTask>().configureEach {
-    dependsOn("generateGplayDebugResValues", "generateGplayDebugAndroidTestResValues")
+    dependsOn("generateApPoopakDebugResValues", "generateApPoopakDebugAndroidTestResValues")
 }
 
 setupDependencyInjection()
@@ -282,7 +242,8 @@ dependencies {
     implementation(projects.services.analytics.compose)
 
     if (ModulesConfig.pushProvidersConfig.includeFirebase) {
-        "gplayImplementation"(projects.libraries.pushproviders.firebase)
+        implementation(projects.libraries.pushproviders.firebase)
+        implementation(projects.libraries.mypoopakBrandconfig)
     }
     if (ModulesConfig.pushProvidersConfig.includeUnifiedPush) {
         implementation(projects.libraries.pushproviders.unifiedpush)
@@ -290,7 +251,7 @@ dependencies {
 
     // Google Play Services fused location backend. Discovered at runtime via ServiceLoader by the
     // location feature.
-    "gplayImplementation"(libs.maplibre.compose.location.runtime.gms)
+    implementation(libs.maplibre.compose.location.runtime.gms)
 
     implementation(libs.appyx.core)
     implementation(libs.androidx.splash)

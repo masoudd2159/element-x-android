@@ -1,0 +1,29 @@
+{
+  "project_info" : {
+    "project_number" : "170250763197",
+    "project_id" : "poopak-demo",
+    "storage_bucket" : "poopak-demo.firebasestorage.app"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:170250763197:android:600f4aeebd06ecf7a8b0d4",
+        "android_client_info" : {
+          "package_name" : "ir.mypoopak"
+        }
+      },
+      "oauth_client" : [],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyBNxv27DWQnVqMHbqJJEs8_dODx2hIvnq4"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : []
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}

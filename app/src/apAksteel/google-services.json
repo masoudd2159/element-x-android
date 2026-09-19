@@ -1,0 +1,39 @@
+{
+  "project_info" : {
+    "project_number" : "911421866446",
+    "project_id" : "poopak-aksteel",
+    "storage_bucket" : "poopak-aksteel.appspot.com"
+  },
+  "client" : [
+    {
+      "client_info" : {
+        "mobilesdk_app_id" : "1:911421866446:android:ca0d162eebafda77b6eb9f",
+        "android_client_info" : {
+          "package_name" : "ir.aksteel.poopak2"
+        }
+      },
+      "oauth_client" : [
+        {
+          "client_id" : "911421866446-h2n3s5va8c7jchii8q8gfanb33hbub08.apps.googleusercontent.com",
+          "client_type" : 3
+        }
+      ],
+      "api_key" : [
+        {
+          "current_key" : "AIzaSyCNi85m13dQagDxu5DUTShCQE0i9vJXyvU"
+        }
+      ],
+      "services" : {
+        "appinvite_service" : {
+          "other_platform_oauth_client" : [
+            {
+              "client_id" : "911421866446-h2n3s5va8c7jchii8q8gfanb33hbub08.apps.googleusercontent.com",
+              "client_type" : 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version" : "1"
+}
