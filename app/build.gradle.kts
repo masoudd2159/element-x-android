@@ -28,7 +28,7 @@ import java.util.Locale
 
 plugins {
     id("io.element.android-compose-application")
-    id("ir.mypoopak.android-brands")
+    id("poopak.android-brands")
     // When using precompiled plugins, we need to apply the firebase plugin like this
     id(libs.plugins.firebaseAppDistribution.get().pluginId)
     id("kotlin-parcelize")
@@ -243,7 +243,7 @@ dependencies {
 
     if (ModulesConfig.pushProvidersConfig.includeFirebase) {
         implementation(projects.libraries.pushproviders.firebase)
-        implementation(projects.libraries.mypoopakBrandconfig)
+        implementation(projects.libraries.poopakBrandconfig)
     }
     if (ModulesConfig.pushProvidersConfig.includeUnifiedPush) {
         implementation(projects.libraries.pushproviders.unifiedpush)
