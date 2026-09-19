@@ -4,6 +4,7 @@ plugins {
 
 data class BrandConfig(
     val name: String,
+    val appName: String,
     val applicationId: String,
     val shortDescription: String,
     val description: String,
@@ -19,6 +20,7 @@ data class BrandConfig(
 val brands = listOf(
     BrandConfig(
         name = "apAksteel",
+        appName = "پوپک امیرکبیر",
         applicationId = "ir.aksteel.poopak2",
         shortDescription = "aksteel",
         description = "poopak-aksteel",
@@ -28,6 +30,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apArmaniSanganco",
+        appName = "خانواده آرمانی سنگان",
         applicationId = "ir.armanisanganco.poopak",
         shortDescription = "armani-sanganco",
         description = "poopak-armani-sanganco",
@@ -37,6 +40,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apBasa",
+        appName = "باسای من",
         applicationId = "ir.basa.poopak",
         shortDescription = "basa",
         description = "poopak-basa",
@@ -46,6 +50,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apCbasco",
+        appName = "پوپک ورق خودرو",
         applicationId = "ir.cbasco.poopak",
         shortDescription = "cbasco",
         description = "poopak-cbasco",
@@ -55,6 +60,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apGoharzamin",
+        appName = "پوپک گهرزمین",
         applicationId = "com.goharzamin.popak",
         shortDescription = "goharzamin",
         description = "popak-goharzamin",
@@ -64,6 +70,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apHosco",
+        appName = "پوپک فولاد هرمزگان",
         applicationId = "ir.hosco.poopak2",
         shortDescription = "hosco",
         description = "poopak-hosco",
@@ -73,6 +80,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apJara",
+        appName = "جهان آرای من",
         applicationId = "net.jahanara.poopak",
         shortDescription = "jahanara",
         description = "poopak-jahanara",
@@ -82,6 +90,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apMsc",
+        appName = "فولاد من",
         applicationId = "ir.mymsc.poopak2",
         shortDescription = "msc",
         description = "poopak-msc",
@@ -91,6 +100,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apMyirisa",
+        appName = "ایریسای من",
         applicationId = "com.irisaco.im2",
         shortDescription = "irisa",
         description = "poopak-irisa",
@@ -100,6 +110,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apNghsco",
+        appName = "پیام‌رسان همکار",
         applicationId = "com.nghsco.hamkar",
         shortDescription = "hamkar",
         description = "hamkar-nghsco",
@@ -109,6 +120,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apNikandishco",
+        appName = "نیک اندیش من",
         applicationId = "ir.nikandishco.my",
         shortDescription = "nikandishco",
         description = "poopak-nikandishco",
@@ -118,6 +130,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apOxinsteel",
+        appName = "اکسین من",
         applicationId = "ir.oxinsteel.im",
         shortDescription = "oxinsteel",
         description = "poopak-oxinsteel",
@@ -127,6 +140,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apPoopak",
+        appName = "پوپک",
         applicationId = "ir.mypoopak",
         shortDescription = "poopak",
         description = "poopak",
@@ -137,6 +151,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apSanganco",
+        appName = "پوپک سنگان",
         applicationId = "ir.sanganco.poopak2",
         shortDescription = "sanganco",
         description = "poopak-sanganco",
@@ -146,6 +161,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apSdsteel",
+        appName = "پوپک سفید دشت",
         applicationId = "ir.sdsteel.poopak2",
         shortDescription = "sdsteel",
         description = "poopak-sdsteel",
@@ -155,6 +171,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apSjsco",
+        appName = "جهان فولاد من",
         applicationId = "ir.sjsco.poopak",
         shortDescription = "sjsco",
         description = "poopak-sjsco",
@@ -164,6 +181,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apWasco",
+        appName = "پوپک غرب آسیا",
         applicationId = "ir.wasco.poopak",
         shortDescription = "wasco",
         description = "poopak-wasco",
@@ -173,6 +191,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apZob",
+        appName = "پیام‌رسان ذوب",
         applicationId = "app.zob",
         shortDescription = "zob",
         description = "poopak-zob",
@@ -205,6 +224,11 @@ android {
                 buildConfigField("String", "SERVICES_HOST", "\"${brand.servicesHost}\"")
 
                 resValue("string", "brand_web_host", brand.webHost)
+                resValue(
+                    "string",
+                    "app_name",
+                    brand.appName,
+                )
                 resValue("string", "brand_backend_host", brand.backendHost)
                 resValue("string", "brand_services_host", brand.servicesHost)
                 resValue("string", "brand_firebase_push_gateway", brand.firebasePushGateway)
