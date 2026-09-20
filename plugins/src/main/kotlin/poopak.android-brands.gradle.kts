@@ -69,6 +69,16 @@ val brands = listOf(
         servicesHost = "pserv.goharzamin.com",
     ),
     BrandConfig(
+        name = "apHoopoe",
+        appName = "Hoopoe",
+        applicationId = "com.hoopoeim",
+        shortDescription = "hoopoe",
+        description = "hoopoe",
+        webHost = "app.hoopoeim.com",
+        backendHost = "hoopoeim.com",
+        servicesHost = "hoopoeim.com",
+    ),
+    BrandConfig(
         name = "apHosco",
         appName = "پوپک فولاد هرمزگان",
         applicationId = "ir.hosco.poopak2",
