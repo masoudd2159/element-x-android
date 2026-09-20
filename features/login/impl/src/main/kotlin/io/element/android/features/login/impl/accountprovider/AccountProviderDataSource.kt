@@ -11,6 +11,7 @@ package io.element.android.features.login.impl.accountprovider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.element.android.appconfig.DefaultHomeserverProvider
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import io.element.android.libraries.matrix.api.accountprovider.AccountProvider
@@ -28,14 +29,17 @@ import kotlinx.coroutines.launch
 @Inject
 class AccountProviderDataSource(
     private val enterpriseService: EnterpriseService,
+    private val defaultHomeserverProvider: DefaultHomeserverProvider,
     private val appPreferencesStore: AppPreferencesStore,
     @AppCoroutineScope private val coroutineScope: CoroutineScope,
 ) {
-    // The provider used when the user has not selected one: an enterprise/MDM-configured provider,
-    // else matrix.org. The most recently used provider (from history) can override it, see init.
-    private val configuredAccountProvider = enterpriseService.accountProviderAllowList()
-        .firstOrNull()
-        ?: matrixOrgAccountProvider
+    private val enterpriseAccountProvider = enterpriseService.accountProviderAllowList().firstOrNull()
+    private val brandAccountProvider = defaultHomeserverProvider.getDefaultHomeserver()?.let(AccountProvider::Generic)
+    private val configuredAccountProvider = when {
+        !enterpriseService.canConnectToAnyAccountProvider() -> enterpriseAccountProvider ?: matrixOrgAccountProvider
+        brandAccountProvider != null -> brandAccountProvider
+        else -> enterpriseAccountProvider ?: matrixOrgAccountProvider
+    }
 
     private val accountProvider: MutableStateFlow<AccountProvider> = MutableStateFlow(configuredAccountProvider)
 
@@ -60,13 +64,14 @@ class AccountProviderDataSource(
     }
 
     /**
-     * The provider to default to: the most recently used one from history when the user is free to
-     * connect to any provider, otherwise the enterprise/MDM-configured provider.
+     * The provider to default to: an enforced enterprise/MDM provider, then the brand provider,
+     * then the most recently used provider from history, and finally the configured fallback.
      */
     private suspend fun defaultAccountProvider(): AccountProvider {
         if (!enterpriseService.canConnectToAnyAccountProvider()) {
             return configuredAccountProvider
         }
+        brandAccountProvider?.let { return it }
         val lastUsedProvider = appPreferencesStore.getHomeserverHistoryFlow().first().firstOrNull()
         return lastUsedProvider?.let { AccountProvider.Generic(it) } ?: configuredAccountProvider
     }

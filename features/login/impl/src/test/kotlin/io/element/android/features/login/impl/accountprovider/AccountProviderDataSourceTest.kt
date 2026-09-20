@@ -47,6 +47,29 @@ class AccountProviderDataSourceTest {
     }
 
     @Test
+    fun `present - brand homeserver is the default`() = runTest {
+        val sut = anAccountProviderDataSource(defaultHomeserver = "https://brand.example")
+
+        sut.flow.test {
+            assertThat(awaitItem()).isEqualTo(AccountProvider.Generic("https://brand.example"))
+        }
+    }
+
+    @Test
+    fun `present - brand homeserver wins over history`() = runTest {
+        val sut = anAccountProviderDataSource(
+            defaultHomeserver = "https://brand.example",
+            appPreferencesStore = InMemoryAppPreferencesStore(
+                homeserverHistory = listOf("https://history.example"),
+            ),
+        )
+
+        sut.flow.test {
+            assertThat(awaitItem()).isEqualTo(AccountProvider.Generic("https://brand.example"))
+        }
+    }
+
+    @Test
     fun `present - user change and reset`() = runTest {
         val sut = anAccountProviderDataSource()
         sut.flow.test {
@@ -101,6 +124,7 @@ class AccountProviderDataSourceTest {
                 accountProviderAllowListResult = { listOf(anAccountProviderManaged(serverName = "enforced.org")) },
                 canConnectToAnyAccountProviderResult = { false },
             ),
+            defaultHomeserver = "https://brand.example",
             appPreferencesStore = InMemoryAppPreferencesStore(
                 homeserverHistory = listOf("https://example.com"),
             ),

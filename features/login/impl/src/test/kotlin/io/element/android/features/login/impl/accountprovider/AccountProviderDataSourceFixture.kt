@@ -7,6 +7,7 @@
 
 package io.element.android.features.login.impl.accountprovider
 
+import io.element.android.appconfig.DefaultHomeserverProvider
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.enterprise.test.FakeEnterpriseService
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
@@ -16,10 +17,14 @@ import kotlinx.coroutines.Dispatchers
 
 fun anAccountProviderDataSource(
     enterpriseService: EnterpriseService = FakeEnterpriseService(),
+    defaultHomeserver: String? = null,
     appPreferencesStore: AppPreferencesStore = InMemoryAppPreferencesStore(),
     coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined),
 ) = AccountProviderDataSource(
     enterpriseService = enterpriseService,
+    defaultHomeserverProvider = object : DefaultHomeserverProvider {
+        override fun getDefaultHomeserver(): String? = defaultHomeserver
+    },
     appPreferencesStore = appPreferencesStore,
     coroutineScope = coroutineScope,
 )
