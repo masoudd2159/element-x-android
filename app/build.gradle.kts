@@ -238,9 +238,10 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(projects.services.analytics.compose)
 
+    implementation(projects.libraries.poopakBrandconfig)
+
     if (ModulesConfig.pushProvidersConfig.includeFirebase) {
         implementation(projects.libraries.pushproviders.firebase)
-        implementation(projects.libraries.poopakBrandconfig)
     }
     if (ModulesConfig.pushProvidersConfig.includeUnifiedPush) {
         implementation(projects.libraries.pushproviders.unifiedpush)

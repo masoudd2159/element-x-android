@@ -8,6 +8,7 @@
 
 package io.element.android.x
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -43,6 +44,7 @@ import io.element.android.services.analytics.compose.LocalAnalyticsService
 import io.element.android.x.di.AppBindings
 import io.element.android.x.intent.SafeUriHandler
 import kotlinx.coroutines.launch
+import poopak.android.brandconfig.locale.PoopakAppLocaleManager
 import timber.log.Timber
 
 private val loggerTag = LoggerTag("MainActivity")
@@ -50,6 +52,10 @@ private val loggerTag = LoggerTag("MainActivity")
 class MainActivity : NodeActivity() {
     private lateinit var mainNode: MainNode
     private lateinit var appBindings: AppBindings
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(PoopakAppLocaleManager.localizedContext(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.tag(loggerTag.value).d("onCreate, with savedInstanceState: ${savedInstanceState != null}")

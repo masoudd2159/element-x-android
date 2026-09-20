@@ -9,6 +9,7 @@
 package io.element.android.x
 
 import android.app.Application
+import android.content.Context
 import androidx.compose.material3.ComposeMaterial3Flags.isAnchoredDraggableComponentsStrictOffsetCheckEnabled
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.startup.AppInitializer
@@ -25,6 +26,7 @@ import io.element.android.x.info.logApplicationInfo
 import io.element.android.x.initializer.CacheCleanerInitializer
 import io.element.android.x.initializer.CrashInitializer
 import io.element.android.x.initializer.PlatformInitializer
+import poopak.android.brandconfig.locale.PoopakAppLocaleManager
 
 class ElementXApplication : Application(), DependencyInjectionGraphOwner, Configuration.Provider {
     override val graph: AppGraph = createGraphFactory<AppGraph.Factory>().create(this)
@@ -34,6 +36,10 @@ class ElementXApplication : Application(), DependencyInjectionGraphOwner, Config
         .build()
 
     @Inject lateinit var sdkMetadata: SdkMetadata
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(PoopakAppLocaleManager.localizedContext(base))
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate() {

@@ -21,6 +21,7 @@ setupDependencyInjection()
 dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.pushproviders.firebase)
+    implementation(libs.androidx.startup)
 
     testCommonDependencies(libs)
 }
