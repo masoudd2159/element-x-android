@@ -70,7 +70,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apHoopoe",
-        appName = "Hoopoe",
+        appName = "پوپک آمریکا",
         applicationId = "com.hoopoeim",
         shortDescription = "hoopoe",
         description = "hoopoe",
