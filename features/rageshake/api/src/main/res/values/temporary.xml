@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_rageshake_not_supported">Shake to report is not supported by your device</string>
+</resources>

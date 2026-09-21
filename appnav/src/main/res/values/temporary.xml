@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_push_registration_no_distributors">No notification distributors available</string>
+    <string name="error_push_registration_no_providers">No notification providers available</string>
+    <string name="error_push_registration_other">Other error: %1$s</string>
+    <string name="error_push_registration_unknown">Unknown error</string>
+</resources>

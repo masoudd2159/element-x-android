@@ -51,7 +51,9 @@ class DefaultRoomGroupMessageCreator(
         existingNotification: Notification?,
     ): Notification {
         val lastKnownRoomEvent = events.last()
-        val roomName = lastKnownRoomEvent.roomName ?: lastKnownRoomEvent.senderDisambiguatedDisplayName ?: "Room name (${roomId.value.take(8)}…)"
+        val roomName = lastKnownRoomEvent.roomName
+            ?: lastKnownRoomEvent.senderDisambiguatedDisplayName
+            ?: stringProvider.getString(R.string.notification_unknown_room_name, roomId.value.take(8))
         val roomIsGroup = !lastKnownRoomEvent.roomIsDm
 
         val tickerText = if (roomIsGroup) {

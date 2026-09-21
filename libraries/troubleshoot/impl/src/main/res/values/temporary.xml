@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_push_history_no_event_id">No eventId</string>
+    <string name="screen_push_history_no_room_id">No roomId</string>
+    <string name="screen_push_history_no_session_id">No sessionId</string>
+    <string name="screen_push_history_show_only_errors">Show only errors</string>
+    <string name="screen_push_history_switch_account_error">Switch accounts before opening this event.</string>
+    <string name="screen_push_history_total_received">Total push notifications received</string>
+</resources>

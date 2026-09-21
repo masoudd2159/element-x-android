@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_space_announcement_discover_rooms">Discover rooms you can join in your spaces</string>
+    <string name="screen_space_announcement_join_public_spaces">Join public spaces</string>
+    <string name="screen_space_announcement_leave_spaces">Leave spaces you’ve joined</string>
+    <string name="screen_space_announcement_manage_invites">Accept or decline invitations to spaces</string>
+    <string name="screen_space_announcement_notice">Filtering, creating, and managing spaces is coming soon.</string>
+    <string name="screen_space_announcement_subtitle">Welcome to the beta version of Spaces. In this version you can:</string>
+    <string name="screen_space_announcement_title">Introducing Spaces</string>
+    <string name="screen_space_announcement_view_spaces">View spaces you’ve created or joined</string>
+</resources>

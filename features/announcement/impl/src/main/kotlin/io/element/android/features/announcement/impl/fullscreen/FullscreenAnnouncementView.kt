@@ -34,6 +34,7 @@ import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.impl.AnnouncementEvent
 import io.element.android.features.announcement.impl.AnnouncementState
 import io.element.android.features.announcement.impl.AnnouncementStatePreviewParam
+import io.element.android.features.announcement.impl.R
 import io.element.android.libraries.designsystem.atomic.molecules.ButtonColumnMolecule
 import io.element.android.libraries.designsystem.atomic.molecules.IconTitleSubtitleMolecule
 import io.element.android.libraries.designsystem.atomic.pages.HeaderFooterPage
@@ -170,12 +171,12 @@ private fun FullscreenAnnouncementFooter(
 
 @Composable
 private fun Announcement.Fullscreen.title() = when (this) {
-    Announcement.Fullscreen.Space -> "Introducing Spaces"
+    Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_title)
 }
 
 @Composable
 private fun Announcement.Fullscreen.subtitle() = when (this) {
-    Announcement.Fullscreen.Space -> "Welcome to the beta version of Spaces! With this first version you can:"
+    Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_subtitle)
 }
 
 @Composable
@@ -187,23 +188,23 @@ private fun Announcement.Fullscreen.icon() = when (this) {
 private fun Announcement.Fullscreen.items(): ImmutableList<VisualListItemData> = when (this) {
     Announcement.Fullscreen.Space -> persistentListOf(
         VisualListItemData(
-            message = "View spaces you\'ve created or joined",
+            message = stringResource(R.string.screen_space_announcement_view_spaces),
             iconVector = CompoundIcons.VisibilityOn(),
         ),
         VisualListItemData(
-            message = "Accept or decline invites to spaces",
+            message = stringResource(R.string.screen_space_announcement_manage_invites),
             iconVector = CompoundIcons.Email(),
         ),
         VisualListItemData(
-            message = "Discover any rooms you can join in your spaces",
+            message = stringResource(R.string.screen_space_announcement_discover_rooms),
             iconVector = CompoundIcons.Search(),
         ),
         VisualListItemData(
-            message = "Join public spaces",
+            message = stringResource(R.string.screen_space_announcement_join_public_spaces),
             iconVector = CompoundIcons.Explore(),
         ),
         VisualListItemData(
-            message = "Leave any spaces you’ve joined",
+            message = stringResource(R.string.screen_space_announcement_leave_spaces),
             iconVector = CompoundIcons.Leave(),
         ),
     )
@@ -211,7 +212,7 @@ private fun Announcement.Fullscreen.items(): ImmutableList<VisualListItemData> =
 
 @Composable
 private fun Announcement.Fullscreen.notice(): String? = when (this) {
-    Announcement.Fullscreen.Space -> "Filtering, creating and managing spaces is coming soon."
+    Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_notice)
 }
 
 @PreviewsDayNight

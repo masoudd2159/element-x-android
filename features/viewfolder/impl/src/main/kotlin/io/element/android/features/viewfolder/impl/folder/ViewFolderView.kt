@@ -23,11 +23,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
+import io.element.android.features.viewfolder.impl.R
 import io.element.android.features.viewfolder.impl.model.Item
 import io.element.android.libraries.designsystem.components.button.BackButton
 import io.element.android.libraries.designsystem.components.list.ListItemContent
@@ -78,7 +80,7 @@ fun ViewFolderView(
                         item {
                             Spacer(Modifier.size(80.dp))
                             Text(
-                                text = "Empty folder",
+                                text = stringResource(R.string.screen_view_folder_empty),
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.fillMaxWidth()

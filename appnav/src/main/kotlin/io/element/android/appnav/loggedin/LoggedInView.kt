@@ -91,6 +91,7 @@ fun LoggedInView(
     )
 }
 
+@Composable
 private fun Throwable.getReason(): String? {
     return when (this) {
         is PusherRegistrationFailure.RegistrationFailure -> {
@@ -98,13 +99,13 @@ private fun Throwable.getReason(): String? {
                 // When registering again, ignore network error
                 null
             } else {
-                clientException.message ?: "Unknown error"
+                clientException.message ?: stringResource(R.string.error_push_registration_unknown)
             }
         }
         is PusherRegistrationFailure.AccountNotVerified -> null
-        is PusherRegistrationFailure.NoDistributorsAvailable -> "No distributors available"
-        is PusherRegistrationFailure.NoProvidersAvailable -> "No providers available"
-        else -> "Other error: $message"
+        is PusherRegistrationFailure.NoDistributorsAvailable -> stringResource(R.string.error_push_registration_no_distributors)
+        is PusherRegistrationFailure.NoProvidersAvailable -> stringResource(R.string.error_push_registration_no_providers)
+        else -> stringResource(R.string.error_push_registration_other, message.orEmpty())
     }
 }
 

@@ -57,7 +57,7 @@ fun RageshakePreferencesView(
                 } else {
                     ListItem(
                         content = {
-                            Text("Rageshaking is not supported by your device")
+                            Text(stringResource(R.string.screen_rageshake_not_supported))
                         },
                     )
                 }

@@ -86,7 +86,7 @@ fun PushHistoryView(
                         onDismissRequest = { showMenu = false },
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Show only errors") },
+                            text = { Text(stringResource(R.string.screen_push_history_show_only_errors)) },
                             trailingIcon = if (state.showOnlyErrors) {
                                 {
                                     Icon(
@@ -141,7 +141,7 @@ fun PushHistoryView(
 
     if (state.showNotSameAccountError) {
         ErrorDialog(
-            content = "Please switch account first to navigate to the event.",
+            content = stringResource(R.string.screen_push_history_switch_account_error),
             onSubmit = { state.eventSink(PushHistoryEvent.ClearDialog) }
         )
     }
@@ -156,7 +156,7 @@ private fun PushHistoryContent(
         modifier = modifier.fillMaxWidth()
     ) {
         ListItem(
-            content = { Text("Total number of received push") },
+            content = { Text(stringResource(R.string.screen_push_history_total_received)) },
             trailingContent = ListItemContent.Text(state.pushCounter.toString()),
         )
         LazyColumn(
@@ -217,19 +217,19 @@ private fun PushHistoryItem(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp, top = 8.dp),
-                    text = pushHistoryItem.sessionId?.value ?: "No sessionId",
+                    text = pushHistoryItem.sessionId?.value ?: stringResource(R.string.screen_push_history_no_session_id),
                     color = ElementTheme.colors.textPrimary,
                     style = ElementTheme.typography.fontBodyMdRegular,
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = pushHistoryItem.roomId?.value ?: "No roomId",
+                    text = pushHistoryItem.roomId?.value ?: stringResource(R.string.screen_push_history_no_room_id),
                     color = ElementTheme.colors.textPrimary,
                     style = ElementTheme.typography.fontBodyMdRegular,
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = pushHistoryItem.eventId?.value ?: "No eventId",
+                    text = pushHistoryItem.eventId?.value ?: stringResource(R.string.screen_push_history_no_event_id),
                     color = ElementTheme.colors.textPrimary,
                     style = ElementTheme.typography.fontBodyMdRegular,
                 )
