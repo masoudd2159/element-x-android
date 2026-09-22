@@ -15,6 +15,10 @@ sealed interface OnBoardingEvent {
         val defaultAccountProvider: AccountProvider
     ) : OnBoardingEvent
 
+    data class OnCreateAccount(
+        val defaultAccountProvider: AccountProvider
+    ) : OnBoardingEvent
+
     data object OnVersionClick : OnBoardingEvent
     data object ClearError : OnBoardingEvent
 }

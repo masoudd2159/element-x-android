@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.appconfig.OnBoardingConfig
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.login.impl.accesscontrol.DefaultAccountProviderAccessControl
@@ -60,6 +61,7 @@ class OnBoardingPresenter(
     @Composable
     override fun present(): OnBoardingState {
         val localCoroutineScope = rememberCoroutineScope()
+        val configuredAccountProvider by accountProviderDataSource.flow.collectAsState()
         val canConnectToAnyAccountProvider = remember {
             enterpriseService.canConnectToAnyAccountProvider()
         }
@@ -74,7 +76,8 @@ class OnBoardingPresenter(
             }
         }
         val mustChooseAccountProvider = remember {
-            !canConnectToAnyAccountProvider && enterpriseService.accountProviderAllowList().size > 1
+            CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER &&
+                !canConnectToAnyAccountProvider && enterpriseService.accountProviderAllowList().size > 1
         }
         val linkAccountProvider by produceState<AccountProvider?>(initialValue = null) {
             // Account provider from the link, if allowed by the enterprise service
@@ -90,13 +93,18 @@ class OnBoardingPresenter(
                     }
                 }
         }
-        val defaultAccountProvider = remember(linkAccountProvider) {
-            // If there is a forced account provider, this is the default account provider
-            // Else use the account provider passed in the params if any and if allowed
-            forcedAccountProvider ?: linkAccountProvider
+        val defaultAccountProvider = remember(linkAccountProvider, configuredAccountProvider) {
+            // When homeserver changes are disabled, use the application's configured provider.
+            // Otherwise retain the upstream forced-provider and link behavior.
+            if (CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+                forcedAccountProvider ?: linkAccountProvider
+            } else {
+                forcedAccountProvider ?: configuredAccountProvider
+            }
         }
         val canLoginWithQrCode by produceState(initialValue = false, linkAccountProvider) {
-            value = linkAccountProvider == null
+            value = CustomAppConfig.FeatureFlags.QR_LOGIN &&
+                (!CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER || linkAccountProvider == null)
         }
         val canReportBug by remember { rageshakeFeatureAvailability.isAvailable() }.collectAsState(false)
         var showReportBug by rememberSaveable { mutableStateOf(false) }
@@ -110,20 +118,26 @@ class OnBoardingPresenter(
 
         val loginModeState = loginModePresenter.present()
 
+        fun submit(defaultAccountProvider: AccountProvider, isAccountCreation: Boolean) = localCoroutineScope.launch {
+            // Ensure that the current account provider is set
+            accountProviderDataSource.setAccountProvider(defaultAccountProvider)
+            loginModeState.eventSink(
+                LoginModeEvent.Submit(
+                    isAccountCreation = isAccountCreation,
+                    homeserverUrl = defaultAccountProvider.serverNameOrBaseUrl(),
+                    resolvedHomeserverUrl = null,
+                    loginHint = params.loginHint?.takeIf {
+                        !isAccountCreation &&
+                            CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER && forcedAccountProvider == null
+                    },
+                )
+            )
+        }
+
         fun handleEvent(event: OnBoardingEvent) {
             when (event) {
-                is OnBoardingEvent.OnSignIn -> localCoroutineScope.launch {
-                    // Ensure that the current account provider is set
-                    accountProviderDataSource.setAccountProvider(event.defaultAccountProvider)
-                    loginModeState.eventSink(
-                        LoginModeEvent.Submit(
-                            isAccountCreation = false,
-                            homeserverUrl = event.defaultAccountProvider.serverNameOrBaseUrl(),
-                            resolvedHomeserverUrl = null,
-                            loginHint = params.loginHint?.takeIf { forcedAccountProvider == null },
-                        )
-                    )
-                }
+                is OnBoardingEvent.OnSignIn -> submit(event.defaultAccountProvider, isAccountCreation = false)
+                is OnBoardingEvent.OnCreateAccount -> submit(event.defaultAccountProvider, isAccountCreation = true)
                 OnBoardingEvent.ClearError -> loginModeState.eventSink(LoginModeEvent.ClearError)
                 OnBoardingEvent.OnVersionClick -> {
                     if (canReportBug) {
@@ -143,7 +157,12 @@ class OnBoardingPresenter(
             defaultAccountProvider = defaultAccountProvider,
             mustChooseAccountProvider = mustChooseAccountProvider,
             canLoginWithQrCode = canLoginWithQrCode,
-            canCreateAccount = defaultAccountProvider == null && canConnectToAnyAccountProvider && OnBoardingConfig.CAN_CREATE_ACCOUNT,
+            canCreateAccount = OnBoardingConfig.CAN_CREATE_ACCOUNT &&
+                if (CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+                    defaultAccountProvider == null && canConnectToAnyAccountProvider
+                } else {
+                    defaultAccountProvider != null
+                },
             canReportBug = canReportBug && showReportBug,
             loginModeState = loginModeState,
             version = buildMeta.versionName,

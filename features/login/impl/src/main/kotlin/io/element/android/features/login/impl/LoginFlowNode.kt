@@ -27,6 +27,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.login.api.LoginEntryPoint
 import io.element.android.features.login.impl.accountprovider.AccountProviderDataSource
@@ -133,7 +134,8 @@ class LoginFlowNode(
     }
 
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
-        return when (navTarget) {
+        val safeNavTarget = navTarget.withFeatureFlagsApplied()
+        return when (safeNavTarget) {
             NavTarget.CheckClassicFlow -> {
                 val callback = object : ClassicFlowNode.Callback {
                     override fun navigateToOnBoarding(allowBackNavigation: Boolean) {
@@ -157,23 +159,29 @@ class LoginFlowNode(
             is NavTarget.OnBoarding -> {
                 val callback = object : OnBoardingNode.Callback {
                     override fun navigateToSignUpFlow() {
-                        backstack.push(
-                            NavTarget.ConfirmAccountProvider(isAccountCreation = true)
-                        )
+                        if (CustomAppConfig.FeatureFlags.CREATE_ACCOUNT && CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+                            backstack.push(
+                                NavTarget.ConfirmAccountProvider(isAccountCreation = true)
+                            )
+                        }
                     }
 
                     override fun navigateToSignInFlow(mustChooseAccountProvider: Boolean) {
-                        backstack.push(
-                            if (mustChooseAccountProvider) {
-                                NavTarget.ChooseAccountProvider
-                            } else {
-                                NavTarget.ConfirmAccountProvider(isAccountCreation = false)
-                            }
-                        )
+                        if (CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+                            backstack.push(
+                                if (mustChooseAccountProvider) {
+                                    NavTarget.ChooseAccountProvider
+                                } else {
+                                    NavTarget.ConfirmAccountProvider(isAccountCreation = false)
+                                }
+                            )
+                        }
                     }
 
                     override fun navigateToQrCode() {
-                        backstack.push(NavTarget.QrCode)
+                        if (CustomAppConfig.FeatureFlags.QR_LOGIN) {
+                            backstack.push(NavTarget.QrCode)
+                        }
                     }
 
                     override fun navigateToBugReport() {
@@ -193,7 +201,7 @@ class LoginFlowNode(
                     }
 
                     override fun onDone() {
-                        if (navTarget.showBackButton) {
+                        if (safeNavTarget.showBackButton) {
                             backstack.pop()
                         } else {
                             callback.onDone()
@@ -204,7 +212,7 @@ class LoginFlowNode(
                 val inputs = OnBoardingNode.Params(
                     accountProvider = params.accountProvider,
                     loginHint = params.loginHint,
-                    showBackButton = navTarget.showBackButton,
+                    showBackButton = safeNavTarget.showBackButton,
                 )
                 createNode<OnBoardingNode>(buildContext, listOf(callback, inputs))
             }
@@ -242,7 +250,7 @@ class LoginFlowNode(
             }
             is NavTarget.ConfirmAccountProvider -> {
                 val inputs = ConfirmAccountProviderNode.Inputs(
-                    isAccountCreation = navTarget.isAccountCreation,
+                    isAccountCreation = safeNavTarget.isAccountCreation,
                 )
                 val callback = object : ConfirmAccountProviderNode.Callback {
                     override fun navigateToOAuth(oAuthDetails: OAuthDetails) {
@@ -257,7 +265,7 @@ class LoginFlowNode(
             }
             is NavTarget.LoginPassword -> {
                 val inputs = LoginPasswordNode.Inputs(
-                    initialLogin = navTarget.initialLogin,
+                    initialLogin = safeNavTarget.initialLogin,
                 )
                 createNode<LoginPasswordNode>(buildContext, plugins = listOf(inputs))
             }
@@ -293,4 +301,27 @@ class LoginFlowNode(
         }
         BackstackView(transitionHandler = rememberLoginFlowTransitionHandler())
     }
+}
+
+internal fun LoginFlowNode.NavTarget.withFeatureFlagsApplied(): LoginFlowNode.NavTarget = when (this) {
+    is LoginFlowNode.NavTarget.ConfirmAccountProvider -> {
+        if (!CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER ||
+            (isAccountCreation && !CustomAppConfig.FeatureFlags.CREATE_ACCOUNT)
+        ) {
+            LoginFlowNode.NavTarget.OnBoarding(showBackButton = false)
+        } else {
+            this
+        }
+    }
+    LoginFlowNode.NavTarget.ChooseAccountProvider -> {
+        if (CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+            this
+        } else {
+            LoginFlowNode.NavTarget.OnBoarding(showBackButton = false)
+        }
+    }
+    LoginFlowNode.NavTarget.QrCode -> {
+        if (CustomAppConfig.FeatureFlags.QR_LOGIN) this else LoginFlowNode.NavTarget.OnBoarding(showBackButton = false)
+    }
+    else -> this
 }

@@ -11,6 +11,7 @@ package io.element.android.features.login.impl.accountprovider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.appconfig.DefaultHomeserverProvider
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.libraries.di.annotations.AppCoroutineScope
@@ -68,6 +69,9 @@ class AccountProviderDataSource(
      * then the most recently used provider from history, and finally the configured fallback.
      */
     private suspend fun defaultAccountProvider(): AccountProvider {
+        if (!CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER) {
+            return configuredAccountProvider
+        }
         if (!enterpriseService.canConnectToAnyAccountProvider()) {
             return configuredAccountProvider
         }

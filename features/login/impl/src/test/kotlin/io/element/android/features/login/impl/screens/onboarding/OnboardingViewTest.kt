@@ -58,6 +58,18 @@ class OnboardingViewTest : RobolectricTestParameter() {
     }
 
     @Test
+    fun `when cannot create account - create account is not exposed`() = runAndroidComposeUiTest {
+        setOnboardingView(
+            state = anOnBoardingState(
+                canCreateAccount = false,
+                eventSink = EventsRecorder(expectEvents = false),
+            ),
+        )
+
+        onNodeWithText(activity!!.getString(R.string.screen_onboarding_sign_up)).assertDoesNotExist()
+    }
+
+    @Test
     fun `when can go back - clicking on back calls the expected callback`() = runAndroidComposeUiTest {
         val eventSink = EventsRecorder<OnBoardingEvent>(expectEvents = false)
         ensureCalledOnce { callback ->

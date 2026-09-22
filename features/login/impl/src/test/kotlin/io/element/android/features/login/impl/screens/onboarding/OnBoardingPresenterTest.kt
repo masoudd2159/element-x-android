@@ -9,6 +9,7 @@
 package io.element.android.features.login.impl.screens.onboarding
 
 import com.google.common.truth.Truth.assertThat
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.appconfig.OnBoardingConfig
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.enterprise.api.IsEnterpriseBuild
@@ -18,11 +19,11 @@ import io.element.android.features.login.impl.accountprovider.AccountProviderDat
 import io.element.android.features.login.impl.accountprovider.SaveAccountProviderToHistory
 import io.element.android.features.login.impl.accountprovider.anAccountProviderDataSource
 import io.element.android.features.login.impl.localnetwork.LocalNetworkPermissionGate
+import io.element.android.features.login.impl.login.LoginMode
 import io.element.android.features.login.impl.login.LoginModePresenter
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.matrix.api.accountprovider.AccountProvider
-import io.element.android.libraries.matrix.api.accountprovider.matrixOrgAccountProvider
 import io.element.android.libraries.matrix.api.auth.MatrixAuthenticationService
 import io.element.android.libraries.matrix.test.AN_ACCOUNT_PROVIDER
 import io.element.android.libraries.matrix.test.AN_ACCOUNT_PROVIDER_2
@@ -32,7 +33,9 @@ import io.element.android.libraries.matrix.test.A_HOMESERVER_URL
 import io.element.android.libraries.matrix.test.A_HOMESERVER_URL_2
 import io.element.android.libraries.matrix.test.A_LOGIN_HINT
 import io.element.android.libraries.matrix.test.accountprovider.anAccountProviderManaged
+import io.element.android.libraries.matrix.test.auth.AN_OAUTH_DATA
 import io.element.android.libraries.matrix.test.auth.FakeMatrixAuthenticationService
+import io.element.android.libraries.matrix.test.auth.aMatrixHomeServerDetails
 import io.element.android.libraries.matrix.test.core.aBuildMeta
 import io.element.android.libraries.oauth.api.OAuthActionFlow
 import io.element.android.libraries.oauth.test.FakeOAuthActionFlow
@@ -64,6 +67,13 @@ class OnBoardingPresenterTest {
     }
 
     @Test
+    fun `custom feature flags disable account creation and homeserver changes while keeping QR login`() {
+        assertThat(CustomAppConfig.FeatureFlags.CREATE_ACCOUNT).isFalse()
+        assertThat(CustomAppConfig.FeatureFlags.CHANGE_HOMESERVER).isFalse()
+        assertThat(CustomAppConfig.FeatureFlags.QR_LOGIN).isTrue()
+    }
+
+    @Test
     fun `present - ensure initial conditions`() {
         assertThat(
             setOf(
@@ -91,7 +101,7 @@ class OnBoardingPresenterTest {
         presenter.test {
             val initialState = awaitItem()
             assertThat(initialState.showBackButton).isFalse()
-            assertThat(initialState.defaultAccountProvider).isNull()
+            assertThat(initialState.defaultAccountProvider).isEqualTo(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG))
             assertThat(initialState.canLoginWithQrCode).isFalse()
             assertThat(initialState.productionApplicationName).isEqualTo("B")
             assertThat(initialState.canCreateAccount).isEqualTo(OnBoardingConfig.CAN_CREATE_ACCOUNT)
@@ -179,7 +189,7 @@ class OnBoardingPresenterTest {
     }
 
     @Test
-    fun `present - opening the app using link with allowed account provider, and the app does not force account provider`() = runTest {
+    fun `present - ignores an account provider from a link when homeserver changes are disabled`() = runTest {
         val presenter = createPresenter(
             params = OnBoardingNode.Params(
                 accountProvider = ACCOUNT_PROVIDER_FROM_LINK,
@@ -194,10 +204,10 @@ class OnBoardingPresenterTest {
             ),
         )
         presenter.test {
-            skipItems(3)
+            skipItems(1)
             awaitItem().also {
-                assertThat(it.defaultAccountProvider).isEqualTo(AccountProvider.Generic(ACCOUNT_PROVIDER_FROM_LINK))
-                assertThat(it.canLoginWithQrCode).isFalse()
+                assertThat(it.defaultAccountProvider).isEqualTo(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG))
+                assertThat(it.canLoginWithQrCode).isTrue()
                 assertThat(it.canCreateAccount).isFalse()
             }
         }
@@ -225,7 +235,7 @@ class OnBoardingPresenterTest {
         presenter.test {
             skipItems(1)
             awaitItem().also {
-                assertThat(it.defaultAccountProvider).isNull()
+                assertThat(it.defaultAccountProvider).isEqualTo(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG))
                 assertThat(it.canLoginWithQrCode).isTrue()
                 assertThat(it.canCreateAccount).isFalse()
             }
@@ -256,8 +266,7 @@ class OnBoardingPresenterTest {
     }
 
     @Test
-    fun `present - a single configured account provider is not forced when the user may use another one`() = runTest {
-        // A singleton allow list only forces the account provider when the user is not free to use another one.
+    fun `present - configured provider is used when homeserver changes are disabled`() = runTest {
         val presenter = createPresenter(
             enterpriseService = FakeEnterpriseService(
                 accountProviderAllowListResult = { listOf(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG)) },
@@ -266,7 +275,7 @@ class OnBoardingPresenterTest {
         )
         presenter.test {
             awaitItem().also {
-                assertThat(it.defaultAccountProvider).isNull()
+                assertThat(it.defaultAccountProvider).isEqualTo(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG))
                 assertThat(it.mustChooseAccountProvider).isFalse()
             }
             skipItems(1)
@@ -274,7 +283,7 @@ class OnBoardingPresenterTest {
     }
 
     @Test
-    fun `present - the user must choose when several account providers are configured and enforced`() = runTest {
+    fun `present - the user cannot choose when several account providers are configured`() = runTest {
         val presenter = createPresenter(
             enterpriseService = FakeEnterpriseService(
                 accountProviderAllowListResult = {
@@ -288,8 +297,8 @@ class OnBoardingPresenterTest {
         )
         presenter.test {
             awaitItem().also {
-                assertThat(it.defaultAccountProvider).isNull()
-                assertThat(it.mustChooseAccountProvider).isTrue()
+                assertThat(it.defaultAccountProvider).isEqualTo(anAccountProviderManaged(serverName = ACCOUNT_PROVIDER_FROM_CONFIG))
+                assertThat(it.mustChooseAccountProvider).isFalse()
             }
             skipItems(1)
         }
@@ -302,10 +311,10 @@ class OnBoardingPresenterTest {
                 Result.failure(AN_EXCEPTION)
             },
         )
-        val accountProviderDataSource = anAccountProviderDataSource()
+        val accountProviderDataSource = anAccountProviderDataSource(defaultHomeserver = A_HOMESERVER_URL)
         val presenter = createPresenter(
             params = OnBoardingNode.Params(
-                accountProvider = A_HOMESERVER_URL,
+                accountProvider = A_HOMESERVER_URL_2,
                 loginHint = A_LOGIN_HINT,
                 showBackButton = false,
             ),
@@ -319,14 +328,14 @@ class OnBoardingPresenterTest {
             accountProviderDataSource = accountProviderDataSource,
         )
         presenter.test {
-            skipItems(3)
+            skipItems(1)
             awaitItem().also {
                 assertThat(it.defaultAccountProvider).isEqualTo(AccountProvider.Generic(A_HOMESERVER_URL))
-                assertThat(accountProviderDataSource.flow.first()).isEqualTo(matrixOrgAccountProvider)
-                it.eventSink(OnBoardingEvent.OnSignIn(AccountProvider.Generic(A_HOMESERVER_URL_2)))
+                assertThat(accountProviderDataSource.flow.first()).isEqualTo(AccountProvider.Generic(A_HOMESERVER_URL))
+                it.eventSink(OnBoardingEvent.OnSignIn(AccountProvider.Generic(A_HOMESERVER_URL)))
                 skipItems(1) // Loading
                 // Account data source has been updated
-                assertThat(accountProviderDataSource.flow.first()).isEqualTo(AccountProvider.Generic(A_HOMESERVER_URL_2))
+                assertThat(accountProviderDataSource.flow.first()).isEqualTo(AccountProvider.Generic(A_HOMESERVER_URL))
                 // Check an error was returned
                 val submittedState = awaitItem()
                 assertThat(submittedState.loginModeState.loginMode).isInstanceOf(AsyncData.Failure::class.java)
@@ -338,6 +347,41 @@ class OnBoardingPresenterTest {
             }
         }
     }
+
+    @Test
+    fun `present - account provider from a link does not override the default provider or login hint`() = runTest {
+        val configuredHomeservers = mutableListOf<String>()
+        val authenticationService = FakeMatrixAuthenticationService(
+            setHomeserverResult = { homeserver ->
+                configuredHomeservers += homeserver
+                Result.success(aMatrixHomeServerDetails(supportsOAuthLogin = true))
+            },
+        )
+        val accountProviderDataSource = anAccountProviderDataSource(defaultHomeserver = A_HOMESERVER_URL)
+        val presenter = createPresenter(
+            params = OnBoardingNode.Params(
+                accountProvider = A_HOMESERVER_URL_2,
+                loginHint = A_LOGIN_HINT,
+                showBackButton = false,
+            ),
+            loginModePresenter = createLoginModePresenter(authenticationService = authenticationService),
+            accountProviderDataSource = accountProviderDataSource,
+        )
+
+        presenter.test {
+            skipItems(1)
+            val state = awaitItem()
+            state.eventSink(OnBoardingEvent.OnSignIn(requireNotNull(state.defaultAccountProvider)))
+            skipItems(1)
+            var loginMode = awaitItem().loginModeState.loginMode
+            while (loginMode !is AsyncData.Success) {
+                loginMode = awaitItem().loginModeState.loginMode
+            }
+            assertThat(loginMode).isEqualTo(AsyncData.Success(LoginMode.OAuth(AN_OAUTH_DATA)))
+            assertThat(configuredHomeservers).containsExactly(A_HOMESERVER_URL)
+            assertThat(authenticationService.getOAuthUrlLoginHint).isNull()
+        }
+    }
 }
 
 private fun createPresenter(
@@ -347,13 +391,18 @@ private fun createPresenter(
         showBackButton = false,
     ),
     buildMeta: BuildMeta = aBuildMeta(),
-    enterpriseService: EnterpriseService = FakeEnterpriseService(),
+    enterpriseService: EnterpriseService = FakeEnterpriseService(
+        isAllowedToConnectToAccountProviderResult = { true },
+        isElementProEnforcedResult = { false },
+    ),
     isEnterpriseBuild: IsEnterpriseBuild = { false },
     rageshakeFeatureAvailability: () -> Flow<Boolean> = { flowOf(true) },
     loginModePresenter: LoginModePresenter = createLoginModePresenter(),
     onBoardingLogoResIdProvider: OnBoardingLogoResIdProvider = OnBoardingLogoResIdProvider { null },
     sessionStore: SessionStore = InMemorySessionStore(),
-    accountProviderDataSource: AccountProviderDataSource = anAccountProviderDataSource(),
+    accountProviderDataSource: AccountProviderDataSource = anAccountProviderDataSource(
+        enterpriseService = enterpriseService,
+    ),
 ) = OnBoardingPresenter(
     params = params,
     buildMeta = buildMeta,
