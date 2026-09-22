@@ -22,6 +22,7 @@ import io.element.android.compound.theme.mapToTheme
 import io.element.android.compound.tokens.generated.SemanticColors
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
+import io.element.android.libraries.designsystem.theme.fonts.resolveAppFont
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
@@ -84,6 +85,7 @@ fun ElementThemeApp(
             content = content,
             compoundLight = compoundLight,
             compoundDark = compoundDark,
+            fontFamily = resolveAppFont(),
         )
     }
 }

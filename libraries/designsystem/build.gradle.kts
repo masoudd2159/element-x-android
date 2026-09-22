@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.coil.compose)
     implementation(libs.vanniktech.blurhash)
+    implementation(projects.appconfig)
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.core)

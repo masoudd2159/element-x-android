@@ -18,6 +18,53 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import io.element.android.compound.tokens.generated.TypographyTokens
 
+/**
+ * Runtime Compound typography derived from generated [TypographyTokens].
+ *
+ * Keep this facade in sync with [TypographyTokens] when upstream Compound adds, removes, or renames typography tokens.
+ * Token dimensions and styling must remain sourced from [TypographyTokens]; this facade exists only to apply the runtime font family.
+ */
+class ElementTypography internal constructor(
+    val fontBodyLgMedium: TextStyle,
+    val fontBodyLgRegular: TextStyle,
+    val fontBodyMdMedium: TextStyle,
+    val fontBodyMdRegular: TextStyle,
+    val fontBodySmMedium: TextStyle,
+    val fontBodySmRegular: TextStyle,
+    val fontBodyXsMedium: TextStyle,
+    val fontBodyXsRegular: TextStyle,
+    val fontHeadingLgBold: TextStyle,
+    val fontHeadingLgRegular: TextStyle,
+    val fontHeadingMdBold: TextStyle,
+    val fontHeadingMdRegular: TextStyle,
+    val fontHeadingSmMedium: TextStyle,
+    val fontHeadingSmRegular: TextStyle,
+    val fontHeadingXlBold: TextStyle,
+    val fontHeadingXlRegular: TextStyle,
+)
+
+/**
+ * Applies [fontFamily] to generated Compound typography without duplicating its token values.
+ */
+internal fun elementTypography(fontFamily: FontFamily = FontFamily.Default) = ElementTypography(
+    fontBodyLgMedium = TypographyTokens.fontBodyLgMedium.copy(fontFamily = fontFamily),
+    fontBodyLgRegular = TypographyTokens.fontBodyLgRegular.copy(fontFamily = fontFamily),
+    fontBodyMdMedium = TypographyTokens.fontBodyMdMedium.copy(fontFamily = fontFamily),
+    fontBodyMdRegular = TypographyTokens.fontBodyMdRegular.copy(fontFamily = fontFamily),
+    fontBodySmMedium = TypographyTokens.fontBodySmMedium.copy(fontFamily = fontFamily),
+    fontBodySmRegular = TypographyTokens.fontBodySmRegular.copy(fontFamily = fontFamily),
+    fontBodyXsMedium = TypographyTokens.fontBodyXsMedium.copy(fontFamily = fontFamily),
+    fontBodyXsRegular = TypographyTokens.fontBodyXsRegular.copy(fontFamily = fontFamily),
+    fontHeadingLgBold = TypographyTokens.fontHeadingLgBold.copy(fontFamily = fontFamily),
+    fontHeadingLgRegular = TypographyTokens.fontHeadingLgRegular.copy(fontFamily = fontFamily),
+    fontHeadingMdBold = TypographyTokens.fontHeadingMdBold.copy(fontFamily = fontFamily),
+    fontHeadingMdRegular = TypographyTokens.fontHeadingMdRegular.copy(fontFamily = fontFamily),
+    fontHeadingSmMedium = TypographyTokens.fontHeadingSmMedium.copy(fontFamily = fontFamily),
+    fontHeadingSmRegular = TypographyTokens.fontHeadingSmRegular.copy(fontFamily = fontFamily),
+    fontHeadingXlBold = TypographyTokens.fontHeadingXlBold.copy(fontFamily = fontFamily),
+    fontHeadingXlRegular = TypographyTokens.fontHeadingXlRegular.copy(fontFamily = fontFamily),
+)
+
 // 32px (Material) vs 34px, it's the closest one
 internal val compoundHeadingXlRegular = TypographyTokens.fontHeadingXlRegular
 
@@ -59,20 +106,22 @@ internal val compoundBodySmMedium = TypographyTokens.fontBodySmMedium
 // 11px both
 internal val compoundBodyXsMedium = TypographyTokens.fontBodyXsMedium
 
-internal val compoundTypography = Typography(
+internal fun compoundTypography(fontFamily: FontFamily = FontFamily.Default) = Typography(
     // displayLarge = , 57px (Material) size. We have no equivalent
     // displayMedium = , 45px (Material) size. We have no equivalent
     // displaySmall = , 36px (Material) size. We have no equivalent
-    headlineLarge = compoundHeadingXlRegular,
-    headlineMedium = compoundHeadingLgRegular,
-    headlineSmall = defaultHeadlineSmall,
-    titleLarge = compoundHeadingMdRegular,
-    titleMedium = compoundBodyLgMedium,
-    titleSmall = compoundBodyMdMedium,
-    bodyLarge = compoundBodyLgRegular,
-    bodyMedium = compoundBodyMdRegular,
-    bodySmall = compoundBodySmRegular,
-    labelLarge = compoundBodyMdMedium,
-    labelMedium = compoundBodySmMedium,
-    labelSmall = compoundBodyXsMedium,
+    headlineLarge = compoundHeadingXlRegular.copy(fontFamily = fontFamily),
+    headlineMedium = compoundHeadingLgRegular.copy(fontFamily = fontFamily),
+    headlineSmall = defaultHeadlineSmall.copy(fontFamily = fontFamily),
+    titleLarge = compoundHeadingMdRegular.copy(fontFamily = fontFamily),
+    titleMedium = compoundBodyLgMedium.copy(fontFamily = fontFamily),
+    titleSmall = compoundBodyMdMedium.copy(fontFamily = fontFamily),
+    bodyLarge = compoundBodyLgRegular.copy(fontFamily = fontFamily),
+    bodyMedium = compoundBodyMdRegular.copy(fontFamily = fontFamily),
+    bodySmall = compoundBodySmRegular.copy(fontFamily = fontFamily),
+    labelLarge = compoundBodyMdMedium.copy(fontFamily = fontFamily),
+    labelMedium = compoundBodySmMedium.copy(fontFamily = fontFamily),
+    labelSmall = compoundBodyXsMedium.copy(fontFamily = fontFamily),
 )
+
+internal val compoundTypography = compoundTypography()

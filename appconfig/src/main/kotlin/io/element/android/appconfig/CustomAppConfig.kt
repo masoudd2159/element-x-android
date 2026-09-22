@@ -14,6 +14,13 @@ package io.element.android.appconfig
  * custom values across upstream Element X files.
  */
 object CustomAppConfig {
+    object Appearance {
+        /**
+         * The application-wide font. Change only this value to switch fonts.
+         */
+        val FONT = AppFont.YEKAN_BAKH
+    }
+
     object FeatureFlags {
         /**
          * Controls whether the "Create account" option is available in the app.
