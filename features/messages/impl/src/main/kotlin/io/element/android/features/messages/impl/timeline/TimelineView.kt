@@ -63,7 +63,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
@@ -93,12 +92,10 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemEventContentPreviewParam
 import io.element.android.features.messages.impl.timeline.protection.TimelineProtectionState
 import io.element.android.features.messages.impl.timeline.protection.aTimelineProtectionState
-import io.element.android.libraries.androidutils.system.copyToClipboard
 import io.element.android.libraries.designsystem.atomic.atoms.UnreadIndicatorAtom
 import io.element.android.libraries.designsystem.components.dialogs.AlertDialog
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
-import io.element.android.libraries.designsystem.text.roundToPx
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.utils.animateScrollToItemCenter
@@ -168,8 +165,6 @@ fun TimelineView(
         state.eventSink(TimelineEvent.FocusOnEvent(eventId))
     }
 
-    val context = LocalContext.current
-    val toastMessage = stringResource(CommonStrings.common_copied_to_clipboard)
     val view = LocalView.current
     fun inReplyToClick(eventId: EventId) {
         state.eventSink(TimelineEvent.FocusOnEvent(eventId))
@@ -179,10 +174,7 @@ fun TimelineView(
         view.performHapticFeedback(
             HapticFeedbackConstants.LONG_PRESS
         )
-        context.copyToClipboard(
-            text = link.url,
-            toastMessage = toastMessage,
-        )
+        state.eventSink(TimelineEvent.CopyToClipboard(link.url))
     }
 
     fun prefetchMoreItems() {
@@ -191,80 +183,88 @@ fun TimelineView(
 
     // Animate alpha when timeline is first displayed, to avoid flashes or glitching when viewing rooms
     AnimatedVisibility(visible = true, enter = fadeIn()) {
-        Box(modifier) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(nestedScrollConnection)
-                    .testTag(TestTags.timeline),
-                state = lazyListState,
-                reverseLayout = true,
-                contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal).asPaddingValues() + PaddingValues(top = 64.dp, bottom = 8.dp),
-            ) {
-                items(
-                    items = state.timelineItems,
-                    contentType = { timelineItem -> timelineItem.contentType() },
-                    key = { timelineItem -> timelineItem.identifier() },
-                ) { timelineItem ->
-                    TimelineItemRow(
-                        timelineItem = timelineItem,
-                        timelineMode = state.timelineMode,
-                        timelineRoomInfo = state.timelineRoomInfo,
-                        timelineProtectionState = timelineProtectionState,
-                        isLastOutgoingMessage = state.isLastOutgoingMessage(timelineItem.identifier()),
-                        focusedEventId = state.focusedEventId,
-                        displayThreadSummaries = state.displayThreadSummaries,
-                        onUserDataClick = onUserDataClick,
-                        onLinkClick = onLinkClick,
-                        onLinkLongClick = ::onLinkLongClick,
-                        onContentClick = onContentClick,
-                        onGalleryItemClick = onGalleryItemClick,
-                        onLongClick = onMessageLongClick,
-                        inReplyToClick = ::inReplyToClick,
-                        onReactionClick = onReactionClick,
-                        onReactionLongClick = onReactionLongClick,
-                        onMoreReactionsClick = onMoreReactionsClick,
-                        onReadReceiptClick = onReadReceiptClick,
-                        onSwipeToReply = onSwipeToReply,
-                        onJoinCallClick = onJoinCallClick,
-                        eventSink = state.eventSink,
-                    )
+        val composeLocalTimelineEventRendererConfig = remember(state.useNewTimelineEventRenderer, state.timelineRoomInfo.currentUserId) {
+            ComposeLocalTimelineEventRendererConfig(
+                isComposeRendererEnabled = state.useNewTimelineEventRenderer,
+                currentUserId = state.timelineRoomInfo.currentUserId,
+            )
+        }
+        CompositionLocalProvider(LocalTimelineEventRendererConfig provides composeLocalTimelineEventRendererConfig) {
+            Box(modifier) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(nestedScrollConnection)
+                        .testTag(TestTags.timeline),
+                    state = lazyListState,
+                    reverseLayout = true,
+                    contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal).asPaddingValues() + PaddingValues(top = 64.dp, bottom = 8.dp),
+                ) {
+                    items(
+                        items = state.timelineItems,
+                        contentType = { timelineItem -> timelineItem.contentType() },
+                        key = { timelineItem -> timelineItem.identifier() },
+                    ) { timelineItem ->
+                        TimelineItemRow(
+                            timelineItem = timelineItem,
+                            timelineMode = state.timelineMode,
+                            timelineRoomInfo = state.timelineRoomInfo,
+                            timelineProtectionState = timelineProtectionState,
+                            isLastOutgoingMessage = state.isLastOutgoingMessage(timelineItem.identifier()),
+                            focusedEventId = state.focusedEventId,
+                            displayThreadSummaries = state.displayThreadSummaries,
+                            onUserDataClick = onUserDataClick,
+                            onLinkClick = onLinkClick,
+                            onLinkLongClick = ::onLinkLongClick,
+                            onContentClick = onContentClick,
+                            onGalleryItemClick = onGalleryItemClick,
+                            onLongClick = onMessageLongClick,
+                            inReplyToClick = ::inReplyToClick,
+                            onReactionClick = onReactionClick,
+                            onReactionLongClick = onReactionLongClick,
+                            onMoreReactionsClick = onMoreReactionsClick,
+                            onReadReceiptClick = onReadReceiptClick,
+                            onSwipeToReply = onSwipeToReply,
+                            onJoinCallClick = onJoinCallClick,
+                            eventSink = state.eventSink,
+                        )
+                    }
                 }
+
+                FocusRequestStateView(
+                    focusRequestState = state.focusRequestState,
+                    onClearFocusRequestState = ::clearFocusRequestState
+                )
+
+                TimelinePrefetchingHelper(
+                    lazyListState = lazyListState,
+                    prefetch = ::prefetchMoreItems
+                )
+
+                TimelineScrollHelper(
+                    hasAnyEvent = state.hasAnyEvent,
+                    lazyListState = lazyListState,
+                    forceJumpToBottomVisibility = forceJumpToBottomVisibility,
+                    forceJumpToReadMarkerVisibility = forceJumpToReadMarkerVisibility,
+                    newEventState = state.newEventState,
+                    isLive = state.isLive,
+                    focusRequestState = state.focusRequestState,
+                    displayJumpToUnread = state.displayJumpToUnread,
+                    jumpToUnread = state.jumpToUnread,
+                    onScrollFinishAt = ::onScrollFinishAt,
+                    onJumpToLive = ::onJumpToLive,
+                    onFocusEventRender = ::onFocusEventRender,
+                    onMarkAllAsRead = ::onMarkAllAsRead,
+                    onFocusOnEvent = ::onFocusOnEvent,
+                )
+
+                FloatingDateBadgeOverlay(
+                    lazyListState = lazyListState,
+                    timelineItems = state.timelineItems,
+                    isLive = state.isLive,
+                    topOffset = floatingDateTopOffset,
+                )
             }
-
-            FocusRequestStateView(
-                focusRequestState = state.focusRequestState,
-                onClearFocusRequestState = ::clearFocusRequestState
-            )
-
-            TimelinePrefetchingHelper(
-                lazyListState = lazyListState,
-                prefetch = ::prefetchMoreItems
-            )
-
-            TimelineScrollHelper(
-                hasAnyEvent = state.hasAnyEvent,
-                lazyListState = lazyListState,
-                forceJumpToBottomVisibility = forceJumpToBottomVisibility,
-                forceJumpToReadMarkerVisibility = forceJumpToReadMarkerVisibility,
-                newEventState = state.newEventState,
-                isLive = state.isLive,
-                focusRequestState = state.focusRequestState,
-                displayJumpToUnread = state.displayJumpToUnread,
-                jumpToUnread = state.jumpToUnread,
-                onScrollFinishAt = ::onScrollFinishAt,
-                onJumpToLive = ::onJumpToLive,
-                onFocusEventRender = ::onFocusEventRender,
-                onMarkAllAsRead = ::onMarkAllAsRead,
-                onFocusOnEvent = ::onFocusOnEvent,
-            )
-
-            FloatingDateBadgeOverlay(
-                lazyListState = lazyListState,
-                timelineItems = state.timelineItems,
-                isLive = state.isLive,
-                topOffset = floatingDateTopOffset,
-            )
         }
     }
 
@@ -573,6 +573,7 @@ private fun JumpToPositionButton(
                         .offset { IntOffset(x = 0, y = dotYOffset.roundToPx()) },
                     color = ElementTheme.colors.iconSuccessPrimary,
                     border = BorderStroke(2.dp, ElementTheme.colors.bgCanvasDefault),
+                    count = 0,
                 )
             }
         }

@@ -44,6 +44,8 @@ import io.element.android.features.messages.impl.voicemessages.timeline.Redacted
 import io.element.android.features.poll.api.actions.EndPollAction
 import io.element.android.features.poll.api.actions.SendPollResponseAction
 import io.element.android.features.roomcall.api.RoomCallState
+import io.element.android.libraries.androidutils.clipboard.ClipboardHelper
+import io.element.android.libraries.androidutils.toast.ToastHelper
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
@@ -60,6 +62,7 @@ import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 import io.element.android.libraries.matrix.api.timeline.item.event.TimelineItemEventOrigin
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
+import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction.DisplayFirstTimelineItems
 import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction.NotificationToMessage
 import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction.OpenRoom
@@ -104,6 +107,8 @@ class TimelinePresenter(
     private val liveLocationShareManager: ActiveLiveLocationShareManager,
     private val markAsFullyRead: MarkAsFullyRead,
     private val timelineProtectionPresenter: Presenter<TimelineProtectionState>,
+    private val clipboardHelper: ClipboardHelper,
+    private val toastHelper: ToastHelper,
 ) : Presenter<TimelineState> {
     private val tag = "TimelinePresenter"
 
@@ -162,6 +167,9 @@ class TimelinePresenter(
         }
         val displayJumpToUnread by produceState(false) {
             value = featureFlagService.isFeatureEnabled(FeatureFlags.JumpToUnread)
+        }
+        val useNewTimelineEventRenderer by produceState(false) {
+            value = featureFlagService.isFeatureEnabled(FeatureFlags.NewTimelineEventRenderer)
         }
 
         val timelineProtectionState = timelineProtectionPresenter.present()
@@ -312,6 +320,11 @@ class TimelinePresenter(
                 is TimelineEvent.ValidateMedia -> {
                     timelineProtectionState.eventSink(TimelineProtectionEvent.ValidateContent(event.mediaSources, event.validationState))
                 }
+                is TimelineEvent.CopyToClipboard -> {
+                    clipboardHelper.copyPlainText(event.text) {
+                        toastHelper.show(CommonStrings.common_copied_to_clipboard)
+                    }
+                }
             }
         }
 
@@ -434,6 +447,7 @@ class TimelinePresenter(
         val timelineRoomInfo by remember(typingNotificationState, roomCallState, roomInfo) {
             derivedStateOf {
                 TimelineRoomInfo(
+                    currentUserId = room.sessionId,
                     name = roomInfo.name,
                     isDm = roomInfo.isDm,
                     userHasPermissionToSendMessage = userEventPermissions.canSendMessage,
@@ -463,6 +477,7 @@ class TimelinePresenter(
             displayThreadSummaries = displayThreadSummaries,
             displayJumpToUnread = displayJumpToUnread,
             jumpToUnread = jumpToUnread.value,
+            useNewTimelineEventRenderer = useNewTimelineEventRenderer,
             eventSink = ::handleEvent,
         )
     }
