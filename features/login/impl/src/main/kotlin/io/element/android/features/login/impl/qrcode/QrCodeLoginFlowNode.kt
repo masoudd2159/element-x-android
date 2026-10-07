@@ -57,6 +57,7 @@ class QrCodeLoginFlowNode(
     @Assisted plugins: List<Plugin>,
     qrCodeLoginGraphFactory: QrCodeLoginGraph.Factory,
     private val coroutineDispatchers: CoroutineDispatchers,
+    private val qrLoginHomeserverValidator: QrLoginHomeserverValidator,
 ) : BaseFlowNode<QrCodeLoginFlowNode.NavTarget>(
     backstack = BackStack(
         initialElement = NavTarget.Initial,
@@ -213,6 +214,10 @@ class QrCodeLoginFlowNode(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun CoroutineScope.startAuthentication(qrCodeLoginData: MatrixQrCodeLoginData) {
+        if (!qrLoginHomeserverValidator.isAllowed(qrCodeLoginData)) {
+            backstack.replace(NavTarget.Error(QrCodeErrorScreenType.UnknownError))
+            return
+        }
         authenticationJob = launch(coroutineDispatchers.main) {
             qrCodeLoginManager.authenticate(qrCodeLoginData)
                 .onSuccess {

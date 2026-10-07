@@ -12,15 +12,21 @@ import com.bumble.appyx.core.modality.AncestryInfo
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.utils.customisations.NodeCustomisationDirectoryImpl
 import com.google.common.truth.Truth.assertThat
+import io.element.android.appconfig.DefaultHomeserverProvider
 import io.element.android.features.login.impl.di.FakeQrCodeLoginGraph
 import io.element.android.features.login.impl.screens.qrcode.confirmation.QrCodeConfirmationStep
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
+import io.element.android.libraries.matrix.api.auth.qrlogin.MatrixQrCodeLoginData
 import io.element.android.libraries.matrix.api.auth.qrlogin.QrCodeLoginStep
 import io.element.android.libraries.matrix.api.auth.qrlogin.QrLoginException
+import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.test.A_SESSION_ID
 import io.element.android.libraries.matrix.test.auth.FakeMatrixAuthenticationService
 import io.element.android.libraries.matrix.test.auth.qrlogin.FakeMatrixQrCodeLoginData
+import io.element.android.tests.testutils.lambda.assert
 import io.element.android.tests.testutils.lambda.lambdaError
+import io.element.android.tests.testutils.lambda.lambdaRecorder
+import io.element.android.tests.testutils.lambda.value
 import io.element.android.tests.testutils.robolectric.RobolectricTest
 import io.element.android.tests.testutils.testCoroutineDispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -114,7 +120,7 @@ class QrCodeLoginFlowNodeTest : RobolectricTest() {
             coroutineDispatchers = testCoroutineDispatchers(useUnconfinedTestDispatcher = true)
         )
 
-        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData()) }
+        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData { "api.mypoopak.ir" }) }
         assertThat(flowNode.isLoginInProgress()).isTrue()
 
         advanceUntilIdle()
@@ -139,7 +145,7 @@ class QrCodeLoginFlowNodeTest : RobolectricTest() {
             coroutineDispatchers = testCoroutineDispatchers(useUnconfinedTestDispatcher = true)
         )
 
-        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData()) }
+        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData { "api.mypoopak.ir" }) }
         assertThat(flowNode.isLoginInProgress()).isTrue()
 
         advanceUntilIdle()
@@ -164,7 +170,7 @@ class QrCodeLoginFlowNodeTest : RobolectricTest() {
             coroutineDispatchers = testCoroutineDispatchers(useUnconfinedTestDispatcher = true)
         )
 
-        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData()) }
+        flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData { "api.mypoopak.ir" }) }
         assertThat(flowNode.isLoginInProgress()).isTrue()
         flowNode.reset()
 
@@ -174,9 +180,61 @@ class QrCodeLoginFlowNodeTest : RobolectricTest() {
         assertThat(flowNode.isLoginInProgress()).isFalse()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `startAuthentication rejects mismatched and unverifiable homeservers without authenticating`() = runTest {
+        listOf("other.example.com", "evil.api.mypoopak.ir", "api.mypoopak.ir.evil.com", null, "", "https://", "api.mypoopak.ir:8448").forEach { server ->
+            val authenticate = lambdaRecorder<MatrixQrCodeLoginData, Result<SessionId>> { Result.success(A_SESSION_ID) }
+            val qrCodeLoginManager = FakeQrCodeLoginManager(authenticateResult = authenticate)
+            val flowNode = createLoginFlowNode(qrCodeLoginManager = qrCodeLoginManager)
+
+            flowNode.run { startAuthentication(FakeMatrixQrCodeLoginData { server }) }
+            advanceUntilIdle()
+
+            assert(authenticate).isNeverCalled()
+            assertThat(flowNode.isLoginInProgress()).isFalse()
+            assertThat(flowNode.currentNavTarget()).isEqualTo(QrCodeLoginFlowNode.NavTarget.Error(QrCodeErrorScreenType.UnknownError))
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `startAuthentication authenticates matching homeserver`() = runTest {
+        val authenticate = lambdaRecorder<MatrixQrCodeLoginData, Result<SessionId>> { Result.success(A_SESSION_ID) }
+        val qrCodeLoginManager = FakeQrCodeLoginManager(authenticateResult = authenticate)
+        val flowNode = createLoginFlowNode(qrCodeLoginManager = qrCodeLoginManager)
+        val qrCodeLoginData = FakeMatrixQrCodeLoginData { "HTTPS://API.MYPOOPAK.IR/" }
+
+        flowNode.run { startAuthentication(qrCodeLoginData) }
+        advanceUntilIdle()
+
+        assert(authenticate).isCalledOnce().with(value(qrCodeLoginData))
+        assertThat(flowNode.currentNavTarget()).isEqualTo(QrCodeLoginFlowNode.NavTarget.Initial)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `startAuthentication preserves unrestricted behavior when changing homeserver is enabled`() = runTest {
+        listOf("other.example.com", null).forEach { server ->
+            val serverNameResult = lambdaRecorder<String?> { server }
+            val qrCodeLoginData = FakeMatrixQrCodeLoginData(serverNameResult)
+            val authenticate = lambdaRecorder<MatrixQrCodeLoginData, Result<SessionId>> { Result.success(A_SESSION_ID) }
+            val qrCodeLoginManager = FakeQrCodeLoginManager(authenticateResult = authenticate)
+            val flowNode = createLoginFlowNode(qrCodeLoginManager = qrCodeLoginManager, canChangeHomeserver = true)
+
+            flowNode.run { startAuthentication(qrCodeLoginData) }
+            advanceUntilIdle()
+
+            assert(authenticate).isCalledOnce().with(value(qrCodeLoginData))
+            assert(serverNameResult).isNeverCalled()
+            assertThat(flowNode.currentNavTarget()).isEqualTo(QrCodeLoginFlowNode.NavTarget.Initial)
+        }
+    }
+
     private fun TestScope.createLoginFlowNode(
         qrCodeLoginManager: QrCodeLoginManager = FakeQrCodeLoginManager(),
-        coroutineDispatchers: CoroutineDispatchers = testCoroutineDispatchers()
+        coroutineDispatchers: CoroutineDispatchers = testCoroutineDispatchers(),
+        canChangeHomeserver: Boolean = false,
     ): QrCodeLoginFlowNode {
         val buildContext = BuildContext(
             ancestryInfo = AncestryInfo.Root,
@@ -192,6 +250,12 @@ class QrCodeLoginFlowNodeTest : RobolectricTest() {
             ),
             qrCodeLoginGraphFactory = FakeQrCodeLoginGraph.Builder(qrCodeLoginManager),
             coroutineDispatchers = coroutineDispatchers,
+            qrLoginHomeserverValidator = QrLoginHomeserverValidator(
+                defaultHomeserverProvider = object : DefaultHomeserverProvider {
+                    override fun getDefaultHomeserver() = "https://api.mypoopak.ir"
+                },
+                canChangeHomeserver = canChangeHomeserver,
+            ),
         )
     }
 
