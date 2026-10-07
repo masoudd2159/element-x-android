@@ -199,7 +199,6 @@
     <string name="action_retry_decryption">"رمزگشایی دوباره"</string>
     <string name="action_save">"ذخیره"</string>
     <string name="action_search">"جستجو"</string>
-    <string name="action_select">"انتخاب"</string>
     <string name="action_select_all">"انتخاب همه"</string>
     <string name="action_send">"ارسال"</string>
     <string name="action_send_edited_message">"ارسال پیام ویرایش‌شده"</string>
@@ -1508,10 +1507,8 @@
     <string name="screen_room_attachment_source_location">"اشتراک‌گذاری مکان"</string>
     <string name="screen_room_attachment_source_poll">"نظرسنجی"</string>
     <string name="screen_room_attachment_text_formatting">"قالب‌بندی متن"</string>
-    <string name="screen_room_confirm_removal_message">"مطمئنید می‌خواهید این پیام را حذف کنید؟"</string>
     <string name="screen_room_confirm_removal_reason_label">"دلیل (اختیاری)"</string>
     <string name="screen_room_confirm_removal_reason_placeholder">"وارد کنید…"</string>
-    <string name="screen_room_confirm_removal_reason_placeholder_android">"دلیل…"</string>
     <string name="screen_room_confirm_removal_reason_supporting_text">"(اختیاری)"</string>
     <string name="screen_room_confirm_removal_title">"تأیید حذف"</string>
     <string name="screen_room_encrypted_history_banner">"تاریخچهٔ پیام‌ها فعلاً در دسترس نیست."</string>
