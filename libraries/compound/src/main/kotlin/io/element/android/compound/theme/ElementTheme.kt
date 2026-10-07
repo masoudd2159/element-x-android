@@ -28,17 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.tokens.ElementTypography
-import io.element.android.compound.tokens.compoundTypography
-import io.element.android.compound.tokens.elementTypography
+import io.element.android.compound.tokens.PoopakTypography
 import io.element.android.compound.tokens.generated.SemanticColors
 import io.element.android.compound.tokens.generated.compoundColorsDark
 import io.element.android.compound.tokens.generated.compoundColorsLight
@@ -70,10 +67,7 @@ object ElementTheme {
     /**
      * Compound [Typography] tokens. In Figma, these have the `Android/font/` prefix.
      */
-    val typography: ElementTypography
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalCompoundTypography.current
+    val typography: ElementTypography = PoopakTypography.element
 
     /**
      * Returns whether the theme version used is the light or the dark one.
@@ -86,25 +80,6 @@ object ElementTheme {
 
 // Global variables (application level)
 internal val LocalCompoundColors = staticCompositionLocalOf { compoundColorsLight }
-internal val LocalCompoundTypography = staticCompositionLocalOf { elementTypography() }
-
-private fun Typography.withFontFamily(fontFamily: FontFamily) = copy(
-    displayLarge = displayLarge.copy(fontFamily = fontFamily),
-    displayMedium = displayMedium.copy(fontFamily = fontFamily),
-    displaySmall = displaySmall.copy(fontFamily = fontFamily),
-    headlineLarge = headlineLarge.copy(fontFamily = fontFamily),
-    headlineMedium = headlineMedium.copy(fontFamily = fontFamily),
-    headlineSmall = headlineSmall.copy(fontFamily = fontFamily),
-    titleLarge = titleLarge.copy(fontFamily = fontFamily),
-    titleMedium = titleMedium.copy(fontFamily = fontFamily),
-    titleSmall = titleSmall.copy(fontFamily = fontFamily),
-    bodyLarge = bodyLarge.copy(fontFamily = fontFamily),
-    bodyMedium = bodyMedium.copy(fontFamily = fontFamily),
-    bodySmall = bodySmall.copy(fontFamily = fontFamily),
-    labelLarge = labelLarge.copy(fontFamily = fontFamily),
-    labelMedium = labelMedium.copy(fontFamily = fontFamily),
-    labelSmall = labelSmall.copy(fontFamily = fontFamily),
-)
 
 /**
  * Sets up the theme for the application, or a part of it.
@@ -118,10 +93,7 @@ private fun Typography.withFontFamily(fontFamily: FontFamily) = copy(
  * @param compoundDark the [SemanticColors] to use in dark theme.
  * @param materialColorsLight the Material 3 [ColorScheme] to use in light theme.
  * @param materialColorsDark the Material 3 [ColorScheme] to use in dark theme.
- * @param fontFamily the font family to apply to Compound and Material typography. When omitted, inherits the surrounding Element theme.
- * @param typography the Material 3 [Typography] tokens to use. [fontFamily], when supplied, replaces every Material style's family.
- * When [fontFamily] is omitted, the body large font family is used for the Compound typography facade. A custom Typography with
- * different families per style intentionally retains those Material styles.
+ * @param typography the Material 3 [Typography] tokens to use. It'll use [PoopakTypography.material] by default.
  * @param content the content to apply the theme to.
  */
 @OptIn(CoreColorToken::class)
@@ -136,20 +108,9 @@ fun ElementTheme(
     compoundDark: SemanticColors = compoundColorsDark,
     materialColorsLight: ColorScheme = compoundLight.toMaterialColorScheme(),
     materialColorsDark: ColorScheme = compoundDark.toMaterialColorScheme(),
-    fontFamily: FontFamily? = null,
-    typography: Typography? = null,
+    typography: Typography = PoopakTypography.material,
     content: @Composable () -> Unit,
 ) {
-    val resolvedFontFamily = fontFamily
-        ?: typography?.bodyLarge?.fontFamily
-        ?: LocalCompoundTypography.current.fontBodyLgRegular.fontFamily
-        ?: FontFamily.Default
-    val resolvedMaterialTypography = when {
-        typography == null -> remember(resolvedFontFamily) { compoundTypography(resolvedFontFamily) }
-        fontFamily != null -> remember(typography, fontFamily) { typography.withFontFamily(fontFamily) }
-        else -> typography
-    }
-    val elementTypography = remember(resolvedFontFamily) { elementTypography(resolvedFontFamily) }
     val darkTheme = theme.isDark()
     val currentCompoundColor = when {
         darkTheme -> if (theme == Theme.Black) {
@@ -208,7 +169,6 @@ fun ElementTheme(
     }
     CompositionLocalProvider(
         LocalCompoundColors provides currentCompoundColor,
-        LocalCompoundTypography provides elementTypography,
         LocalContentColor provides colorScheme.onSurface,
         // Configure the keyboard focus style: Draw a blue inset ring around the focused component.
         // Ref: https://www.figma.com/design/hlbsmSekQorGRN1t2R9JEy/Accessibility-checks?node-id=271-42066
@@ -233,7 +193,7 @@ fun ElementTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = resolvedMaterialTypography,
+            typography = typography,
             content = content
         )
     }

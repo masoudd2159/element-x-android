@@ -7,12 +7,48 @@
 
 package io.element.android.compound.tokens
 
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import com.google.common.truth.Truth.assertThat
+import io.element.android.appconfig.AppFont
+import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.theme.fonts.resolveAppFont
 import io.element.android.compound.tokens.generated.TypographyTokens
 import org.junit.Test
 
+// A top-level initializer deliberately exercises upstream's non-Composable typography contract.
+private val topLevelBodyStyle = ElementTheme.typography.fontBodySmRegular
+
 class ElementTypographyTest {
+    @Test
+    fun `static theme typography uses the configured application font`() {
+        assertThat(ElementTheme.typography).isSameInstanceAs(PoopakTypography.element)
+        assertThat(topLevelBodyStyle.fontFamily).isSameInstanceAs(resolveAppFont())
+        assertThat(PoopakTypography.material.bodyLarge.fontFamily).isSameInstanceAs(resolveAppFont())
+    }
+
+    @Test
+    fun `both app fonts cover every generated token without changing other properties`() {
+        val tokenGetters = TypographyTokens::class.java.methods.filter { it.returnType == TextStyle::class.java }
+        val facadeGetters = ElementTypography::class.java.methods.filter { it.returnType == TextStyle::class.java }
+        assertThat(facadeGetters.map { it.name }).containsExactlyElementsIn(tokenGetters.map { it.name })
+        AppFont.entries.forEach { appFont ->
+            val family = resolveAppFont(appFont)
+            val typography = elementTypography(family)
+            tokenGetters.forEach { getter ->
+                val token = getter.invoke(TypographyTokens) as TextStyle
+                val style = ElementTypography::class.java.getMethod(getter.name).invoke(typography) as TextStyle
+                assertThat(style).isEqualTo(token.copy(fontFamily = family))
+            }
+            val material = compoundTypography.withFontFamily(family)
+            compoundTypography::class.java.methods.filter { it.returnType == TextStyle::class.java }.forEach { getter ->
+                val token = getter.invoke(compoundTypography) as TextStyle
+                val style = getter.invoke(material) as TextStyle
+                assertThat(style).isEqualTo(token.copy(fontFamily = family))
+            }
+        }
+    }
+
     @Test
     fun `runtime typography preserves generated token properties and replaces only font family`() {
         val typography = elementTypography(FontFamily.Serif)
@@ -36,12 +72,7 @@ class ElementTypographyTest {
             typography.fontHeadingXlRegular to TypographyTokens.fontHeadingXlRegular,
         ).forEach { (resolved, generated) ->
             assertThat(resolved.fontFamily).isEqualTo(FontFamily.Serif)
-            assertThat(resolved.fontSize).isEqualTo(generated.fontSize)
-            assertThat(resolved.fontWeight).isEqualTo(generated.fontWeight)
-            assertThat(resolved.lineHeight).isEqualTo(generated.lineHeight)
-            assertThat(resolved.letterSpacing).isEqualTo(generated.letterSpacing)
-            assertThat(resolved.platformStyle).isEqualTo(generated.platformStyle)
-            assertThat(resolved.lineHeightStyle).isEqualTo(generated.lineHeightStyle)
+            assertThat(resolved).isEqualTo(generated.copy(fontFamily = FontFamily.Serif))
         }
     }
 
@@ -49,7 +80,7 @@ class ElementTypographyTest {
     fun `material typography uses the same font family as element typography`() {
         val fontFamily = FontFamily.Serif
         val elementTypography = elementTypography(fontFamily)
-        val materialTypography = compoundTypography(fontFamily)
+        val materialTypography = compoundTypography.withFontFamily(fontFamily)
 
         assertThat(elementTypography.fontBodyLgRegular.fontFamily).isEqualTo(fontFamily)
         assertThat(materialTypography.bodyLarge.fontFamily).isEqualTo(fontFamily)

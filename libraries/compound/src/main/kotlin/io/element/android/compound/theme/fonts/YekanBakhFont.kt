@@ -5,12 +5,12 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
-package io.element.android.libraries.designsystem.theme.fonts
+package io.element.android.compound.theme.fonts
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import io.element.android.libraries.designsystem.R
+import io.element.android.compound.R
 
 internal object YekanBakhFont {
     val family = FontFamily(

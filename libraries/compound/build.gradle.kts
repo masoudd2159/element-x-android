@@ -32,6 +32,7 @@ tasks.withType(Test::class).configureEach {
 }
 
 dependencies {
+    implementation(projects.appconfig)
     testCommonDependencies(libs)
 
     // Paparazzi 1.3.2 workaround (see https://github.com/cashapp/paparazzi/blob/master/CHANGELOG.md#132---2024-01-13)
