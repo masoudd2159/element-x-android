@@ -113,3 +113,9 @@ lint/tmp/
 .DS_Store
 
 checkouts/**
+
+# Graphify generated knowledge graph
+/graphify-out/
+
+# Local Codex configuration
+/.codex/
