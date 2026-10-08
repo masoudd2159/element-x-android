@@ -306,7 +306,7 @@
     <string name="common_image">"تصویر"</string>
     <string name="common_in_reply_to">"در پاسخ به %1$s"</string>
     <string name="common_install_apk_android">"نصب APK"</string>
-    <string name="common_invite_unknown_profile">"این شناسهٔ Matrix پیدا نشد؛ ممکن است دعوت دریافت نشود."</string>
+    <string name="common_invite_unknown_profile">"این شناسهٔ کاربری پیدا نشد؛ ممکن است دعوت دریافت نشود."</string>
     <string name="common_leaving_room">"در حال ترک اتاق"</string>
     <string name="common_leaving_space">"در حال ترک فضا"</string>
     <string name="common_line_copied_to_clipboard">"خط در کلیپ‌بورد کپی شد"</string>
@@ -504,7 +504,7 @@
     <string name="dialog_video_quality_selector_subtitle_no_file_size">"کیفیت ویدیویی که می‌خواهید آپلود کنید را انتخاب کنید."</string>
     <string name="dialog_video_quality_selector_title">"کیفیت آپلود ویدیو را انتخاب کنید"</string>
     <string name="error_account_already_logged_in">"در این دستگاه با نام کاربری %1$s وارد شده‌اید."</string>
-    <string name="error_account_creation_not_possible">"ارائه‌دهندهٔ حساب شما برای پشتیبانی از سرویس احراز هویت Matrix و ساخت حساب باید ارتقا یابد."</string>
+    <string name="error_account_creation_not_possible">"ارائه‌دهندهٔ حساب شما برای پشتیبانی از سرویس احراز هویت و ساخت حساب باید ارتقا یابد."</string>
     <string name="error_failed_creating_the_permalink">"لینک دائمی ساخته نشد"</string>
     <string name="error_failed_loading_map">"%1$s نتوانست نقشه را بارگذاری کند. کمی بعد دوباره تلاش کنید."</string>
     <string name="error_failed_loading_messages">"پیام‌ها بارگذاری نشدند"</string>
@@ -1003,8 +1003,8 @@
     <string name="call_foreground_service_channel_title_android">"تماس در حال برگزاری"</string>
     <string name="call_foreground_service_message_android">"برای بازگشت به تماس بزنید"</string>
     <string name="call_foreground_service_title_android">"☎️ تماس در حال برگزاری"</string>
-    <string name="call_invalid_audio_device_bluetooth_devices_disabled">"Element Call در این نسخهٔ اندروید از دستگاه صوتی بلوتوث پشتیبانی نمی‌کند. دستگاه صوتی دیگری انتخاب کنید."</string>
-    <string name="screen_incoming_call_subtitle_android">"تماس ورودی Element Call"</string>
+    <string name="call_invalid_audio_device_bluetooth_devices_disabled">"در این نسخهٔ اندروید، استفاده از دستگاه صوتی بلوتوث برای تماس پشتیبانی نمی‌شود. دستگاه صوتی دیگری انتخاب کنید."</string>
+    <string name="screen_incoming_call_subtitle_android">"تماس ورودی"</string>
     <!-- ========================================================= -->
     <!-- Onboarding, Login & Device Linking -->
     <!-- ========================================================= -->
@@ -1051,13 +1051,13 @@
     </plurals>
     <string name="screen_app_lock_use_biometric_android">"استفاده از روش بیومتریک"</string>
     <string name="screen_app_lock_use_pin_android">"استفاده از پین"</string>
-    <string name="screen_change_account_provider_matrix_org_subtitle">"matrix.org سروری بزرگ و رایگان در شبکهٔ عمومی Matrix برای ارتباط امن و غیرمتمرکز است و بنیاد Matrix.org آن را اداره می‌کند."</string>
+    <string name="screen_change_account_provider_matrix_org_subtitle">"این سرور عمومی و رایگان، بستری برای ارتباط امن و غیرمتمرکز فراهم می‌کند."</string>
     <string name="screen_change_account_provider_other">"دیگر"</string>
     <string name="screen_change_account_provider_subtitle">"از ارائه‌دهندهٔ دیگری، مانند سرور خصوصی یا حساب محل کار، استفاده کنید."</string>
     <string name="screen_change_account_provider_title">"تغییر ارائه‌دهندهٔ حساب"</string>
     <string name="screen_change_server_error_element_pro_required_action_android">"Google Play"</string>
-    <string name="screen_change_server_error_element_pro_required_message">"برنامه Element Pro برای %1$s مورد نیاز است. لطفاً آن را از فروشگاه دانلود کنید."</string>
-    <string name="screen_change_server_error_element_pro_required_title">"Element Pro لازم است"</string>
+    <string name="screen_change_server_error_element_pro_required_message">"برای استفاده از %1$s به نسخهٔ سازمانی برنامه نیاز است. لطفاً نسخهٔ مورد نیاز را از فروشگاه نصب کنید."</string>
+    <string name="screen_change_server_error_element_pro_required_title">"نسخهٔ سازمانی برنامه لازم است"</string>
     <string name="screen_change_server_error_invalid_homeserver">"به این ارائه‌دهندهٔ حساب دسترسی نداریم. آدرس را بررسی کنید؛ اگر درست است، برای راهنمایی با مدیر سرویس تماس بگیرید."</string>
     <string name="screen_change_server_error_invalid_well_known">"سرور به دلیل مشکلی در فایل .well-known در دسترس نیست: %1$s"</string>
     <string name="screen_change_server_error_no_sliding_sync_message">"ارائه‌دهندهٔ انتخاب‌شده از همگام‌سازی لغزشی پشتیبانی نمی‌کند. برای استفاده از %1$s باید سرور ارتقا یابد."</string>
@@ -1070,7 +1070,7 @@
     <string name="screen_change_server_navigation_title_register">"ساخت حساب"</string>
     <string name="screen_change_server_subtitle">"آدرس سرور چیست؟"</string>
     <string name="screen_change_server_textfield_footer_login">"اگر شرکت یا انجمنی حساب شما را ارائه کرده است، ارائه‌دهندهٔ حساب را تغییر دهید (برای مثال: companyname.com)."</string>
-    <string name="screen_change_server_textfield_footer_register">"در matrix.org به‌صورت رایگان حساب بسازید. برای ساخت حساب نزد ارائه‌دهنده‌ای دیگر، آدرس آن را وارد کنید (برای مثال: communityname.org)."</string>
+    <string name="screen_change_server_textfield_footer_register">"برای ساخت حساب نزد ارائه‌دهنده‌ای دیگر، آدرس سرور آن را وارد کنید (برای مثال: example.org)."</string>
     <string name="screen_change_server_textfield_header">"ارائه‌دهندهٔ حساب"</string>
     <string name="screen_change_server_textfield_placeholder">"example.com"</string>
     <string name="screen_change_server_title">"سرور را انتخاب کنید"</string>
@@ -1122,11 +1122,11 @@
     <string name="screen_login_error_refresh_tokens">"این سرور از توکن تازه‌سازی استفاده می‌کند که در ورود با رمز عبور پشتیبانی نمی‌شود."</string>
     <string name="screen_login_error_unsupported_authentication">"ارائه‌دهندهٔ حساب انتخاب‌شده از ورود با رمز عبور یا OAuth پشتیبانی نمی‌کند. با مدیر سرویس تماس بگیرید یا ارائه‌دهندهٔ دیگری انتخاب کنید."</string>
     <string name="screen_login_form_header">"اطلاعات حساب خود را وارد کنید"</string>
-    <string name="screen_login_subtitle">"Matrix شبکه‌ای باز برای ارتباط امن و غیرمتمرکز است."</string>
+    <string name="screen_login_subtitle">"ارتباط امن و غیرمتمرکز در بستری باز."</string>
     <string name="screen_login_title">"خوش برگشتید!"</string>
     <string name="screen_login_title_with_homeserver">"ورود به %1$s"</string>
-    <string name="screen_missing_key_backup_open_element_classic">"باز کردن Element Classic"</string>
-    <string name="screen_missing_key_backup_step_1">"Element Classic را روی دستگاه خود باز کنید"</string>
+    <string name="screen_missing_key_backup_open_element_classic">"باز کردن نسخهٔ قبلی برنامه"</string>
+    <string name="screen_missing_key_backup_step_1">"نسخهٔ قبلی برنامه را روی دستگاه خود باز کنید"</string>
     <string name="screen_missing_key_backup_step_2_android">"به تنظیمات &gt; امنیت و حریم خصوصی بروید"</string>
     <string name="screen_missing_key_backup_step_3_android">"در مدیریت کلیدهای رمزگذاری، بازیابی پیام‌های رمزگذاری‌شده را انتخاب کنید."</string>
     <string name="screen_missing_key_backup_step_4">"برای فعال کردن ذخیره‌سازی کلید، دستورالعمل‌ها را دنبال کنید"</string>
@@ -1190,8 +1190,8 @@
     <string name="screen_qr_code_login_verify_code_subtitle">"ممکن است ارائه‌دهندهٔ حساب برای تأیید ورود، کد زیر را بخواهد."</string>
     <string name="screen_qr_code_login_verify_code_title">"کد تأیید شما"</string>
     <string name="screen_server_confirmation_change_server">"تغییر ارائه‌دهندهٔ حساب"</string>
-    <string name="screen_server_confirmation_message_login_element_dot_io">"سروری خصوصی برای کارکنان Element."</string>
-    <string name="screen_server_confirmation_message_login_matrix_dot_org">"Matrix شبکه‌ای باز برای ارتباط امن و غیرمتمرکز است."</string>
+    <string name="screen_server_confirmation_message_login_element_dot_io">"این سرور خصوصی و مخصوص کاربران سازمانی است."</string>
+    <string name="screen_server_confirmation_message_login_matrix_dot_org">"این سرور بستری عمومی برای ارتباط امن و غیرمتمرکز است."</string>
     <string name="screen_server_confirmation_message_register">"گفتگوهای شما روی این سرویس نگهداری می‌شوند؛ شبیه سرویسی که ایمیل‌هایتان را نگه می‌دارد."</string>
     <string name="screen_server_confirmation_title_login">"می‌خواهید وارد %1$s شوید"</string>
     <string name="screen_server_confirmation_title_picker_mode">"ارائه‌دهندهٔ حساب را انتخاب کنید"</string>
@@ -1432,7 +1432,7 @@
     <string name="screen_start_chat_join_room_by_address_placeholder">"آدرس را وارد کنید…"</string>
     <string name="screen_start_chat_join_room_by_address_room_found">"اتاق پیدا شد"</string>
     <string name="screen_start_chat_join_room_by_address_room_not_found">"اتاق پیدا نشد"</string>
-    <string name="screen_start_chat_join_room_by_address_supporting_text">"نمونه: ‪#room-name:matrix.org"</string>
+    <string name="screen_start_chat_join_room_by_address_supporting_text">"نمونه: ‪#room-name:example.org"</string>
     <!-- ========================================================= -->
     <!-- Messages, Polls & Reactions -->
     <!-- ========================================================= -->
@@ -1522,7 +1522,7 @@
     <string name="screen_room_timeline_add_reaction">"افزودن واکنش"</string>
     <string name="screen_room_timeline_beginning_of_room">"%1$s از اینجا شروع شد."</string>
     <string name="screen_room_timeline_beginning_of_room_no_name">"گفتگو از اینجا شروع شد."</string>
-    <string name="screen_room_timeline_legacy_call">"این تماس پشتیبانی نمی‌شود. از تماس‌گیرنده بخواهید در صورت امکان از برنامهٔ Element X استفاده کند."</string>
+    <string name="screen_room_timeline_legacy_call">"این تماس پشتیبانی نمی‌شود. از تماس‌گیرنده بخواهید در صورت امکان از نسخهٔ جدید برنامه استفاده کند."</string>
     <string name="screen_room_timeline_less_reactions">"نمایش کمتر"</string>
     <string name="screen_room_timeline_message_copied">"پیام کپی شد"</string>
     <string name="screen_room_timeline_no_permission_to_post">"اجازهٔ ارسال به این اتاق را ندارید"</string>
@@ -1768,8 +1768,8 @@
     <string name="screen_advanced_settings_choose_distributor_dialog_title_android">"روش دریافت اعلان‌ها را انتخاب کنید"</string>
     <string name="screen_advanced_settings_developer_mode">"حالت توسعه‌دهنده"</string>
     <string name="screen_advanced_settings_developer_mode_description">"قابلیت‌های مخصوص توسعه‌دهندگان را فعال کنید."</string>
-    <string name="screen_advanced_settings_element_call_base_url">"آدرس پایهٔ سفارشی Element Call"</string>
-    <string name="screen_advanced_settings_element_call_base_url_description">"یک آدرس پایهٔ سفارشی برای Element Call تنظیم کنید."</string>
+    <string name="screen_advanced_settings_element_call_base_url">"آدرس پایهٔ سفارشی سرویس تماس"</string>
+    <string name="screen_advanced_settings_element_call_base_url_description">"یک آدرس پایهٔ سفارشی برای سرویس تماس تنظیم کنید."</string>
     <string name="screen_advanced_settings_element_call_base_url_validation_error">"آدرس نامعتبر است. پروتکل (http/https) و آدرس را بررسی کنید."</string>
     <string name="screen_advanced_settings_hide_invite_avatars_toggle_title">"پنهان کردن تصاویر پروفایل در درخواست‌های دعوت اتاق"</string>
     <string name="screen_advanced_settings_hide_timeline_media_toggle_title">"پنهان کردن رسانه‌ها در گفتگو"</string>
