@@ -15,8 +15,8 @@ import config.BuildTimeConfig
 import extension.AssetCopyTask
 import extension.GitBranchNameValueSource
 import extension.GitRevisionValueSource
-import extension.allEnterpriseImpl
 import extension.allFeaturesImpl
+import extension.allFossImpl
 import extension.allLibrariesImpl
 import extension.allServicesImpl
 import extension.buildConfigFieldStr
@@ -182,19 +182,11 @@ androidComponents {
                 // Common rules, always applied.
                 keepRules.addStaticSourceDirectory("proguard/common")
 
-                // Depending on whether the app flavor is enterprise or not we want to use different proguard rules.
-                val flavorProguardDir = if (isEnterpriseBuild) {
-                    // Custom rules for enterprise builds
-                    "../enterprise/proguard"
+                val fossProguardDir = "proguard/foss"
+                if (File(projectDir, fossProguardDir).exists()) {
+                    keepRules.addStaticSourceDirectory(fossProguardDir)
                 } else {
-                    // Custom fules for FOSS builds
-                    "proguard/foss"
-                }
-
-                if (File(projectDir, flavorProguardDir).exists()) {
-                    keepRules.addStaticSourceDirectory(flavorProguardDir)
-                } else {
-                    logger.warn("Proguard folder ${File(projectDir, flavorProguardDir).absolutePath} does not exist")
+                    logger.warn("Proguard folder ${File(projectDir, fossProguardDir).absolutePath} does not exist")
                 }
             }
         }
@@ -226,13 +218,7 @@ setupDependencyInjection()
 dependencies {
     allLibrariesImpl()
     allServicesImpl()
-    if (isEnterpriseBuild) {
-        allEnterpriseImpl(project)
-        implementation(projects.appicon.enterprise)
-    } else {
-        implementation(projects.features.enterprise.implFoss)
-        implementation(projects.appicon.element)
-    }
+    allFossImpl(project)
     allFeaturesImpl(project)
     implementation(projects.features.migration.api)
     implementation(projects.appnav)

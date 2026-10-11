@@ -25,5 +25,6 @@ class OAuthConfigurationProviderTest {
         ).get()
         assertThat(result.clientName).isEqualTo("myName")
         assertThat(result.redirectUri).isEqualTo(FAKE_REDIRECT_URL)
+        assertThat(result.logoUri).isNull()
     }
 }

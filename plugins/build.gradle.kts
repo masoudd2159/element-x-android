@@ -11,11 +11,13 @@ plugins {
 }
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
     google()
 }
 
 dependencies {
+    implementation("com.github.node-gradle:gradle-node-plugin:7.1.0")
     implementation(libs.android.gradle.plugin)
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.kover.gradle.plugin)

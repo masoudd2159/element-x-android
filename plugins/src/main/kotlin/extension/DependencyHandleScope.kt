@@ -14,6 +14,7 @@ import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.closureOf
@@ -150,11 +151,23 @@ fun DependencyHandlerScope.allServicesImpl() {
     implementation(project(":services:toolbox:impl"))
 }
 
-fun DependencyHandlerScope.allEnterpriseImpl(project: Project) = addAll(
-    project = project,
-    modulePrefix = ":enterprise:features",
-    moduleSuffix = ":impl",
-)
+fun DependencyHandlerScope.allFossImpl(project: Project) {
+    implementation(project(":features:enterprise:impl-foss"))
+    project.configurations.matching { it.name.endsWith("RuntimeClasspath") || it.name.endsWith("CompileClasspath") }.configureEach {
+        val classpathName = name
+        // Test fixtures expose the app's API; they need not depend on its runtime implementations.
+        val requiresFossImplementation = !classpathName.contains("Test")
+        incoming.afterResolve {
+            val projectPaths = resolutionResult.allComponents.mapNotNull { (it.id as? ProjectComponentIdentifier)?.projectPath }
+            check(projectPaths.none { it.startsWith(":enterprise:") }) {
+                "FOSS classpath $classpathName must not resolve private :enterprise: projects."
+            }
+            check(!requiresFossImplementation || ":features:enterprise:impl-foss" in projectPaths) {
+                "FOSS application classpath $classpathName must resolve :features:enterprise:impl-foss."
+            }
+        }
+    }
+}
 
 fun DependencyHandlerScope.allFeaturesImpl(project: Project) = addAll(
     project = project,

@@ -1,0 +1,16 @@
+{
+  "name": "android-brand-icons",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": "24.12.0"
+  },
+  "scripts": {
+    "test": "node --test generate-icons.test.cjs"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "0.9.12",
+    "sharp": "0.35.5",
+    "acorn": "8.19.0"
+  }
+}

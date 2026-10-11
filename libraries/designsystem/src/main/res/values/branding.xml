@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2026 Element Creations Ltd.
+     SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial. -->
+<resources>
+    <item name="brand_login_logo" type="drawable">@drawable/brand_logo</item>
+</resources>

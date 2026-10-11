@@ -49,6 +49,7 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
 import io.element.android.libraries.designsystem.theme.components.OutlinedButton
 import io.element.android.libraries.designsystem.theme.components.Text
+import io.element.android.libraries.designsystem.utils.CommonDrawables
 import io.element.android.libraries.matrix.api.auth.OAuthDetails
 import io.element.android.libraries.permissions.api.localnetwork.LocalNetworkPermissionDialogView
 import io.element.android.libraries.testtags.TestTags
@@ -91,14 +92,9 @@ fun LoginWithClassicView(
                         .background(ElementTheme.colors.bgCanvasDefault, shape = RoundedCornerShape(15.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    val resId = if (state.isElementPro) {
-                        R.drawable.element_pro_logo
-                    } else {
-                        R.drawable.element_foss_logo
-                    }
                     Image(
                         modifier = Modifier.size(37.5.dp),
-                        painter = painterResource(id = resId),
+                        painter = painterResource(id = CommonDrawables.brand_login_logo),
                         contentDescription = null,
                     )
                 }

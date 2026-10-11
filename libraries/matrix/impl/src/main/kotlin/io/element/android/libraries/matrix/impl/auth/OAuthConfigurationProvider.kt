@@ -23,7 +23,7 @@ class OAuthConfigurationProvider(
         clientName = buildMeta.applicationName,
         redirectUri = oAuthRedirectUrlProvider.provide(),
         clientUri = OAuthConfig.CLIENT_URI,
-        logoUri = OAuthConfig.LOGO_URI,
+        logoUri = OAuthConfig.LOGO_URI.takeIf(String::isNotBlank),
         tosUri = OAuthConfig.TOS_URI,
         policyUri = OAuthConfig.POLICY_URI,
         staticRegistrations = OAuthConfig.STATIC_REGISTRATIONS,

@@ -6,9 +6,8 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
-import java.io.File
-
 /**
- * Are we building with the enterprise sources?
+ * All application distributions use the open-source implementation.
+ * The presence of a private checkout must not change the distribution or its dependency graph.
  */
-val isEnterpriseBuild = File("enterprise/README.md").exists()
+const val isEnterpriseBuild = false

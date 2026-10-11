@@ -17,6 +17,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        // Managed branding Node distribution; the plugin must not add a project repository.
+        ivy {
+            url = uri("https://nodejs.org/dist")
+            patternLayout { artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]") }
+            metadataSources { artifact() }
+            content { includeModule("org.nodejs", "node") }
+        }
         exclusiveContent {
             forRepository {
                 maven {
@@ -144,7 +151,7 @@ fun includeProjects(directory: File, path: String, maxDepth: Int = 1) {
     }
 }
 
-includeProjects(File(rootDir, "enterprise"), ":enterprise", maxDepth = 2)
+// FOSS applications do not include private projects, even if the optional submodule is checked out.
 includeProjects(File(rootDir, "features"), ":features")
 includeProjects(File(rootDir, "libraries"), ":libraries")
 includeProjects(File(rootDir, "services"), ":services")

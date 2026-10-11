@@ -35,7 +35,7 @@ android {
         )
         buildConfigFieldStr(
             name = "LOGO_URI",
-            value = BuildTimeConfig.URL_LOGO ?: "https://element.io/mobile-icon.png"
+            value = BuildTimeConfig.URL_LOGO.orEmpty()
         )
         buildConfigFieldStr(
             name = "TOS_URI",

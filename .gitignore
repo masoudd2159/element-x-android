@@ -119,3 +119,6 @@ checkouts/**
 
 # Local Codex configuration
 /.codex/
+
+# Build-only branding tool dependencies
+node_modules/

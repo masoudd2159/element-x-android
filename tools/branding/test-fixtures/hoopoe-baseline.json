@@ -1,0 +1,25 @@
+{
+  "note": "Decoded RGBA regression baselines. Update the current artwork hash and pixels together only after an explicit artwork review. The supplied canonical SVG predates this three-file implementation; its gradients differ from e2edb6306c.",
+  "previous": {
+    "revision": "e2edb6306c",
+    "canonicalSvgSha256": "195886e6a9dd686a29e54576c309d1eb02b27876e0e03fcb6838a33077160e33",
+    "foregroundRgbaSha256": {
+      "mdpi": "0ebc650e4112db9e5d5ec0105b64d4bad2b697de80d5be59e2434a319dcde0f3",
+      "hdpi": "e26ed26cdbf32b8a7e6f15e907fef4c87cf89be0aa57186d2ddde7c4faa58cfa",
+      "xhdpi": "2e58d6d75ed10bda4b6913f0f9cd5484f2ecd47662c6fc326fa66157b0e7c008",
+      "xxhdpi": "a8c96e8eb110d3d2ae52c5a014e6ca76fc6ea7fae6ee2f0ce3f3f5d4a9a500c9",
+      "xxxhdpi": "28c4c91eb215a0452f2c97ccff684e08aff38cff47927379e69b68075c421638"
+    }
+  },
+  "current": {
+    "revision": "Supplied branding/apHoopoe/logo.svg (preserved without modification)",
+    "canonicalSvgSha256": "6d105a9ac98e668bfd7f02bf761ed2d868e7d69cb0ad4647c4916f5a0ffc0ec8",
+    "foregroundRgbaSha256": {
+      "mdpi": "64884fe4755a45f3eaca90d19c6d5f45f950acf7cd1a48c55ee1f09c95b9527b",
+      "hdpi": "dd6aec60deb85b99bb1fc50be5375efe3b5b2557ddabfc167625b4425cd4470c",
+      "xhdpi": "53759d86edebd3630027a4ecbb347901823bf936801015dd63ee0d3b37efe24e",
+      "xxhdpi": "2c074027ad9e6cf1a5677ed7085bbf10d1fd17342019e33310ce04705cb7c653",
+      "xxxhdpi": "263f06d16816e47bbea4fdd4493ebb54d09f061221b5dfe3e759f58468fac82c"
+    }
+  }
+}
