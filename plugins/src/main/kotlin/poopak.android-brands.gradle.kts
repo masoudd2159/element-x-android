@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 plugins {
     id("com.android.application")
     id("com.github.node-gradle.node")
+    id("poopak.android-localization")
 }
 
 data class BrandConfig(

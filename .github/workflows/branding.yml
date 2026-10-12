@@ -34,6 +34,10 @@ jobs:
         run: python3 tools/branding/test-gradle-integration.py
       - name: Build Hoopoe FOSS Debug and verify every APK
         run: ./gradlew :app:assembleApHoopoeDebug --stacktrace
+      - name: Check full Hoopoe Release lint with configuration cache
+        run: ./gradlew :app:lintApHoopoeRelease --configuration-cache --stacktrace
+      - name: Test Persian overlay validation
+        run: python3 -m unittest discover -s tools/localization -p 'test_*.py'
       - name: Test FOSS services, login and OAuth
         run: >-
           ./gradlew :features:enterprise:impl-foss:testDebugUnitTest :features:login:impl:testDebugUnitTest

@@ -47,9 +47,24 @@ mono_stat = mono.stat()
 
 def packaged_artwork():
     apk = next((ROOT / 'app/build/outputs/apk/apHoopoe/debug').glob('*arm64-v8a*.apk'))
+    call_assets = {'assets/' + p.relative_to(ROOT / 'app/build/generated/brandAssets/apHoopoe').as_posix()
+                   for p in (ROOT / 'app/build/generated/brandAssets/apHoopoe').rglob('*') if p.is_file()}
     with zipfile.ZipFile(apk) as archive:
+        assert call_assets and call_assets <= set(archive.namelist()), 'Missing packaged embedded-call artwork'
         return {name: archive.read(name) for name in archive.namelist()
-                if re.search(r'res/.*(?:brand_foreground|brand_logo_artwork|ic_notification)', name)}
+                if name in call_assets or re.search(r'res/.*(?:brand_foreground|brand_logo_artwork|brand_monochrome|brand_launcher|ic_notification)', name)}
+
+
+def notification_only_edit(original):
+    # Select the one white fill attribute, not unrelated occurrences of the colour.
+    # Keep the user's spelling and every other byte intact; XML hex colours are case-insensitive.
+    matches = list(re.finditer(rb'android:fillColor\s*=\s*"(#(?i:ffffff))"', original))
+    assert len(matches) == 1, 'Expected exactly one white notification path fill before editing'
+    start, end = matches[0].span(1)
+    assert original[start:end].lower() == b'#ffffff'
+    changed = original[:start] + b'#000000' + original[end:]
+    assert changed != original, 'Notification-only fixture must modify the source'
+    return changed
 
 
 try:
@@ -96,11 +111,11 @@ try:
     gradle('package-before-notification', ':app:assembleApHoopoeDebug')
     packaged_before = packaged_artwork()
     assert packaged_before and any('ic_notification' in n for n in packaged_before)
-    changed_notification = original_notification.replace(b'#FFFFFF', b'#000000')
-    assert changed_notification != original_notification
+    changed_notification = notification_only_edit(original_notification)
     notification.write_bytes(changed_notification)
     gradle('notification-only', GEN, VERIFY, VALIDATE)
     changed = snapshot()
+    assert changed.keys() == before.keys(), 'Notification edit must retain the same generated outputs'
     notification_output = 'app/build/generated/brandIcons/apHoopoe/drawable/ic_notification.xml'
     assert changed[notification_output][0] != before[notification_output][0]
     assert {k: v for k, v in changed.items() if k != notification_output} == {k: v for k, v in before.items() if k != notification_output}

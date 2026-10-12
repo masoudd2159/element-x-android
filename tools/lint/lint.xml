@@ -36,6 +36,12 @@
     </issue>
 
     <issue id="UnusedResources" severity="error">
+        <!-- Exact generated flavor metadata only: gateway is read through the library R class;
+             the three hosts are intentional metadata. See brand-metadata.md. -->
+        <ignore regexp="^The resource `R\.string\.brand_backend_host` appears to be unused$" />
+        <ignore regexp="^The resource `R\.string\.brand_firebase_push_gateway` appears to be unused$" />
+        <ignore regexp="^The resource `R\.string\.brand_services_host` appears to be unused$" />
+        <ignore regexp="^The resource `R\.string\.brand_web_host` appears to be unused$" />
         <!-- Ignore unused strings resource from localazy -->
         <ignore path="**/localazy.xml" />
         <!-- Ignore unused resource in debug build type -->

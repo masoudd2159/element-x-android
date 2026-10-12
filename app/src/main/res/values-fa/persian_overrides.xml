@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<!-- These are app overlays of library-owned resources, not new app resources.
+     With checkDependencies=false, lint cannot see their defaults or library R references.
+     verify<Variant>PersianTranslations checks defaults in the active project dependencies
+     and format arguments before lint/build. See tools/localization/README.md. -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraTranslation,MissingDefaultResource,UnusedResources">
     <!-- ========================================================= -->
     <!-- App & Navigation -->
     <!-- ========================================================= -->

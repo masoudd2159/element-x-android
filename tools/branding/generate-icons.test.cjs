@@ -10,6 +10,7 @@ const { verify } = require('./verify-source.cjs');
 const { createHash } = require('node:crypto');
 const { brandCall } = require('./brand-call.cjs');
 const vm = require('node:vm');
+const { vectorAlpha } = require('./test-fixtures/vector-preview.cjs');
 const baseline = require('./test-fixtures/hoopoe-baseline.json').current;
 const vector = '<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#FFFFFF" android:pathData="M4,4H20V20H4Z"/></vector>';
 const fixture = (t, svg) => {
@@ -247,18 +248,61 @@ test('Replacing notification alone changes its dedicated output and preserves ev
         }
     }
 });
-test('Notification retains the supplied Hoopoe paths, transparent cutouts and a legible small silhouette', async () => {
-    const dir = path.join(__dirname, '../../branding/apHoopoe');
-    const mono = parseXml(fs.readFileSync(path.join(dir, 'monochrome.xml'), 'utf8'));
-    const notification = parseXml(validateMonochrome(fs.readFileSync(path.join(dir, 'notification.xml'), 'utf8')));
-    const paths = doc => Array.from(doc.getElementsByTagName('path')).map(n => n.getAttribute('android:pathData'));
-    assert.deepEqual(paths(notification), paths(mono));
-    // SVG raster preview of the unchanged paths and translation, at Android's 24px small-icon size.
-    const artwork = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1802 1802"><g transform="translate(125 0)">${paths(notification).map(d => `<path fill="white" d="${d}"/>`).join('')}</g></svg>`;
-    const alpha = await sharp(Buffer.from(artwork)).resize(24, 24).ensureAlpha().extractChannel('alpha').raw().toBuffer();
-    assert.ok(alpha.some(a => a === 0), 'Background and cutouts must remain transparent');
-    assert.ok(alpha.filter(a => a > 128).length > 70, 'Silhouette must remain visible at notification size');
-    assert.ok(alpha.filter(a => a === 0).length > 200, 'A full opaque tile is not a notification icon');
+function assertNotificationAlpha(alpha, size) {
+    const scale = size / 24;
+    assert.ok(alpha.filter(a => a > 128).length > 70 * scale ** 2, 'Silhouette must remain visible at notification size');
+    assert.ok(alpha.filter(a => a === 0).length > 200 * scale ** 2, 'A full opaque tile is not a notification icon');
+    for (const [x, y] of [[0, 0], [23, 0], [0, 23], [23, 23], [5, 11], [18, 11]]) {
+        assert.equal(alpha[Math.floor((y + 0.5) * scale) * size + Math.floor((x + 0.5) * scale)], 0,
+            `Background/interior cutout at (${x}, ${y}) must remain transparent`);
+    }
+}
+
+test('Notification independently preserves the existing VectorDrawable, transparent cutouts and a legible small silhouette', async () => {
+    const text = fs.readFileSync(path.join(__dirname, '../../branding/apHoopoe/notification.xml'), 'utf8');
+    const notification = parseXml(validateMonochrome(text));
+    // Pin the existing notification independently of themed launcher artwork. Ignore
+    // XML comments/formatting, but retain every Android attribute and node's order.
+    function canonical(node) {
+        return [node.localName, Array.from(node.attributes).filter(a => a.namespaceURI === 'http://schemas.android.com/apk/res/android')
+            .map(a => [a.localName, a.value]).sort(), Array.from(node.childNodes).filter(n => n.nodeType === 1).map(canonical)];
+    }
+    const hash = createHash('sha256').update(JSON.stringify(canonical(notification.documentElement))).digest('hex');
+    assert.equal(hash, baseline.notification.canonicalVectorSha256);
+    // 24dp at all five Android densities; no launcher viewport or placement constants.
+    for (const size of [24, 36, 48, 72, 96]) assertNotificationAlpha(await vectorAlpha(text, size), size);
+});
+
+test('Notification visual checks reject invisible, tiny, opaque and filled-cutout artwork', async () => {
+    const text = fs.readFileSync(path.join(__dirname, '../../branding/apHoopoe/notification.xml'), 'utf8');
+    const tile = '<path android:fillColor="#ffffff" android:pathData="M0,0H24V24H0Z"/>';
+    await assert.rejects(vectorAlpha(text.replace('<path', '<path android:fillAlpha="0"'), 24), /no visible paths/);
+    for (const bad of [text.replace('<path', '<group android:translateX="1000"><path').replace('</vector>', '</group></vector>'),
+        text.replace('<path', '<group android:scaleX="0.01" android:scaleY="0.01"><path').replace('</vector>', '</group></vector>'),
+        text.replace('</vector>', `${tile}</vector>`),
+        text.replace('</vector>', `${tile.replace('M0,0H24V24H0Z', 'M4,10H7V13H4Z')}</vector>`)]) {
+        const alpha = await vectorAlpha(bad, 24);
+        assert.throws(() => assertNotificationAlpha(alpha, 24), /Silhouette|opaque tile|cutout/);
+    }
+});
+
+test('Vector preview honours viewport, nested pivot transforms, fill rules, alpha and scoped clips', async () => {
+    const wrap = body => vector.replace('<path android:fillColor="#FFFFFF" android:pathData="M4,4H20V20H4Z"/>', body);
+    const square = (data, attrs = '') => `<path android:fillColor="#FFFFFF" android:pathData="${data}" ${attrs}/>`;
+    // Scale around (4,4), rotate 90 degrees, translate (10,2), then apply a nested translation.
+    const transformed = wrap('<group android:pivotX="4" android:pivotY="4" android:scaleX="2" ' +
+        'android:rotation="90" android:translateX="10" android:translateY="2">' +
+        `<group android:translateX="1">${square('M4,4H6V7H4Z')}</group></group>`);
+    assert.deepEqual(await vectorAlpha(transformed, 24), await vectorAlpha(wrap(square('M11,8H14V12H11Z')), 24));
+    const rectangle = wrap(square('M4,4H20V20H4Z')).replace('android:viewportWidth="24"', 'android:viewportWidth="48"');
+    assert.deepEqual(await vectorAlpha(rectangle, 24), await vectorAlpha(wrap(square('M2,4H10V20H2Z')), 24));
+    const clipped = wrap(square('M0,0H2V2H0Z') + '<group>' + square('M4,4H6V6H4Z') + '<clip-path android:pathData="M8,8H16V16H8Z"/>' +
+        square('M4,4H20V20H4Z') + '</group>' + square('M20,20H24V24H20Z'));
+    assert.deepEqual(await vectorAlpha(clipped, 24), await vectorAlpha(wrap(square('M0,0H2V2H0Z M4,4H6V6H4Z M8,8H16V16H8Z M20,20H24V24H20Z')), 24));
+    const hole = 'M4,4H20V20H4Z M8,8H16V16H8Z';
+    assert.equal((await vectorAlpha(wrap(square(hole, 'android:fillType="evenOdd"')), 24))[12 * 24 + 12], 0);
+    assert.equal((await vectorAlpha(wrap(square(hole)), 24))[12 * 24 + 12], 255);
+    assert.equal((await vectorAlpha(wrap(square('M4,4H20V20H4Z', 'android:fillAlpha="0.5"')), 24))[12 * 24 + 12], 128);
 });
 
 test('Themed launcher preserves supplied paths and fits its viewport inside the adaptive safe circle', () => {

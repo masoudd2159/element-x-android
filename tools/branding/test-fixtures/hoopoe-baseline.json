@@ -14,6 +14,10 @@
   "current": {
     "revision": "Supplied branding/apHoopoe/logo.svg (preserved without modification)",
     "canonicalSvgSha256": "6d105a9ac98e668bfd7f02bf761ed2d868e7d69cb0ad4647c4916f5a0ffc0ec8",
+    "notification": {
+      "revision": "Existing branding/apHoopoe/notification.xml at c7fdfa1ebb0949bcec7b588c51271924745f3414; regression snapshot, not new artwork approval",
+      "canonicalVectorSha256": "b1c88dc6ffc2d76442e7559c79c2ff9592549237c3e5d816f66f76a1759c6427"
+    },
     "foregroundRgbaSha256": {
       "mdpi": "64884fe4755a45f3eaca90d19c6d5f45f950acf7cd1a48c55ee1f09c95b9527b",
       "hdpi": "dd6aec60deb85b99bb1fc50be5375efe3b5b2557ddabfc167625b4425cd4470c",
