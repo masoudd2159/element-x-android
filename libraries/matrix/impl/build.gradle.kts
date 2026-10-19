@@ -59,7 +59,11 @@ dependencies {
     implementation(platform("io.element.android:element-call-bom:$elementCallVersion"))
     implementation(libs.element.call.api)
     implementation(projects.features.callnative.api)
-    implementation(libs.element.call.matrix)
+    implementation(libs.element.call.matrix) {
+        if (usesLocalRustSdk) {
+            exclude(group = "org.matrix.rustcomponents", module = "sdk-android")
+        }
+    }
 
     implementation(projects.appconfig)
     implementation(projects.features.enterprise.api)
@@ -78,6 +82,7 @@ dependencies {
     implementation(variantOf(libs.jna) { artifactType("aar") })
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.androidx.lifecycle.process)
 
     testCommonDependencies(libs)
     testImplementation(projects.features.enterprise.test)
