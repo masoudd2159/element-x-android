@@ -14,8 +14,8 @@
   <string name="confirm_recovery_key_banner_primary_button_title">"Enter your recovery key"</string>
   <string name="confirm_recovery_key_banner_secondary_button_title">"Forgot your recovery key?"</string>
   <string name="confirm_recovery_key_banner_title">"Your key storage is out of sync"</string>
-  <string name="full_screen_intent_banner_message">"To ensure you never miss an important call, please change your settings to allow full-screen notifications when your phone is locked."</string>
-  <string name="full_screen_intent_banner_title">"Enhance your call experience"</string>
+  <string name="full_screen_intent_banner_message_android">"To ensure you never miss an important call, please change your settings to allow full-screen notifications when your phone is locked."</string>
+  <string name="full_screen_intent_banner_title_android">"Enhance your call experience"</string>
   <string name="screen_home_tab_chats">"Chats"</string>
   <string name="screen_home_tab_search">"Search"</string>
   <string name="screen_home_tab_spaces">"Spaces"</string>
@@ -59,6 +59,13 @@ You don’t have any unread messages!"</string>
   <string name="screen_roomlist_mark_as_unread">"Mark as unread"</string>
   <string name="screen_roomlist_tombstoned_room_description">"This room has been upgraded"</string>
   <string name="screen_roomlist_your_spaces">"Your spaces"</string>
+  <string name="screen_search_empty_state_message">"Search for chats and messages"</string>
+  <string name="screen_search_empty_state_title">"Start searching…"</string>
+  <string name="screen_search_from_your_messages_header">"From your messages"</string>
+  <string name="screen_search_no_results_message">"There are no results for “%1$s”. Try a new search term."</string>
+  <string name="screen_search_recent_searches">"Recent searches"</string>
+  <string name="screen_search_tab_chats">"Chats"</string>
+  <string name="screen_search_tab_messages">"Messages"</string>
   <string name="session_verification_banner_message">"Looks like you’re using a new device. Verify with another device to access your encrypted messages."</string>
   <string name="session_verification_banner_title">"Verify it’s you"</string>
 </resources>

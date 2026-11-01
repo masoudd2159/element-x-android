@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -83,6 +85,8 @@ import io.element.android.libraries.designsystem.components.async.AsyncIndicator
 import io.element.android.libraries.designsystem.components.async.AsyncIndicatorHost
 import io.element.android.libraries.designsystem.components.async.AsyncIndicatorState
 import io.element.android.libraries.di.RoomScope
+import io.element.android.libraries.htmlrenderer.api.LocalMentionDisplayNames
+import io.element.android.libraries.htmlrenderer.api.MentionDisplayNames
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
@@ -92,12 +96,13 @@ import io.element.android.libraries.matrix.api.core.toRoomIdOrAlias
 import io.element.android.libraries.matrix.api.media.MediaSource
 import io.element.android.libraries.matrix.api.permalink.PermalinkData
 import io.element.android.libraries.matrix.api.room.BaseRoom
+import io.element.android.libraries.matrix.api.room.activeRoomMembers
 import io.element.android.libraries.matrix.api.room.alias.matches
-import io.element.android.libraries.matrix.api.room.joinedRoomMembers
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.TimelineProvider
 import io.element.android.libraries.matrix.api.timeline.item.TimelineItemDebugInfo
+import io.element.android.libraries.matrix.ui.messages.LocalRoomMemberProfilesCache
 import io.element.android.libraries.matrix.ui.messages.RoomMemberProfilesCache
 import io.element.android.libraries.matrix.ui.messages.RoomNamesCache
 import io.element.android.libraries.mediaviewer.api.GalleryInfo
@@ -245,7 +250,7 @@ class MessagesFlowNode(
         room.membersStateFlow
             .onEach { membersState ->
                 withContext(coroutineDispatchers.computation) {
-                    roomMemberProfilesCache.replace(membersState.joinedRoomMembers())
+                    roomMemberProfilesCache.replace(membersState.activeRoomMembers())
                 }
             }
             .launchIn(lifecycleScope)
@@ -985,8 +990,18 @@ class MessagesFlowNode(
             RenderingMapsNotSupportedDialog { displayVulkanNotSupportedError = false }
         }
 
+        // The State instances are passed as is, so the provided value stays the same when the display names change
+        val userDisplayNames = roomMemberProfilesCache.displayNames.collectAsState()
+        val roomDisplayNames = roomNamesCache.displayNames.collectAsState()
+        val userStatuses = roomMemberProfilesCache.displayedStatusEmojis.collectAsState()
+        val mentionDisplayNames = remember(userDisplayNames, roomDisplayNames, userStatuses) {
+            MentionDisplayNames(users = userDisplayNames, rooms = roomDisplayNames, userStatuses = userStatuses)
+        }
+
         CompositionLocalProvider(
-            LocalMentionSpanUpdater provides mentionSpanUpdater
+            LocalMentionSpanUpdater provides mentionSpanUpdater,
+            LocalMentionDisplayNames provides mentionDisplayNames,
+            LocalRoomMemberProfilesCache provides roomMemberProfilesCache,
         ) {
             Box(modifier = modifier) {
                 BackstackView()

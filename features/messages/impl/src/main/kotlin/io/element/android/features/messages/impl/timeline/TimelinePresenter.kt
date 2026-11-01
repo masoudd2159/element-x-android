@@ -78,7 +78,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -126,7 +125,6 @@ class TimelinePresenter(
             navigator: MessagesNavigator
         ): TimelinePresenter
     }
-
     private val timelineItemsFactory: TimelineItemsFactory = timelineItemsFactoryCreator.create(
         config = TimelineItemsFactoryConfig(
             computeReadReceipts = true,
@@ -265,7 +263,7 @@ class TimelinePresenter(
                 is TimelineEvent.StopLiveLocationShare -> sessionCoroutineScope.launch {
                     liveLocationShareManager.stopShare(room.roomId)
                 }
-                is TimelineEvent.FocusOnEvent -> sessionCoroutineScope.launch {
+                is TimelineEvent.FocusOnEvent -> room.roomCoroutineScope.launch {
                     focusRequestState.value = FocusRequestState.Requested(event.eventId, event.debounce)
                     delay(event.debounce)
                     Timber.tag(tag).d("Started focus on ${event.eventId}")
@@ -402,22 +400,14 @@ class TimelinePresenter(
                 .onEach { eventIdsToDeselect -> selectionState.value = selectionState.value.deselect(eventIdsToDeselect) }
                 .launchIn(this)
 
-            combine(
-                timelineController.timelineItems(),
-                room.membersStateFlow,
-                sessionPreferencesStore.isRenderReadReceiptsEnabled(),
-            ) { items, membersState, renderReadReceipts ->
-                val parent = analyticsService.getLongRunningTransaction(DisplayFirstTimelineItems)
-                val transaction = parent?.startChild("timelineItemsFactory.replaceWith", "Processing timeline items")
-                transaction?.putExtraData(AnalyticsUserData.TIMELINE_ITEM_COUNT, items.count().toString())
-                timelineItemsFactory.replaceWith(
-                    timelineItems = items,
-                    roomMembers = membersState.roomMembers().orEmpty(),
-                    renderReadReceipts = renderReadReceipts,
-                )
-                transaction?.finish()
-                items
-            }
+            timelineController.timelineItems()
+                .onEach { items ->
+                    val parent = analyticsService.getLongRunningTransaction(DisplayFirstTimelineItems)
+                    val transaction = parent?.startChild("timelineItemsFactory.replaceWith", "Processing timeline items")
+                    transaction?.putExtraData(AnalyticsUserData.TIMELINE_ITEM_COUNT, items.count().toString())
+                    timelineItemsFactory.replaceWith(timelineItems = items)
+                    transaction?.finish()
+                }
                 .onEach(redactedVoiceMessageManager::onEachMatrixTimelineItem)
                 .flowOn(dispatchers.computation)
                 .launchIn(this)
@@ -505,12 +495,14 @@ class TimelinePresenter(
         val userEventPermissions by room.permissionsAsState(UserEventPermissions.DEFAULT) { perms ->
             perms.userEventPermissions()
         }
-        val timelineRoomInfo by remember(typingNotificationState, roomCallState, roomInfo) {
+        val renderReadReceipts by sessionPreferencesStore.isRenderReadReceiptsEnabled().collectAsState(initial = true)
+        val timelineRoomInfo by remember(typingNotificationState, roomCallState, roomInfo, renderReadReceipts) {
             derivedStateOf {
                 TimelineRoomInfo(
                     currentUserId = room.sessionId,
                     name = roomInfo.name,
                     isDm = roomInfo.isDm,
+                    renderReadReceipts = renderReadReceipts,
                     userHasPermissionToSendMessage = userEventPermissions.canSendMessage,
                     userHasPermissionToSendReaction = userEventPermissions.canSendReaction,
                     roomCallState = roomCallState,
