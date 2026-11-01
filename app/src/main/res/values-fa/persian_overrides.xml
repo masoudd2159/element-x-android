@@ -753,7 +753,7 @@
     <string name="rich_text_editor_unindent">"کاهش تورفتگی"</string>
     <string name="rich_text_editor_url_placeholder">"لینک"</string>
     <string name="screen_room_voice_message_tooltip">"نگه داشتن برای ضبط"</string>
-    <string name="slash_command_confetti">"پیام را همراه با کاغذرنگی ارسال می‌کند"</string>
+    <string name="slash_command_description_confetti">"پیام را همراه با کاغذرنگی ارسال می‌کند"</string>
     <string name="slash_command_description_avatar">"تصویر پروفایل شما را در همهٔ اتاق‌ها تغییر می‌دهد"</string>
     <string name="slash_command_description_avatar_for_room">"تصویر پروفایل شما را فقط در اتاق فعلی تغییر می‌دهد"</string>
     <string name="slash_command_description_ban_user">"کاربر دارای شناسهٔ واردشده را مسدود می‌کند"</string>
@@ -761,7 +761,7 @@
     <string name="slash_command_description_deop_user">"سطح دسترسی کاربر دارای شناسهٔ واردشده را کاهش می‌دهد"</string>
     <string name="slash_command_description_devtools">"صفحهٔ ابزارهای توسعه‌دهنده را باز می‌کند"</string>
     <string name="slash_command_description_discard_session">"نشست گروهی خروجی فعلی را در اتاق رمزگذاری‌شده کنار می‌گذارد"</string>
-    <string name="slash_command_description_discard_session_not_handled">"فقط در اتاق‌های رمزگذاری‌شده پشتیبانی می‌شود"</string>
+    <string name="slash_command_error_discard_session_not_handled">"فقط در اتاق‌های رمزگذاری‌شده پشتیبانی می‌شود"</string>
     <string name="slash_command_description_emote">"یک حرکت نمایشی نشان می‌دهد"</string>
     <string name="slash_command_description_ignore_user">"کاربر را نادیده می‌گیرد و پیام‌هایش را از شما پنهان می‌کند"</string>
     <string name="slash_command_description_invite_user">"کاربر دارای شناسهٔ واردشده را به اتاق فعلی دعوت می‌کند"</string>
@@ -791,7 +791,7 @@
     <string name="slash_command_parameters_error">"فرمان «%1$s» به پارامترهای بیشتری نیاز دارد یا بعضی پارامترها نادرست‌اند. ساختار درست:
 
 %2$s"</string>
-    <string name="slash_command_snow">"پیام را همراه با بارش برف ارسال می‌کند"</string>
+    <string name="slash_command_description_snow">"پیام را همراه با بارش برف ارسال می‌کند"</string>
     <string name="slash_command_unrecognized">"فرمان ناشناخته: %1$s"</string>
     <!-- ========================================================= -->
     <!-- Media & Location -->
@@ -1237,8 +1237,8 @@
     <string name="confirm_recovery_key_banner_primary_button_title">"وارد کردن کلید بازیابی"</string>
     <string name="confirm_recovery_key_banner_secondary_button_title">"کلید بازیابی خود را فراموش کرده‌اید؟"</string>
     <string name="confirm_recovery_key_banner_title">"ذخیره‌سازی کلید همگام نیست"</string>
-    <string name="full_screen_intent_banner_message">"برای اطمینان از اینکه هرگز تماس مهمی را از دست نمی‌دهید، لطفاً تنظیمات خود را تغییر دهید تا وقتی تلفنتان قفل است، اعلان‌ها به‌صورت تمام‌صفحه نمایش داده شوند."</string>
-    <string name="full_screen_intent_banner_title">"بهبود تجربهٔ تماس"</string>
+    <string name="full_screen_intent_banner_message_android">"برای اطمینان از اینکه هرگز تماس مهمی را از دست نمی‌دهید، لطفاً تنظیمات خود را تغییر دهید تا وقتی تلفنتان قفل است، اعلان‌ها به‌صورت تمام‌صفحه نمایش داده شوند."</string>
+    <string name="full_screen_intent_banner_title_android">"بهبود تجربهٔ تماس"</string>
     <string name="screen_home_tab_chats">"گفتگوها"</string>
     <string name="screen_home_tab_spaces">"فضاها"</string>
     <string name="screen_invites_decline_chat_message">"مطمئنید که می‌خواهید دعوت پیوستن به %1$s را رد کنید؟"</string>
@@ -1302,15 +1302,14 @@
     <string name="screen_space_settings_leave_space">"ترک فضا"</string>
     <string name="screen_space_settings_roles_and_permissions">"نقش‌ها و مجوزها"</string>
     <string name="screen_space_settings_security_and_privacy">"امنیت و حریم خصوصی"</string>
-    <string name="search_from_your_messages_header">"در پیام‌های شما"</string>
-    <string name="search_no_results_subtitle">"نتیجه‌ای برای «%1$s» پیدا نشد. عبارت دیگری را جستجو کنید."</string>
-    <string name="search_no_results_title">"نتیجه‌ای پیدا نشد"</string>
-    <string name="search_section_chats">"گفتگوها"</string>
-    <string name="search_section_messages">"پیام‌ها"</string>
+    <string name="screen_search_from_your_messages_header">"در پیام‌های شما"</string>
+    <string name="screen_search_no_results_message">"نتیجه‌ای برای «%1$s» پیدا نشد. عبارت دیگری را جستجو کنید."</string>
+    <string name="screen_search_tab_chats">"گفتگوها"</string>
+    <string name="screen_search_tab_messages">"پیام‌ها"</string>
     <string name="session_verification_banner_message">"به نظر می‌رسد از دستگاه جدیدی استفاده می‌کنید. برای دسترسی به پیام‌های رمزگذاری‌شده، آن را با دستگاه دیگری تأیید کنید."</string>
     <string name="session_verification_banner_title">"تأیید کنید خودتان هستید"</string>
-    <string name="start_searching_subtitle">"گفتگوها و پیام‌ها را جستجو کنید"</string>
-    <string name="start_searching_title">"جستجو را شروع کنید…"</string>
+    <string name="screen_search_empty_state_message">"گفتگوها و پیام‌ها را جستجو کنید"</string>
+    <string name="screen_search_empty_state_title">"جستجو را شروع کنید…"</string>
     <!-- ========================================================= -->
     <!-- Rooms, Invitations & Membership -->
     <!-- ========================================================= -->
@@ -1466,7 +1465,6 @@
     <string name="screen_create_poll_answer_hint">"گزینهٔ %1$d"</string>
     <string name="screen_create_poll_cancel_confirmation_content_android">"تغییراتتان ذخیره نشده‌اند. مطمئنید که می‌خواهید برگردید؟"</string>
     <string name="screen_create_poll_delete_option_a11y">"حذف گزینه %1$s"</string>
-    <string name="screen_create_poll_max_selections_headline">"تعداد انتخاب مجاز برای هر نفر"</string>
     <string name="screen_create_poll_question_desc">"پرسش یا موضوع"</string>
     <string name="screen_create_poll_question_hint">"این نظرسنجی دربارهٔ چیست؟"</string>
     <string name="screen_create_poll_title">"ایجاد نظرسنجی"</string>
