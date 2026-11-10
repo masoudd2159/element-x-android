@@ -43,7 +43,6 @@ import io.element.android.libraries.matrix.api.scanner.ContentScanner
 import io.element.android.libraries.matrix.api.search.MessageSearchService
 import io.element.android.libraries.matrix.api.search.SearchBackfillService
 import io.element.android.libraries.matrix.api.spaces.SpaceService
-import io.element.android.libraries.matrix.api.sync.SlidingSyncVersion
 import io.element.android.libraries.matrix.api.sync.SyncService
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.user.MatrixSearchUserResults
@@ -406,11 +405,6 @@ interface MatrixClient : ClientUrlContentFetcher {
      */
     suspend fun getRoomPreview(roomIdOrAlias: RoomIdOrAlias, serverNames: List<String>): Result<NotJoinedRoom>
 
-    /**
-     * Returns the currently used sliding sync version.
-     */
-    suspend fun currentSlidingSyncVersion(): Result<SlidingSyncVersion>
-
     /** Whether this account can be deactivated from the app, which depends on the authentication method used by the homeserver. */
     fun canDeactivateAccount(): Boolean
 
@@ -508,6 +502,11 @@ interface MatrixClient : ClientUrlContentFetcher {
      * Resets the cached client `well-known` config by the SDK.
      */
     suspend fun resetWellKnownConfig(): Result<Unit>
+
+    /**
+     * Release all the resources of the client. The client must not be used afterwards.
+     */
+    suspend fun destroy()
 
     /** Returns a provider for the capabilities the homeserver advertises, such as whether the display name can be changed. */
     fun homeserverCapabilities(): HomeserverCapabilitiesProvider

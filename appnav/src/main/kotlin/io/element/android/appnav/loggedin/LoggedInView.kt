@@ -16,14 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.lifecycle.Lifecycle
-import io.element.android.appnav.R
 import io.element.android.libraries.architecture.AsyncData
-import io.element.android.libraries.designsystem.components.dialogs.ErrorDialog
 import io.element.android.libraries.designsystem.components.dialogs.ErrorDialogWithDoNotShowAgain
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
-import io.element.android.libraries.designsystem.utils.OnLifecycleEvent
 import io.element.android.libraries.matrix.api.exception.isNetworkError
 import io.element.android.libraries.permissions.api.localnetwork.LocalNetworkPermissionDialogView
 import io.element.android.libraries.push.api.PusherRegistrationFailure
@@ -35,11 +31,6 @@ fun LoggedInView(
     navigateToNotificationTroubleshoot: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OnLifecycleEvent { _, event ->
-         if (event == Lifecycle.Event.ON_RESUME) {
-            state.eventSink(LoggedInEvent.CheckSlidingSyncProxyAvailability)
-         }
-    }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -74,16 +65,6 @@ fun LoggedInView(
         }
     }
 
-    // Set the force migration dialog here so it's always displayed over every screen
-    if (state.forceNativeSlidingSyncMigration) {
-        ForceNativeSlidingSyncMigrationDialog(
-            appName = state.appName,
-            onSubmit = {
-                state.eventSink(LoggedInEvent.LogoutAndMigrateToNativeSlidingSync)
-            }
-        )
-    }
-
     LocalNetworkPermissionDialogView(
         dialog = state.localNetworkPermissionDialog,
         onSubmit = { state.eventSink(LoggedInEvent.RequestLocationNetworkPermission) },
@@ -107,20 +88,6 @@ private fun Throwable.getReason(): String? {
         is PusherRegistrationFailure.NoProvidersAvailable -> stringResource(R.string.error_push_registration_no_providers)
         else -> stringResource(R.string.error_push_registration_other, message.orEmpty())
     }
-}
-
-@Composable
-private fun ForceNativeSlidingSyncMigrationDialog(
-    appName: String,
-    onSubmit: () -> Unit,
-) {
-    ErrorDialog(
-        title = null,
-        content = stringResource(R.string.banner_migrate_to_native_sliding_sync_app_force_logout_title, appName),
-        submitText = stringResource(R.string.banner_migrate_to_native_sliding_sync_action),
-        onSubmit = onSubmit,
-        canDismiss = false,
-    )
 }
 
 @PreviewsDayNight
