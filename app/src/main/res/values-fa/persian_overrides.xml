@@ -9,9 +9,6 @@
     <!-- ========================================================= -->
     <!-- App & Navigation -->
     <!-- ========================================================= -->
-    <string name="banner_migrate_to_native_sliding_sync_action">"خروج و ارتقا"</string>
-    <string name="banner_migrate_to_native_sliding_sync_app_force_logout_title">"‏%1$s دیگر از پروتکل قدیمی پشتیبانی نمی‌کند. برای ادامه، از حساب خارج شوید و دوباره وارد شوید."</string>
-    <string name="banner_migrate_to_native_sliding_sync_force_logout_title">"سرور شما دیگر از پروتکل قدیمی پشتیبانی نمی‌کند. برای ادامه، از حساب خارج شوید و دوباره وارد شوید."</string>
     <!-- ========================================================= -->
     <!-- Common UI & Accessibility -->
     <!-- ========================================================= -->
@@ -57,7 +54,6 @@
     <string name="a11y_notifications_new_mentions">"منشن‌های جدید"</string>
     <string name="a11y_notifications_new_messages">"پیام‌های جدید"</string>
     <string name="a11y_notifications_ongoing_call">"تماس در حال برگزاری"</string>
-    <string name="a11y_other_user_avatar">"تصویر پروفایل کاربر دیگر"</string>
     <string name="a11y_page_n">"صفحهٔ %1$d"</string>
     <string name="a11y_pause">"مکث"</string>
     <string name="a11y_paused_voice_message">"پیام صوتی؛ مدت: %1$s؛ موقعیت فعلی: %2$s"</string>
@@ -105,7 +101,6 @@
     <string name="a11y_voice_message">"پیام صوتی، مدت: %1$s"</string>
     <string name="a11y_voice_message_record">"ضبط پیام صوتی."</string>
     <string name="a11y_voice_message_stop_recording">"توقف ضبط"</string>
-    <string name="a11y_your_avatar">"تصویر پروفایل شما"</string>
     <string name="action_accept">"پذیرش"</string>
     <string name="action_add_caption">"افزودن توضیح"</string>
     <string name="action_add_existing_rooms">"افزودن اتاق‌های موجود"</string>
@@ -118,7 +113,6 @@
     <string name="action_choose_photo">"انتخاب عکس"</string>
     <string name="action_clear">"پاک کردن"</string>
     <string name="action_close">"بستن"</string>
-    <string name="action_complete_verification">"تکمیل تأیید"</string>
     <string name="action_confirm">"تأیید"</string>
     <string name="action_confirm_password">"تأیید رمز عبور"</string>
     <string name="action_continue">"ادامه"</string>
@@ -130,8 +124,6 @@
     <string name="action_create">"ایجاد"</string>
     <string name="action_create_room">"ایجاد اتاق"</string>
     <string name="action_create_space">"ایجاد فضا"</string>
-    <string name="action_deactivate">"غیرفعال کردن"</string>
-    <string name="action_deactivate_account">"غیرفعال کردن حساب"</string>
     <string name="action_decline">"رد"</string>
     <string name="action_decline_and_block">"رد و مسدود کردن"</string>
     <string name="action_delete">"حذف"</string>
@@ -170,9 +162,7 @@
     <string name="action_leave_room">"ترک اتاق"</string>
     <string name="action_leave_space">"ترک فضا"</string>
     <string name="action_load_more">"نمایش بیشتر"</string>
-    <string name="action_manage_account">"مدیریت حساب"</string>
     <string name="action_manage_account_and_devices">"مدیریت حساب و دستگاه‌ها"</string>
-    <string name="action_manage_devices">"مدیریت دستگاه‌ها"</string>
     <string name="action_manage_rooms">"مدیریت اتاق‌ها"</string>
     <string name="action_mark_as_read">"علامت‌گذاری به‌عنوان خوانده‌شده"</string>
     <string name="action_message">"پیام"</string>
@@ -195,7 +185,6 @@
     <string name="action_reply">"پاسخ"</string>
     <string name="action_reply_in_thread">"پاسخ در رشتهٔ گفتگو"</string>
     <string name="action_report">"گزارش"</string>
-    <string name="action_report_bug">"گزارش اشکال"</string>
     <string name="action_report_content">"گزارش محتوا"</string>
     <string name="action_report_dm">"گزارش گفتگو"</string>
     <string name="action_report_room">"گزارش اتاق"</string>
@@ -214,7 +203,6 @@
     <string name="action_share_link">"اشتراک‌گذاری لینک"</string>
     <string name="action_share_live_location">"اشتراک‌گذاری موقعیت زنده"</string>
     <string name="action_show">"نمایش"</string>
-    <string name="action_sign_in_again">"ورود دوباره"</string>
     <string name="action_signout">"حذف این دستگاه"</string>
     <string name="action_signout_anyway">"حذف دستگاه در هر صورت"</string>
     <string name="action_skip">"رد کردن"</string>
@@ -236,11 +224,8 @@
     <string name="action_voice_call">"تماس صوتی"</string>
     <string name="action_yes">"بله"</string>
     <string name="action_yes_try_again">"بله، دوباره تلاش کنید"</string>
-    <string name="banner_migrate_to_native_sliding_sync_description">"سرور شما اکنون از یک پروتکل جدید و سریع‌تر پشتیبانی می‌کند. برای ارتقا، از حساب خارج شوید و دوباره وارد شوید. انجام این کار در حال حاضر به شما کمک می‌کند تا از خروج اجباری هنگام حذف پروتکل قدیمی در آینده جلوگیری کنید."</string>
-    <string name="banner_migrate_to_native_sliding_sync_title">"ارتقا موجود است"</string>
     <string name="common_about">"درباره"</string>
     <string name="common_acceptable_use_policy">"قوانین استفاده"</string>
-    <string name="common_add_account">"افزودن یک حساب"</string>
     <string name="common_add_another_account">"افزودن حسابی دیگر"</string>
     <string name="common_adding_caption">"در حال افزودن توضیح"</string>
     <string name="common_advanced_settings">"تنظیمات پیشرفته"</string>
@@ -252,7 +237,6 @@
     <string name="common_audio">"صدا"</string>
     <string name="common_beta">"آزمایشی"</string>
     <string name="common_blocked_users">"کاربران مسدودشده"</string>
-    <string name="common_bubbles">"حباب‌ها"</string>
     <string name="common_call_declined">"تماس رد شد"</string>
     <string name="common_call_in_progress">"تماس در جریان است"</string>
     <string name="common_call_started">"تماس آغاز شد"</string>
@@ -574,7 +558,6 @@
     <string name="screen_room_change_role_administrators_or_owners_title">"ویرایش مدیران یا مالکان"</string>
     <string name="screen_room_error_failed_processing_media">"رسانه برای آپلود پردازش نشد. دوباره تلاش کنید."</string>
     <string name="screen_room_error_failed_retrieving_user_details">"جزئیات کاربر دریافت نشد"</string>
-    <string name="screen_room_event_pill">"پیام در %1$s"</string>
     <string name="screen_room_grouped_state_events_expand">"نمایش بیشتر"</string>
     <string name="screen_room_grouped_state_events_reduce">"نمایش کمتر"</string>
     <string name="screen_room_live_location_banner">"اشتراک‌گذاری موقعیت زنده"</string>
@@ -831,16 +814,11 @@
     <string name="notification_channel_noisy">"اعلان‌های صدادار"</string>
     <string name="notification_channel_ringing_calls">"زنگ تماس‌ها"</string>
     <string name="notification_channel_silent">"اعلان‌های بی‌صدا"</string>
-    <plurals name="notification_compat_summary_line_for_room">
-        <item quantity="one">"%1$s: %2$d پیام"</item>
-        <item quantity="other">"%1$s: %2$d پیام"</item>
-    </plurals>
     <plurals name="notification_compat_summary_title">
         <item quantity="one">"%d اعلان"</item>
         <item quantity="other">"%d اعلان"</item>
     </plurals>
     <string name="notification_error_unified_push_unregistered_android">"ثبت توزیع‌کنندهٔ UnifiedPush انجام نشد و ممکن است اعلان‌ها را دریافت نکنید. تنظیمات اعلان و وضعیت توزیع‌کننده را بررسی کنید."</string>
-    <string name="notification_fallback_content">"پیام‌های جدیدی دارید."</string>
     <plurals name="notification_fallback_n_content">
         <item quantity="one">"%d پیام جدید دارید."</item>
         <item quantity="other">"%d پیام جدید دارید."</item>
@@ -852,22 +830,11 @@
     <string name="notification_incoming_audio_call">"📞 تماس ورودی"</string>
     <string name="notification_incoming_call">"📹 تماس ورودی"</string>
     <string name="notification_inline_reply_failed">"**ارسال انجام نشد — اتاق را باز کنید"</string>
-    <string name="notification_invitation_action_join">"پیوستن"</string>
-    <string name="notification_invitation_action_reject">"رد کردن"</string>
-    <plurals name="notification_invitations">
-        <item quantity="one">"%d دعوت"</item>
-        <item quantity="other">"%d دعوت"</item>
-    </plurals>
     <string name="notification_invite_body">"به گفتگو دعوتتان کرد"</string>
     <string name="notification_invite_body_with_sender">"%1$s به گفتگو دعوتتان کرد"</string>
     <string name="notification_knock_request_body">"درخواست عضویت داد"</string>
     <string name="notification_live_location_started_body">"اشتراک‌گذاری موقعیت زنده را شروع کرد"</string>
     <string name="notification_mentioned_you_body">"شما را منشن کرد: %1$s"</string>
-    <string name="notification_new_messages">"پیام جدید"</string>
-    <plurals name="notification_new_messages_for_room">
-        <item quantity="one">"%d پیام جدید"</item>
-        <item quantity="other">"%d پیام جدید"</item>
-    </plurals>
     <string name="notification_reaction_body">"با %1$s واکنش داد"</string>
     <string name="notification_room_action_mark_as_read">"علامت‌گذاری به‌عنوان خوانده‌شده"</string>
     <string name="notification_room_action_quick_reply">"پاسخ سریع"</string>
@@ -930,10 +897,6 @@
     <string name="troubleshoot_notifications_test_current_push_provider_title">"ارائه‌دهندهٔ پوش فعلی"</string>
     <string name="troubleshoot_notifications_test_detect_push_provider_description">"بررسی اینکه برنامه دست‌کم از یک ارائه‌دهندهٔ پوش پشتیبانی کند."</string>
     <string name="troubleshoot_notifications_test_detect_push_provider_failure">"ارائه‌دهندهٔ پوش پشتیبانی‌شده‌ای پیدا نشد."</string>
-    <plurals name="troubleshoot_notifications_test_detect_push_provider_success">
-        <item quantity="one">"%1$d ارائه‌دهندهٔ پوش پیدا شد: %2$s"</item>
-        <item quantity="other">"%1$d ارائه‌دهندهٔ پوش پیدا شد: %2$s"</item>
-    </plurals>
     <string name="troubleshoot_notifications_test_detect_push_provider_success_2">"این برنامه با پشتیبانی از موارد زیر ساخته شده است: %1$s"</string>
     <string name="troubleshoot_notifications_test_detect_push_provider_title">"پشتیبانی از ارائه‌دهندهٔ پوش"</string>
     <string name="troubleshoot_notifications_test_display_notification_description">"بررسی توانایی برنامه در نمایش اعلان."</string>
@@ -1014,15 +977,7 @@
     <!-- ========================================================= -->
     <!-- Onboarding, Login & Device Linking -->
     <!-- ========================================================= -->
-    <string name="screen_account_provider_change">"تغییر ارائه‌دهندهٔ حساب"</string>
-    <string name="screen_account_provider_form_hint">"آدرس سرور"</string>
-    <string name="screen_account_provider_form_notice">"عبارت جستجو یا آدرس دامنه را وارد کنید."</string>
-    <string name="screen_account_provider_form_subtitle">"شرکت، انجمن یا سرور خصوصی خود را جستجو کنید."</string>
-    <string name="screen_account_provider_form_title">"پیدا کردن ارائه‌دهندهٔ حساب"</string>
-    <string name="screen_account_provider_signin_subtitle">"گفتگوهای شما روی این سرویس نگهداری می‌شوند؛ شبیه سرویسی که ایمیل‌هایتان را نگه می‌دارد."</string>
     <string name="screen_account_provider_signin_title">"می‌خواهید وارد %s شوید"</string>
-    <string name="screen_account_provider_signup_subtitle">"گفتگوهای شما روی این سرویس نگهداری می‌شوند؛ شبیه سرویسی که ایمیل‌هایتان را نگه می‌دارد."</string>
-    <string name="screen_account_provider_signup_title">"می‌خواهید در %s حساب بسازید"</string>
     <string name="screen_app_lock_biometric_authentication">"احراز هویت بیومتریک"</string>
     <string name="screen_app_lock_biometric_unlock">"باز کردن قفل با روش بیومتریک"</string>
     <string name="screen_app_lock_biometric_unlock_title_android">"باز کردن قفل با روش بیومتریک"</string>
@@ -1057,10 +1012,7 @@
     </plurals>
     <string name="screen_app_lock_use_biometric_android">"استفاده از روش بیومتریک"</string>
     <string name="screen_app_lock_use_pin_android">"استفاده از پین"</string>
-    <string name="screen_change_account_provider_matrix_org_subtitle">"این سرور عمومی و رایگان، بستری برای ارتباط امن و غیرمتمرکز فراهم می‌کند."</string>
-    <string name="screen_change_account_provider_other">"دیگر"</string>
     <string name="screen_change_account_provider_subtitle">"از ارائه‌دهندهٔ دیگری، مانند سرور خصوصی یا حساب محل کار، استفاده کنید."</string>
-    <string name="screen_change_account_provider_title">"تغییر ارائه‌دهندهٔ حساب"</string>
     <string name="screen_change_server_error_element_pro_required_action_android">"Google Play"</string>
     <string name="screen_change_server_error_element_pro_required_message">"برای استفاده از %1$s به نسخهٔ سازمانی برنامه نیاز است. لطفاً نسخهٔ مورد نیاز را از فروشگاه نصب کنید."</string>
     <string name="screen_change_server_error_element_pro_required_title">"نسخهٔ سازمانی برنامه لازم است"</string>
@@ -1070,7 +1022,6 @@
     <string name="screen_change_server_error_unauthorized_homeserver">"%1$s اجازهٔ اتصال به %2$s را ندارد."</string>
     <string name="screen_change_server_error_unauthorized_homeserver_content">"این برنامه فقط برای موارد زیر پیکربندی شده است: %1$s."</string>
     <string name="screen_change_server_error_unauthorized_homeserver_title">"ارائه‌دهندهٔ حساب %1$s مجاز نیست."</string>
-    <string name="screen_change_server_form_header">"آدرس سرور"</string>
     <string name="screen_change_server_form_notice">"آدرس دامنه را وارد کنید."</string>
     <string name="screen_change_server_navigation_title_login">"ورود"</string>
     <string name="screen_change_server_navigation_title_register">"ساخت حساب"</string>
@@ -1092,7 +1043,6 @@
     <string name="screen_identity_confirmed_subtitle">"اکنون می‌توانید پیام‌ها را امن بخوانید و ارسال کنید و مخاطبانتان هم می‌توانند به این دستگاه اعتماد کنند."</string>
     <string name="screen_identity_confirmed_title">"دستگاه تأیید شد"</string>
     <string name="screen_identity_use_another_device">"استفاده از دستگاهی دیگر"</string>
-    <string name="screen_identity_waiting_on_other_device">"در انتظار دستگاه دیگر…"</string>
     <string name="screen_link_new_device_desktop_scanning_title">"اسکن کد QR"</string>
     <string name="screen_link_new_device_desktop_step1">"%1$s را روی لپ‌تاپ یا رایانه رومیزی باز کنید."</string>
     <string name="screen_link_new_device_desktop_step3">"اسکن کد QR با این دستگاه"</string>
@@ -1129,7 +1079,6 @@
     <string name="screen_login_error_unsupported_authentication">"ارائه‌دهندهٔ حساب انتخاب‌شده از ورود با رمز عبور یا OAuth پشتیبانی نمی‌کند. با مدیر سرویس تماس بگیرید یا ارائه‌دهندهٔ دیگری انتخاب کنید."</string>
     <string name="screen_login_form_header">"اطلاعات حساب خود را وارد کنید"</string>
     <string name="screen_login_subtitle">"ارتباط امن و غیرمتمرکز در بستری باز."</string>
-    <string name="screen_login_title">"خوش برگشتید!"</string>
     <string name="screen_login_title_with_homeserver">"ورود به %1$s"</string>
     <string name="screen_missing_key_backup_open_element_classic">"باز کردن نسخهٔ قبلی برنامه"</string>
     <string name="screen_missing_key_backup_step_1">"نسخهٔ قبلی برنامه را روی دستگاه خود باز کنید"</string>
@@ -1148,7 +1097,6 @@
     <string name="screen_onboarding_sign_up">"ساخت حساب"</string>
     <string name="screen_onboarding_welcome_back">"خوش برگشتید"</string>
     <string name="screen_onboarding_welcome_message">"به %1$s خوش آمدید؛ پیام‌رسانی سریع و ساده."</string>
-    <string name="screen_onboarding_welcome_subtitle">"به %1$s خوش آمدید؛ سریع، ساده و روان."</string>
     <string name="screen_onboarding_welcome_title">"ارتباط، ساده و امن"</string>
     <string name="screen_qr_code_login_connecting_subtitle">"در حال برقراری اتصال امن"</string>
     <string name="screen_qr_code_login_connection_note_secure_state_description">"اتصال امن با دستگاه جدید برقرار نشد. دستگاه‌های فعلی شما همچنان امن هستند و جای نگرانی نیست."</string>
@@ -1190,22 +1138,15 @@
     <string name="screen_qr_code_login_no_camera_permission_state_description">"برای ادامه، اجازه دهید %1$s از دوربین دستگاه استفاده کند."</string>
     <string name="screen_qr_code_login_no_camera_permission_state_title">"برای اسکن کد QR به دوربین اجازهٔ دسترسی بدهید"</string>
     <string name="screen_qr_code_login_scanning_state_title">"اسکن کد QR"</string>
-    <string name="screen_qr_code_login_start_over_button">"شروع دوباره"</string>
     <string name="screen_qr_code_login_unknown_error_description">"خطایی غیرمنتظره رخ داد. لطفاً دوباره تلاش کنید."</string>
     <string name="screen_qr_code_login_verify_code_loading">"در انتظار دستگاه دیگر"</string>
     <string name="screen_qr_code_login_verify_code_subtitle">"ممکن است ارائه‌دهندهٔ حساب برای تأیید ورود، کد زیر را بخواهد."</string>
     <string name="screen_qr_code_login_verify_code_title">"کد تأیید شما"</string>
-    <string name="screen_server_confirmation_change_server">"تغییر ارائه‌دهندهٔ حساب"</string>
-    <string name="screen_server_confirmation_message_login_element_dot_io">"این سرور خصوصی و مخصوص کاربران سازمانی است."</string>
     <string name="screen_server_confirmation_message_login_matrix_dot_org">"این سرور بستری عمومی برای ارتباط امن و غیرمتمرکز است."</string>
-    <string name="screen_server_confirmation_message_register">"گفتگوهای شما روی این سرویس نگهداری می‌شوند؛ شبیه سرویسی که ایمیل‌هایتان را نگه می‌دارد."</string>
-    <string name="screen_server_confirmation_title_login">"می‌خواهید وارد %1$s شوید"</string>
     <string name="screen_server_confirmation_title_picker_mode">"ارائه‌دهندهٔ حساب را انتخاب کنید"</string>
-    <string name="screen_server_confirmation_title_register">"می‌خواهید در %1$s حساب بسازید"</string>
     <string name="screen_signed_out_reason_1">"رمز عبور را در دستگاه دیگری تغییر داده‌اید"</string>
     <string name="screen_signed_out_reason_2">"این دستگاه را از دستگاه دیگری حذف کرده‌اید"</string>
     <string name="screen_signed_out_reason_3">"مدیر سرور دسترسی شما را لغو کرده است"</string>
-    <string name="screen_signed_out_subtitle">"ممکن است به یکی از دلایل زیر خارج شده باشید. برای ادامهٔ استفاده از %s دوباره وارد شوید."</string>
     <string name="screen_signed_out_title">"از حساب خارج شده‌اید"</string>
     <string name="screen_signout_confirmation_dialog_content">"مطمئنید می‌خواهید این دستگاه را حذف کنید؟"</string>
     <string name="screen_signout_confirmation_dialog_submit">"حذف این دستگاه"</string>
@@ -1245,7 +1186,6 @@
     <string name="screen_invites_decline_chat_title">"رد دعوت"</string>
     <string name="screen_invites_decline_direct_chat_message">"مطمئنید می‌خواهید گفتگوی خصوصی با %1$s را رد کنید؟"</string>
     <string name="screen_invites_decline_direct_chat_title">"رد گفتگو"</string>
-    <string name="screen_invites_empty_list">"دعوتی ندارید"</string>
     <string name="screen_invites_invited_you">"%1$s (%2$s) دعوتتان کرد"</string>
     <string name="screen_leave_space_choose_owners_action">"انتخاب مالکان"</string>
     <string name="screen_leave_space_last_admin_info">"‏%1$s (مدیر)"</string>
@@ -1260,7 +1200,6 @@
     <string name="screen_leave_space_title">"ترک %1$s؟"</string>
     <string name="screen_leave_space_title_last_admin">"تنها مدیر %1$s هستید"</string>
     <string name="screen_leave_space_title_last_owner">"انتقال مالکیت"</string>
-    <string name="screen_migration_message">"این فرایند فقط یک بار انجام می‌شود. از صبر شما ممنونیم."</string>
     <string name="screen_migration_title">"در حال راه‌اندازی حساب…"</string>
     <string name="screen_roomlist_a11y_create_message">"ایجاد اتاق یا گفتگویی جدید"</string>
     <string name="screen_roomlist_clear_filters">"پاک کردن فیلترها"</string>
@@ -1306,8 +1245,6 @@
     <string name="screen_search_no_results_message">"نتیجه‌ای برای «%1$s» پیدا نشد. عبارت دیگری را جستجو کنید."</string>
     <string name="screen_search_tab_chats">"گفتگوها"</string>
     <string name="screen_search_tab_messages">"پیام‌ها"</string>
-    <string name="session_verification_banner_message">"به نظر می‌رسد از دستگاه جدیدی استفاده می‌کنید. برای دسترسی به پیام‌های رمزگذاری‌شده، آن را با دستگاه دیگری تأیید کنید."</string>
-    <string name="session_verification_banner_title">"تأیید کنید خودتان هستید"</string>
     <string name="screen_search_empty_state_message">"گفتگوها و پیام‌ها را جستجو کنید"</string>
     <string name="screen_search_empty_state_title">"جستجو را شروع کنید…"</string>
     <!-- ========================================================= -->
@@ -1770,13 +1707,10 @@
     <!-- Profiles & Preferences -->
     <!-- ========================================================= -->
     <string name="screen_advanced_settings_choose_distributor_dialog_title_android">"روش دریافت اعلان‌ها را انتخاب کنید"</string>
-    <string name="screen_advanced_settings_developer_mode">"حالت توسعه‌دهنده"</string>
-    <string name="screen_advanced_settings_developer_mode_description">"قابلیت‌های مخصوص توسعه‌دهندگان را فعال کنید."</string>
     <string name="screen_advanced_settings_element_call_base_url">"آدرس پایهٔ سفارشی سرویس تماس"</string>
     <string name="screen_advanced_settings_element_call_base_url_description">"یک آدرس پایهٔ سفارشی برای سرویس تماس تنظیم کنید."</string>
     <string name="screen_advanced_settings_element_call_base_url_validation_error">"آدرس نامعتبر است. پروتکل (http/https) و آدرس را بررسی کنید."</string>
     <string name="screen_advanced_settings_hide_invite_avatars_toggle_title">"پنهان کردن تصاویر پروفایل در درخواست‌های دعوت اتاق"</string>
-    <string name="screen_advanced_settings_hide_timeline_media_toggle_title">"پنهان کردن رسانه‌ها در گفتگو"</string>
     <string name="screen_advanced_settings_labs">"قابلیت‌های آزمایشی"</string>
     <string name="screen_advanced_settings_live_location_section_description">"مسافتی که باید طی کنید تا به‌روزرسانی انجام شود."</string>
     <string name="screen_advanced_settings_live_location_section_footer">"مطمئن شوید که «موقعیت مکانی دقیق» برای این برنامه فعال شده است. برای تغییر مجوز به %1$s بروید."</string>
@@ -1788,7 +1722,6 @@
     </plurals>
     <string name="screen_advanced_settings_media_compression_description">"عکس‌ها و ویدیوها را سریع‌تر آپلود کنید و مصرف اینترنت را کاهش دهید"</string>
     <string name="screen_advanced_settings_media_compression_title">"بهینه‌سازی کیفیت رسانه"</string>
-    <string name="screen_advanced_settings_moderation_and_safety_section_title">"نظارت و امنیت"</string>
     <string name="screen_advanced_settings_optimise_image_upload_quality_description">"بهینه‌سازی خودکار تصاویر برای آپلود سریع‌تر و حجم کمتر فایل‌ها."</string>
     <string name="screen_advanced_settings_optimise_image_upload_quality_title">"بهینه‌سازی کیفیت آپلود تصویر"</string>
     <string name="screen_advanced_settings_optimise_video_upload_quality_description">"%1$s. برای تغییر، اینجا را لمس کنید."</string>
@@ -1797,9 +1730,6 @@
     <string name="screen_advanced_settings_optimise_video_upload_quality_standard">"استاندارد (۷۲۰p)"</string>
     <string name="screen_advanced_settings_optimise_video_upload_quality_title">"کیفیت آپلود ویدیو"</string>
     <string name="screen_advanced_settings_push_provider_android">"ارائه‌دهندهٔ اعلان پوش"</string>
-    <string name="screen_advanced_settings_rich_text_editor_description">"ویرایشگر متن قالب‌دار را غیرفعال کنید یا Markdown را دستی بنویسید."</string>
-    <string name="screen_advanced_settings_send_read_receipts">"رسید خواندن"</string>
-    <string name="screen_advanced_settings_send_read_receipts_description">"اگر خاموش باشد، دیگران رسید خواندن شما را نمی‌بینند؛ اما شما همچنان رسید خواندن آن‌ها را می‌بینید."</string>
     <string name="screen_advanced_settings_share_presence">"اشتراک‌گذاری حضور"</string>
     <string name="screen_advanced_settings_share_presence_description">"اگر خاموش باشد، نمی‌توانید رسیدهای خوانده شدن یا اعلان‌های تایپ را ارسال یا دریافت کنید."</string>
     <string name="screen_advanced_settings_show_media_timeline_always_hide">"پنهان کردن همیشگی"</string>
@@ -1996,7 +1926,6 @@
     <string name="screen_reset_encryption_password_placeholder">"رمز عبور را وارد کنید…"</string>
     <string name="screen_reset_encryption_password_subtitle">"تأیید کنید که می‌خواهید هویت دیجیتال را بازنشانی کنید."</string>
     <string name="screen_reset_encryption_password_title">"برای ادامه، رمز عبور حساب خود را وارد کنید"</string>
-    <string name="screen_session_verification_cancelled_subtitle">"درخواست منقضی یا رد شد. دوباره تلاش کنید."</string>
     <string name="screen_session_verification_compare_emojis_subtitle">"بررسی کنید ایموجی‌های زیر با ایموجی‌های دستگاه دیگر دقیقاً یکسان باشند."</string>
     <string name="screen_session_verification_compare_emojis_title">"مقایسهٔ ایموجی‌ها"</string>
     <string name="screen_session_verification_compare_emojis_user_subtitle">"بررسی کنید ایموجی‌های زیر با ایموجی‌های دستگاه کاربر دیگر دقیقاً یکسان باشند."</string>
@@ -2007,36 +1936,25 @@
     <string name="screen_session_verification_device_verified">"دستگاه تأیید شد"</string>
     <string name="screen_session_verification_enter_recovery_key">"وارد کردن کلید بازیابی"</string>
     <string name="screen_session_verification_failed_subtitle">"درخواست منقضی یا رد شد، یا اطلاعات تأیید مطابقت نداشت."</string>
-    <string name="screen_session_verification_open_existing_session_subtitle">"برای دسترسی به تاریخچهٔ پیام‌های رمزگذاری‌شده، هویت خود را تأیید کنید."</string>
-    <string name="screen_session_verification_open_existing_session_title">"باز کردن دستگاهی که وارد حساب است"</string>
-    <string name="screen_session_verification_positive_button_canceled">"تلاش دوباره برای تأیید"</string>
-    <string name="screen_session_verification_positive_button_initial">"آماده‌ام"</string>
     <string name="screen_session_verification_positive_button_verifying_ongoing">"در انتظار مطابقت…"</string>
     <string name="screen_session_verification_ready_subtitle">"مجموعه‌ای یکتا از ایموجی‌ها را مقایسه کنید."</string>
-    <string name="screen_session_verification_request_accepted_subtitle">"ایموجی‌ها و ترتیب آن‌ها را دقیق مقایسه کنید."</string>
     <string name="screen_session_verification_request_details_timestamp">"زمان ورود"</string>
     <string name="screen_session_verification_request_failure_subtitle">"درخواست منقضی یا رد شد، یا اطلاعات تأیید مطابقت نداشت."</string>
     <string name="screen_session_verification_request_failure_title">"تأیید ناموفق بود"</string>
     <string name="screen_session_verification_request_footer">"فقط در صورتی ادامه دهید که خودتان این تأیید را آغاز کرده باشید."</string>
     <string name="screen_session_verification_request_subtitle">"برای محافظت از تاریخچهٔ پیام‌ها، دستگاه دیگر را تأیید کنید."</string>
-    <string name="screen_session_verification_request_success_subtitle">"اکنون می‌توانید در دستگاه دیگر پیام‌ها را امن بخوانید و ارسال کنید."</string>
-    <string name="screen_session_verification_request_success_title">"دستگاه تأیید شد"</string>
     <string name="screen_session_verification_request_title">"درخواست تأیید"</string>
     <string name="screen_session_verification_they_dont_match">"مطابق نیستند"</string>
     <string name="screen_session_verification_they_match">"مطابقت دارند"</string>
-    <string name="screen_session_verification_unavailable_subtitle">"از دستگاه دیگری یا کلید بازیابی استفاده کنید."</string>
-    <string name="screen_session_verification_unavailable_title">"در حال حاضر تأیید با این دستگاه امکان‌پذیر نیست"</string>
     <string name="screen_session_verification_use_another_device_subtitle">"قبل از شروع تأیید از اینجا، مطمئن شوید که برنامه را در دستگاه دیگر باز کرده‌اید."</string>
     <string name="screen_session_verification_use_another_device_title">"برنامه را روی دستگاه تأییدشدهٔ دیگری باز کنید"</string>
     <string name="screen_session_verification_user_initiator_subtitle">"برای امنیت بیشتر، با مقایسه مجموعه‌ای از ایموجی‌ها در دستگاه‌های خود، این کاربر را تأیید کنید. این کار را با استفاده از یک روش ارتباطی مطمئن انجام دهید."</string>
     <string name="screen_session_verification_user_initiator_title">"این کاربر را تأیید می‌کنید؟"</string>
     <string name="screen_session_verification_user_responder_subtitle">"برای امنیت بیشتر، اگر کاربر دیگری بخواهد هویت دیجیتالی شما را تأیید کند، مجموعه‌ای از ایموجی‌ها برای مقایسه به شما نشان داده می‌شود."</string>
-    <string name="screen_session_verification_waiting_another_device_subtitle">"باید در دستگاه دیگر پنجره‌ای ببینید. تأیید را از آنجا شروع کنید."</string>
     <string name="screen_session_verification_waiting_another_device_title">"شروع تأیید در دستگاه دیگر"</string>
     <string name="screen_session_verification_waiting_other_device_title">"شروع تأیید در دستگاه دیگر"</string>
     <string name="screen_session_verification_waiting_other_user_title">"در انتظار کاربر دیگر"</string>
     <string name="screen_session_verification_waiting_subtitle">"پس از پذیرش، می‌توانید به تأیید ادامه دهید."</string>
-    <string name="screen_session_verification_waiting_to_accept_subtitle">"برای ادامه، درخواست تأیید را در دستگاه دیگر بپذیرید."</string>
     <string name="screen_session_verification_waiting_to_accept_title">"در انتظار پذیرش درخواست"</string>
     <string name="verification_emoji_00">سگ</string>
     <string name="verification_emoji_01">گربه</string>

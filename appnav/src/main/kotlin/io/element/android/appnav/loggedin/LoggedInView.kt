@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import io.element.android.appnav.R
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.designsystem.components.dialogs.ErrorDialogWithDoNotShowAgain
 import io.element.android.libraries.designsystem.preview.ElementPreview
