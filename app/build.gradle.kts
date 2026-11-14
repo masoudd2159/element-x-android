@@ -217,7 +217,7 @@ setupDependencyInjection()
 
 dependencies {
     allLibrariesImpl()
-    allServicesImpl()
+    allServicesImpl(project)
     allFossImpl(project)
     allFeaturesImpl(project)
     implementation(projects.features.migration.api)
