@@ -249,8 +249,12 @@ dependencies {
 
     implementation(platform(libs.network.okhttp.bom))
     implementation(libs.network.okhttp.logging)
+    implementation(platform(libs.network.retrofit.bom))
+    implementation(libs.network.retrofit)
+    implementation(libs.serialization.json)
 
     testCommonDependencies(libs)
+    testImplementation(libs.network.mockwebserver)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.toolbox.test)
 }
