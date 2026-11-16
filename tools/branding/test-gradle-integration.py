@@ -136,7 +136,9 @@ try:
     assert {k: v[0] for k, v in snapshot().items()} == {k: v[0] for k, v in cache_before.items()}
     for brand in ['ApPoopak', 'ApMsc']:
         plan = gradle(f'{brand}-plan', f':app:assemble{brand}Debug', '--dry-run')
-        assert 'generateApHoopoeBrandIcons' not in plan and 'installBrandingTools' not in plan
+        assert 'generateApHoopoeBrandIcons' not in plan
+        assert ('generateApPoopakBrandIcons' in plan) == (brand == 'ApPoopak')
+        assert ('installBrandingTools' in plan) == (brand == 'ApPoopak')
         assert 'verifyEnterpriseSources' not in plan
         # Included standalone library modules are harmless; their tasks must not be in the app graph.
         assert ':features:enterprise:impl-foss:' in plan
@@ -147,7 +149,7 @@ try:
         assert ':features:enterprise:impl-foss' in projects
         assert not any(p.startswith(':enterprise:') for p in projects)
         assert 'FAILED' not in graph
-        if brand == 'apHoopoe':
+        if brand in {'apHoopoe', 'apPoopak'}:
             assert not any(p.startswith(':appicon:') for p in projects)
         else:
             assert ':appicon:enterprise' in projects
@@ -158,13 +160,14 @@ try:
     for flavor in flavors:
         capitalized = flavor[0].upper() + flavor[1:]
         assert f'assemble{capitalized}Debug' in inventory
-        assert (f'generate{capitalized}BrandIcons' in inventory) == (flavor == 'apHoopoe')
+        assert (f'generate{capitalized}BrandIcons' in inventory) == (flavor in {'apHoopoe', 'apPoopak'})
     assert 'verifyEnterpriseSources' not in inventory
     fixtures_graph = gradle('app-test-fixtures-dependencies', ':app:dependencies', '--configuration', 'apHoopoeDebugTestFixturesCompileClasspath')
     assert 'FAILED' not in fixtures_graph and not re.search(r"project ['\"]?:enterprise:", fixtures_graph)
     for parent in ['brandIcons', 'brandAssets']:
         base = ROOT / 'app/build/generated' / parent
-        assert {p.relative_to(base).parts[0] for p in base.rglob('*') if p.is_file()} == {'apHoopoe'}
+        assert {p.relative_to(base).parts[0] for p in base.rglob('*') if p.is_file()} <= {'apHoopoe', 'apPoopak'}
+        assert (base / 'apHoopoe').is_dir()
     print('PASS: required/invalid XML, packaged notification-only changes, build cache, managed tooling, configuration cache, FOSS source invalidation/graphs, unchanged images and all 19 flavor registrations')
 finally:
     notification.write_bytes(original_notification)

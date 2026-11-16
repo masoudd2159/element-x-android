@@ -166,6 +166,7 @@ val brands = listOf(
     ),
     BrandConfig(
         name = "apPoopak",
+        centralizedBranding = true,
         appName = "پوپک",
         applicationId = "ir.mypoopak",
         shortDescription = "poopak",

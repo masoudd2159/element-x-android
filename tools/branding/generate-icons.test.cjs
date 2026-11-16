@@ -183,13 +183,20 @@ test('Hoopoe source scope excludes inactive brands and catches relevant Kotlin c
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, '<vector/>');
     }
+    const registry = path.join(dir, 'plugins/src/main/kotlin/poopak.android-brands.gradle.kts');
+    fs.mkdirSync(path.dirname(registry), { recursive: true });
+    fs.writeFileSync(registry, 'class BrandConfig(ignored: String)\nBrandConfig(name = "apHoopoe", centralizedBranding = true),\n' +
+        'BrandConfig(name = "apPoopak", centralizedBranding = true),\nBrandConfig(name = "apLegacy"),');
     const kotlin = path.join(dir, 'libraries/matrix/impl/src/main/kotlin/Logo.kt');
     fs.mkdirSync(path.dirname(kotlin), { recursive: true });
     fs.writeFileSync(kotlin, '// io.element is a technical namespace');
-    assert.deepEqual(sourceFiles(dir), [kotlin]);
-    assert.doesNotThrow(() => verify(dir));
+    assert.deepEqual(sourceFiles(dir, 'apHoopoe'), [registry, kotlin].sort());
+    assert.ok(sourceFiles(dir).some(file => file.includes('/apPoopak/')));
+    assert.throws(() => verify(dir), /Missing approved brand artwork/);
+    assert.throws(() => verify(dir, sourceFiles(dir, 'apPoopak')), /apPoopak/);
+    assert.doesNotThrow(() => verify(dir, sourceFiles(dir, 'apHoopoe')));
     fs.appendFileSync(kotlin, '\nval uri = "https://element.io/mobile-icon.png"');
-    assert.throws(() => verify(dir), /Logo.kt/);
+    assert.throws(() => verify(dir, sourceFiles(dir, 'apHoopoe')), /Logo.kt/);
     const active = path.join(dir, 'app/src/apHoopoe/res/drawable/renamed.webp');
     fs.mkdirSync(path.dirname(active), { recursive: true });
     const root = path.join(__dirname, '../..');
@@ -319,4 +326,30 @@ test('Themed launcher preserves supplied paths and fits its viewport inside the 
     assert.ok(Math.hypot(width, height) * scale <= 65 + 1e-8);
     assert.ok(Math.abs(Number(group.getAttribute('android:translateX')) + width * scale / 2 - 54) < 1e-8);
     assert.ok(Math.abs(Number(group.getAttribute('android:translateY')) + height * scale / 2 - 54) < 1e-8);
+});
+
+test('Poopak generation preserves its dedicated artwork and adaptive safe zone', async t => {
+    const options = fixture(t);
+    for (const file of ['logo.svg', 'monochrome.xml', 'notification.xml']) {
+        fs.copyFileSync(path.join(__dirname, '../../branding/apPoopak', file), path.join(options.sourceDir, file));
+    }
+    await generate(options);
+    const notification = fs.readFileSync(path.join(options.sourceDir, 'notification.xml'), 'utf8');
+    assert.deepEqual(await vectorAlpha(fs.readFileSync(path.join(options.outputDir, 'drawable/ic_notification.xml'), 'utf8'), 24),
+        await vectorAlpha(notification, 24));
+    const mono = fs.readFileSync(path.join(options.sourceDir, 'monochrome.xml'), 'utf8');
+    const paths = doc => Array.from(parseXml(doc).getElementsByTagName('path')).map(n => n.getAttribute('android:pathData'));
+    assert.deepEqual(paths(launcherMonochrome(mono, 60)), paths(mono));
+    const { data, info } = await sharp(path.join(options.outputDir, 'drawable-xxxhdpi/brand_foreground.png')).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    let painted = 0;
+    for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
+        if (data[(y * info.width + x) * 4 + 3] > 200) {
+            painted++;
+            assert.ok(Math.hypot(x + 0.5 - 216, y + 0.5 - 216) <= 132);
+        }
+    }
+    assert.ok(painted > 0);
+    const alpha = await vectorAlpha(fs.readFileSync(path.join(options.sourceDir, 'notification.xml'), 'utf8'), 24);
+    assert.ok(alpha.some(a => a > 128));
+    for (const i of [0, 23, 552, 575]) assert.equal(alpha[i], 0);
 });

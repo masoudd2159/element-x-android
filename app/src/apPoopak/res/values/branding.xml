@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2026 Element Creations Ltd.
+     SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Referenced by ElementLogoAtom in the shared designsystem module. -->
+    <bool name="brand_onboarding_logo_shadow" tools:ignore="UnusedResources">false</bool>
+</resources>

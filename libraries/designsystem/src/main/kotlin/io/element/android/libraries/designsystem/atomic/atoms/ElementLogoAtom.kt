@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun ElementLogoAtom(
     modifier: Modifier = Modifier,
     useBlurredShadow: Boolean = canUseBlurMaskFilter(),
     darkTheme: Boolean = ElementTheme.isLightTheme.not(),
+    useLogoShadow: Boolean = booleanResource(R.bool.brand_onboarding_logo_shadow),
 ) {
     val blur = if (darkTheme) 160.dp else 24.dp
     val shadowColor = if (darkTheme) size.shadowColorDark else size.shadowColorLight
@@ -81,10 +83,8 @@ fun ElementLogoAtom(
                 .background(backgroundColor)
                 .blurCompat(blur)
         )
-        Image(
-            modifier = Modifier
-                .size(size.logoSize)
-                // Do the same double shadow than on Figma...
+        val logoShadow = if (useLogoShadow) {
+            Modifier
                 .shadow(
                     elevation = 35.dp,
                     clip = false,
@@ -96,7 +96,14 @@ fun ElementLogoAtom(
                     clip = false,
                     shape = CircleShape,
                     ambientColor = Color(0x80000000),
-                ),
+                )
+        } else {
+            Modifier
+        }
+        Image(
+            modifier = Modifier
+                .size(size.logoSize)
+                .then(logoShadow),
             painter = painterResource(id = R.drawable.brand_logo),
             contentDescription = null
         )
@@ -161,6 +168,14 @@ internal fun ElementLogoAtomMediumNoBlurShadowPreview() = ElementPreview {
 @PreviewsDayNight
 internal fun ElementLogoAtomLargeNoBlurShadowPreview() = ElementPreview {
     ContentToPreview(ElementLogoAtomSize.Large, useBlurredShadow = false)
+}
+
+@Composable
+@PreviewsDayNight
+internal fun ElementLogoAtomLargeNoLogoShadowPreview() = ElementPreview {
+    Box(Modifier.background(ElementTheme.colors.bgSubtlePrimary)) {
+        ElementLogoAtom(ElementLogoAtomSize.Large, useLogoShadow = false)
+    }
 }
 
 @ExcludeFromCoverage

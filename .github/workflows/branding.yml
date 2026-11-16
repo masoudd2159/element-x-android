@@ -33,7 +33,9 @@ jobs:
       - name: Verify generator integration and incremental inputs
         run: python3 tools/branding/test-gradle-integration.py
       - name: Build Hoopoe FOSS Debug and verify every APK
-        run: ./gradlew :app:assembleApHoopoeDebug --stacktrace
+        run: ./gradlew :app:assembleApHoopoeDebug :app:verifyApHoopoeDebugBrandApk --stacktrace
+      - name: Build and independently verify Poopak Debug APKs
+        run: ./gradlew :app:assembleApPoopakDebug :app:verifyApPoopakDebugBrandApk --stacktrace
       - name: Check full Hoopoe Release lint with configuration cache
         run: ./gradlew :app:lintApHoopoeRelease --configuration-cache --stacktrace
       - name: Test Persian overlay validation

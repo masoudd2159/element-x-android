@@ -1,8 +1,8 @@
 # Android brand artwork
 
 `BrandConfig` in `plugins/src/main/kotlin/poopak.android-brands.gradle.kts` is the
-single registry. Only `apHoopoe` opts in with `centralizedBranding = true`.
-The other 18 flavors retain their legacy launcher/UI resources, notification icon,
+single registry. `apHoopoe` and `apPoopak` opt in with `centralizedBranding = true`.
+The other 17 flavors retain their legacy launcher/UI resources, notification icon,
 application IDs, Firebase files, hosts and signing configuration.
 
 ## Three canonical files
@@ -94,7 +94,8 @@ node tools/branding/verify-source.cjs .
 python3 tools/branding/test-gradle-integration.py
 ./gradlew :app:assembleApHoopoeDebug --stacktrace
 ./gradlew :app:verifyApHoopoeDebugBrandApk
-./gradlew :app:assembleApPoopakDebug :app:assembleApMscDebug --continue --stacktrace
+./gradlew :app:assembleApPoopakDebug :app:verifyApPoopakDebugBrandApk --stacktrace
+./gradlew :app:assembleApMscDebug --stacktrace
 ```
 
 Assemble/bundle tasks verify every ABI APK or the AAB base module using AGP AAPT2.
@@ -108,7 +109,7 @@ enrolled package. Renamed/copied Element artwork is still rejected.
 
 Integration tests exercise missing/malformed XML, notification-only edits, unchanged
 outputs, build/configuration caches, FOSS dependencies and all 19 registrations.
-The CI branding workflow validates sources, runs these tests, builds Hoopoe Debug,
+The CI branding workflow validates sources, runs these tests, builds Hoopoe and Poopak Debug,
 checks compiled packages and uploads APKs only after successful verification.
 Runtime launcher masks, themed-icon settings and small-icon legibility still require
 an isolated emulator/device review. A local notification does not test push delivery.
@@ -126,8 +127,8 @@ required to replace artwork.
 
 All 19 flavors use `features.enterprise.impl-foss`. Private `:enterprise:` projects
 are excluded from settings; dependency verification rejects them. The public
-`appicon.enterprise` resource module remains only for the 18 legacy flavors.
-Hoopoe depends on neither upstream appicon module. No private deployment key or
+`appicon.enterprise` resource module remains only for the 17 legacy flavors.
+Hoopoe and Poopak depend on neither upstream appicon module. No private deployment key or
 submodule checkout is required. Existing release lint checks remain enabled;
 well-known discovery, placeholder Firebase configuration and Persian translation
 lint problems are separate from branding.

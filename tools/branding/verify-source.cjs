@@ -8,8 +8,16 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const forbidden = require('./forbidden-element-assets.json');
 const { parseXml, readArtwork } = require('./generate-icons.cjs');
-// Standalone CI scope matches enrolled Hoopoe sources. Gradle supplies its exact declared inputs.
-function sourceFiles(root, brand = 'apHoopoe') {
+// Standalone CI includes every enrolled flavor; Gradle supplies its exact declared inputs.
+function enrolledBrands(root) {
+    const registry = path.join(root, 'plugins/src/main/kotlin/poopak.android-brands.gradle.kts');
+    if (!fs.existsSync(registry)) return [];
+    return fs.readFileSync(registry, 'utf8').split('BrandConfig(').slice(2)
+        .filter(block => /centralizedBranding\s*=\s*true/.test(block.split('),')[0]))
+        .map(block => block.match(/name\s*=\s*"(ap\w+)"/)[1]);
+}
+function sourceFiles(root, brands = enrolledBrands(root)) {
+    if (typeof brands === 'string') brands = [brands];
     const files = [];
     function walk(dir) {
         if (!fs.existsSync(dir)) return;
@@ -20,27 +28,21 @@ function sourceFiles(root, brand = 'apHoopoe') {
             } else files.push(file);
         }
     }
-    for (const set of ['main', 'debug', 'release', 'nightly', brand]) walk(path.join(root, 'app/src', set));
+    for (const set of ['main', 'debug', 'release', 'nightly', ...brands]) walk(path.join(root, 'app/src', set));
     for (const dir of ['appnav', 'appconfig', 'libraries', 'features', 'services']) walk(path.join(root, dir));
     for (const file of ['app/build.gradle.kts', 'plugins/src/main/kotlin/poopak.android-brands.gradle.kts']) {
         if (fs.existsSync(path.join(root, file))) files.push(path.join(root, file));
     }
     return files.sort();
 }
-function verify(root, files = sourceFiles(root)) {
+function verify(root, files) {
+    const standalone = files === undefined;
+    if (standalone) files = sourceFiles(root);
     const failures = [];
     // Gradle provides the active flavor's artwork; standalone CI follows the same registry opt-in.
     const brandDirs = new Set(files.filter(f => f.endsWith(`${path.sep}logo.svg`) &&
         f.startsWith(path.join(root, 'branding') + path.sep)).map(f => path.dirname(f)));
-    const registry = path.join(root, 'plugins/src/main/kotlin/poopak.android-brands.gradle.kts');
-    if (fs.existsSync(registry)) {
-        for (const block of fs.readFileSync(registry, 'utf8').split('BrandConfig(').slice(2)) {
-            if (/centralizedBranding\s*=\s*true/.test(block.split('),')[0])) {
-                const name = block.match(/name\s*=\s*"(ap\w+)"/)[1];
-                brandDirs.add(path.join(root, 'branding', name));
-            }
-        }
-    }
+    if (standalone) for (const name of enrolledBrands(root)) brandDirs.add(path.join(root, 'branding', name));
     for (const dir of brandDirs) readArtwork(dir);
     for (const file of files) {
         const entry = path.basename(file);
