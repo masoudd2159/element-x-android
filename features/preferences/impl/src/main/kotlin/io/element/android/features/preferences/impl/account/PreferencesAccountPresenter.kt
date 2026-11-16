@@ -57,7 +57,7 @@ class PreferencesAccountPresenter(
         }
         val canReportBug by remember { rageshakeFeatureAvailability.isAvailable() }.collectAsState(false)
         LaunchedEffect(Unit) {
-            canDeactivateAccount = ALLOW_SELF_DEACTIVATION && matrixClient.canDeactivateAccount()
+            canDeactivateAccount = matrixClient.canDeactivateAccount()
         }
 
         val accountManagementUrl by produceState<String?>(initialValue = null) {

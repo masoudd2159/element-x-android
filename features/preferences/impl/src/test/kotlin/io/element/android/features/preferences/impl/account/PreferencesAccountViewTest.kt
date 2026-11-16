@@ -125,7 +125,7 @@ class PreferencesAccountViewTest : RobolectricTest() {
     fun `click on Remove this device invokes the expected callback`() = runAndroidComposeUiTest {
         ensureCalledOnce { callback ->
             setView(
-                aPreferencesAccountState(canDeactivateAccount = false),
+                aPreferencesAccountState(),
                 onSignOutClick = callback,
             )
             val text = activity!!.getString(CommonStrings.action_signout)

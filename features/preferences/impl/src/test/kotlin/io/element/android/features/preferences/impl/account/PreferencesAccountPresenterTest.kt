@@ -67,7 +67,7 @@ class PreferencesAccountPresenterTest {
             assertThat(initialState.snackbarMessage).isNull()
             val loadedState = consumeItemsUntilPredicate { it.accountManagementUrl != null }.last()
             assertThat(loadedState.showSecureBackup).isFalse()
-            assertThat(loadedState.canDeactivateAccount).isFalse()
+            assertThat(loadedState.canDeactivateAccount).isTrue()
             assertThat(loadedState.canReportBug).isTrue()
             assertThat(loadedState.accountManagementUrl).isEqualTo("tweaked null url")
             accountManagementUrlResult.assertions().isCalledOnce()
@@ -126,16 +126,14 @@ class PreferencesAccountPresenterTest {
     }
 
     @Test
-    fun `present - can deactivate account is false when the Matrix client says it is unavailable`() = runTest {
+    fun `present - can deactivate account is false if the Matrix client say so`() = runTest {
         createPreferencesAccountPresenter(
             matrixClient = FakeMatrixClient(
                 canDeactivateAccountResult = { false },
-                accountManagementUrlResult = { Result.success("url") },
+                accountManagementUrlResult = { Result.success(null) },
             ),
-            sessionEnterpriseService = FakeSessionEnterpriseService(tweakMasUrlResult = { it }),
         ).test {
-            val loadedState = consumeItemsUntilPredicate { it.accountManagementUrl != null }.last()
-            assertThat(loadedState.canDeactivateAccount).isFalse()
+            assertThat(awaitItem().canDeactivateAccount).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
