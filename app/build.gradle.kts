@@ -252,7 +252,7 @@ dependencies {
     }
 
     // The native call's PostHog client. F-Droid builds must not include PostHog, see https://github.com/element-hq/element-x-android/issues/7801
-    "gplayImplementation"(projects.features.callnative.posthog)
+    implementation(projects.features.callnative.posthog)
 
     // Google Play Services fused location backend. Discovered at runtime via ServiceLoader by the
     // location feature.
