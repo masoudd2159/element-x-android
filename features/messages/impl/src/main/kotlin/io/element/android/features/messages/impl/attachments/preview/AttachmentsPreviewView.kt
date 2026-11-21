@@ -29,6 +29,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
@@ -38,11 +39,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -530,28 +533,30 @@ private fun AttachmentsPreviewBottomActions(
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TextComposer(
-        modifier = modifier,
-        state = state.textEditorState,
-        voiceMessageState = VoiceMessageState.Idle,
-        composerMode = MessageComposerMode.Attachment,
-        onRequestFocus = {},
-        onSendMessage = onSendClick,
-        showTextFormatting = false,
-        onResetComposerMode = {},
-        onAddAttachment = {},
-        onDismissTextFormatting = {},
-        onVoiceRecorderEvent = {},
-        onVoicePlayerEvent = {},
-        onSendVoiceMessage = {},
-        onDeleteVoiceMessage = {},
-        onReceiveSuggestion = {},
-        resolveMentionDisplay = { _, _ -> TextDisplay.Plain },
-        resolveAtRoomMentionDisplay = { TextDisplay.Plain },
-        onError = {},
-        onTyping = {},
-        onSelectRichContent = {},
-    )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        TextComposer(
+            modifier = modifier,
+            state = state.textEditorState,
+            voiceMessageState = VoiceMessageState.Idle,
+            composerMode = MessageComposerMode.Attachment,
+            onRequestFocus = {},
+            onSendMessage = onSendClick,
+            showTextFormatting = false,
+            onResetComposerMode = {},
+            onAddAttachment = {},
+            onDismissTextFormatting = {},
+            onVoiceRecorderEvent = {},
+            onVoicePlayerEvent = {},
+            onSendVoiceMessage = {},
+            onDeleteVoiceMessage = {},
+            onReceiveSuggestion = {},
+            resolveMentionDisplay = { _, _ -> TextDisplay.Plain },
+            resolveAtRoomMentionDisplay = { TextDisplay.Plain },
+            onError = {},
+            onTyping = {},
+            onSelectRichContent = {},
+        )
+    }
 }
 
 // Only preview in dark, dark theme is forced on the Node.

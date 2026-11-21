@@ -25,6 +25,7 @@ object ElementRichTextEditorStyle {
         hasFocus: Boolean,
     ): RichTextEditorStyle {
         val baseStyle = common()
+        val typography = ElementTheme.typography.fontBodyLgRegular
         return baseStyle.copy(
             text = baseStyle.text.copy(
                 color = if (hasFocus) {
@@ -33,6 +34,11 @@ object ElementRichTextEditorStyle {
                     ElementTheme.colors.textSecondary
                 },
                 placeholderColor = ElementTheme.colors.textSecondary,
+                fontFamily = typography.fontFamily,
+                fontWeight = typography.fontWeight,
+                fontStyle = typography.fontStyle,
+                fontSynthesis = typography.fontSynthesis,
+                fontSize = typography.fontSize,
                 lineHeight = TextUnit.Unspecified,
                 includeFontPadding = true,
             )

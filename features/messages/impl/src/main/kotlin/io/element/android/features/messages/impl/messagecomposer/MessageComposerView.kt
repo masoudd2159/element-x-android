@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -27,8 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerEvent
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerState
@@ -119,30 +122,32 @@ internal fun MessageComposerView(
         voiceMessageState.eventSink(VoiceMessageComposerEvent.PlayerEvent(event))
     }
 
-    TextComposer(
-        modifier = modifier,
-        state = state.textEditorState,
-        voiceMessageState = voiceMessageState.voiceMessageState,
-        onRequestFocus = ::onRequestFocus,
-        onSendMessage = ::sendMessage,
-        composerMode = state.mode,
-        isInThreadTimeline = state.isInThreadTimeline,
-        showTextFormatting = state.showTextFormatting,
-        onResetComposerMode = ::onCloseSpecialMode,
-        onAddAttachment = ::onAddAttachment,
-        onDismissTextFormatting = ::onDismissTextFormatting,
-        onVoiceRecorderEvent = onVoiceRecorderEvent,
-        onVoicePlayerEvent = onVoicePlayerEvent,
-        onSendVoiceMessage = onSendVoiceMessage,
-        onDeleteVoiceMessage = onDeleteVoiceMessage,
-        onReceiveSuggestion = ::onSuggestionReceived,
-        resolveMentionDisplay = state.resolveMentionDisplay,
-        resolveAtRoomMentionDisplay = state.resolveAtRoomMentionDisplay,
-        onError = ::onError,
-        onTyping = ::onTyping,
-        onSelectRichContent = ::sendUri,
-        onAddEmoji = onToggleEmojiPicker,
-    )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        TextComposer(
+            modifier = modifier,
+            state = state.textEditorState,
+            voiceMessageState = voiceMessageState.voiceMessageState,
+            onRequestFocus = ::onRequestFocus,
+            onSendMessage = ::sendMessage,
+            composerMode = state.mode,
+            isInThreadTimeline = state.isInThreadTimeline,
+            showTextFormatting = state.showTextFormatting,
+            onResetComposerMode = ::onCloseSpecialMode,
+            onAddAttachment = ::onAddAttachment,
+            onDismissTextFormatting = ::onDismissTextFormatting,
+            onVoiceRecorderEvent = onVoiceRecorderEvent,
+            onVoicePlayerEvent = onVoicePlayerEvent,
+            onSendVoiceMessage = onSendVoiceMessage,
+            onDeleteVoiceMessage = onDeleteVoiceMessage,
+            onReceiveSuggestion = ::onSuggestionReceived,
+            resolveMentionDisplay = state.resolveMentionDisplay,
+            resolveAtRoomMentionDisplay = state.resolveAtRoomMentionDisplay,
+            onError = ::onError,
+            onTyping = ::onTyping,
+            onSelectRichContent = ::sendUri,
+            onAddEmoji = onToggleEmojiPicker,
+        )
+    }
 
     AsyncActionView(
         async = state.slashCommandAction,

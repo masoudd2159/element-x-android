@@ -41,6 +41,7 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -175,6 +176,9 @@ private val BUBBLE_INCOMING_OFFSET = 16.dp
 /** Shared instance so that rows which never slide keep comparing equal, and keep skipping. */
 internal val NoSelectionOffset: Density.() -> IntOffset = { IntOffset.Zero }
 
+// Timelines can set the direction of message rows independently of the surrounding UI.
+internal val LocalTimelineMessageLayoutDirection = staticCompositionLocalOf<LayoutDirection?> { null }
+
 @Composable
 fun TimelineItemEventRow(
     event: TimelineItem.Event,
@@ -216,6 +220,8 @@ fun TimelineItemEventRow(
             onContentLayoutChange = onContentLayoutChange,
         )
     },
+) = CompositionLocalProvider(
+    LocalLayoutDirection provides (LocalTimelineMessageLayoutDirection.current ?: LocalLayoutDirection.current),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }

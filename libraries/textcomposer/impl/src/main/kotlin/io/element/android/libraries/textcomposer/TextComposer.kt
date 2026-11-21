@@ -169,7 +169,7 @@ fun TextComposer(
         is TextEditorState.Rich -> {
             val coroutineScope = rememberCoroutineScope()
             val view = LocalView.current
-            remember(state.richTextEditorState, composerMode, onResetComposerMode, onError) {
+            remember(state.richTextEditorState, composerMode, onResetComposerMode, onError, placeholder) {
                 @Composable {
                     TextInputBox(
                         modifier = Modifier
@@ -678,31 +678,34 @@ private fun TextInputBox(
             Spacer(Modifier.height(4.dp))
         }
 
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(
+            modifier = Modifier.padding(end = if (trailingContent != null) 0.dp else 12.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
             Box(
                 modifier = Modifier
-                    .padding(top = 1.dp, bottom = 4.dp, start = 12.dp, end = if (trailingContent != null) 0.dp else 12.dp)
+                    .padding(top = 1.dp, bottom = 4.dp, start = 12.dp)
                     .weight(1f)
                     .then(Modifier.testTag(TestTags.textEditor)),
                 contentAlignment = Alignment.CenterStart,
             ) {
                 textInput()
-                if (isTextEmpty && composerMode.showCaptionCompatibilityWarning()) {
-                    var showBottomSheet by remember { mutableStateOf(false) }
-                    Icon(
-                        modifier = Modifier
-                            .clickable { showBottomSheet = true }
-                            .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
-                            .align(Alignment.CenterEnd),
-                        imageVector = CompoundIcons.InfoSolid(),
-                        tint = ElementTheme.colors.iconCriticalPrimary,
-                        contentDescription = stringResource(CommonStrings.a11y_info),
+            }
+            if (isTextEmpty && composerMode.showCaptionCompatibilityWarning()) {
+                var showBottomSheet by remember { mutableStateOf(false) }
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable { showBottomSheet = true }
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    imageVector = CompoundIcons.InfoSolid(),
+                    tint = ElementTheme.colors.iconCriticalPrimary,
+                    contentDescription = stringResource(CommonStrings.a11y_info),
+                )
+                if (showBottomSheet) {
+                    CaptionWarningBottomSheet(
+                        onDismiss = { showBottomSheet = false },
                     )
-                    if (showBottomSheet) {
-                        CaptionWarningBottomSheet(
-                            onDismiss = { showBottomSheet = false },
-                        )
-                    }
                 }
             }
             trailingContent?.invoke()

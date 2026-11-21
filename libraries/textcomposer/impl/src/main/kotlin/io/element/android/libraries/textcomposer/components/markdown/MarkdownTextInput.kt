@@ -19,8 +19,10 @@ import android.view.View
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.getSpans
@@ -32,6 +34,7 @@ import androidx.core.widget.addTextChangedListener
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
+import io.element.android.libraries.designsystem.text.rememberTypeface
 import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.textcomposer.ElementRichTextEditorStyle
 import io.element.android.libraries.textcomposer.mentions.LocalMentionSpanUpdater
@@ -80,6 +83,13 @@ fun MarkdownTextInput(
     }
 
     val mentionSpanUpdater = LocalMentionSpanUpdater.current
+    val editorTextStyle = richTextEditorStyle.text
+    val typeface by TextStyle(
+        fontFamily = editorTextStyle.fontFamily,
+        fontWeight = editorTextStyle.fontWeight,
+        fontStyle = editorTextStyle.fontStyle,
+        fontSynthesis = editorTextStyle.fontSynthesis,
+    ).rememberTypeface()
 
     AndroidView(
         modifier = Modifier
@@ -132,6 +142,7 @@ fun MarkdownTextInput(
         },
         update = { editText ->
             editText.contentDescription = placeholder
+            editText.typeface = typeface
             editText.applyStyleInCompose(richTextEditorStyle)
             editText.onEnterKeyListener = {
                 onSendMessage()
