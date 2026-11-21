@@ -168,12 +168,10 @@ private fun FullscreenAnnouncementFooter(
     }
 }
 
-@Composable
 private fun Announcement.Fullscreen.title() = when (this) {
     Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_title)
 }
 
-@Composable
 private fun Announcement.Fullscreen.subtitle() = when (this) {
     Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_subtitle)
 }
@@ -209,7 +207,6 @@ private fun Announcement.Fullscreen.items(): ImmutableList<VisualListItemData> =
     )
 }
 
-@Composable
 private fun Announcement.Fullscreen.notice(): String? = when (this) {
     Announcement.Fullscreen.Space -> stringResource(R.string.screen_space_announcement_notice)
 }

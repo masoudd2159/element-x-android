@@ -151,7 +151,10 @@ class QrCodeLoginFlowNode(
                                 }
                             }
                         }
-                        else -> Unit
+                        QrCodeLoginStep.Uninitialized,
+                        QrCodeLoginStep.Starting,
+                        QrCodeLoginStep.SyncingSecrets,
+                        QrCodeLoginStep.Finished -> Unit
                     }
                 }
         }

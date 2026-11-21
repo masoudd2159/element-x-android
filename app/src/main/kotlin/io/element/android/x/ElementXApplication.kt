@@ -18,15 +18,14 @@ import androidx.work.Configuration
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
 import io.element.android.call.ui.ElementCallActivity
+import io.element.android.features.rageshake.api.logs.ApplicationInfoLogger
 import io.element.android.libraries.architecture.bindings
 import io.element.android.libraries.di.DependencyInjectionGraphOwner
-import io.element.android.libraries.matrix.api.SdkMetadata
 import io.element.android.libraries.workmanager.api.di.MetroWorkerFactory
 import io.element.android.x.call.ElementCallActivityHostDelegate
 import io.element.android.x.di.AppBindings
 import io.element.android.x.di.AppGraph
 import io.element.android.x.di.ApplicationBindings
-import io.element.android.x.info.logApplicationInfo
 import io.element.android.x.initializer.CacheCleanerInitializer
 import io.element.android.x.initializer.CrashInitializer
 import io.element.android.x.initializer.PlatformInitializer
@@ -48,7 +47,7 @@ class ElementXApplication private constructor(
         .setWorkerFactory(MetroWorkerFactory(graph.workerProviders))
         .build()
 
-    @Inject lateinit var sdkMetadata: SdkMetadata
+    @Inject lateinit var applicationInfoLogger: ApplicationInfoLogger
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(PoopakAppLocaleManager.localizedContext(base))
@@ -68,7 +67,7 @@ class ElementXApplication private constructor(
 
         bindings<ApplicationBindings>().inject(this)
         elementCallActivityHost.bind { bindings<AppBindings>().nativeCallScreenHost() }
-        logApplicationInfo(this, sdkMetadata.sdkGitSha)
+        applicationInfoLogger.log()
 
         // Disable the strict offset check for anchored draggable components, as it can cause issues with bottom sheets.
         // Remove once https://issuetracker.google.com/issues/477038695 is fixed.
