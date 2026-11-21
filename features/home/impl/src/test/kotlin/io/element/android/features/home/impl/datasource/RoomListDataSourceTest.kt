@@ -10,8 +10,6 @@ package io.element.android.features.home.impl.datasource
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import io.element.android.features.home.impl.FakeDateTimeObserver
-import io.element.android.libraries.androidutils.system.DateTimeObserver
 import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.test.A_ROOM_ID
@@ -27,11 +25,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.time.Instant
 
 class RoomListDataSourceTest {
     @Test
-    fun `when DateTimeObserver gets a date change, the room summaries are refreshed`() = runTest {
+    fun `when the date formatting revision changes, the room summaries are refreshed`() = runTest {
         val roomList = FakeDynamicRoomList().apply {
             summaries.emit(listOf(aRoomSummary()))
         }
@@ -40,7 +37,6 @@ class RoomListDataSourceTest {
         ).apply {
             postState(RoomListService.State.Running)
         }
-        val dateTimeObserver = FakeDateTimeObserver()
         var dateFormatterResult = "Today"
         val dateFormatter = FakeDateFormatter { _, _, _ -> dateFormatterResult }
         val roomListDataSource = createRoomListDataSource(
@@ -48,7 +44,6 @@ class RoomListDataSourceTest {
             roomListRoomSummaryFactory = aRoomListRoomSummaryFactory(
                 dateFormatter = dateFormatter,
             ),
-            dateTimeObserver = dateTimeObserver,
         )
 
         roomListDataSource.roomSummariesFlow.test {
@@ -60,7 +55,7 @@ class RoomListDataSourceTest {
             assertThat(initialRoomList.first().timestamp).isEqualTo("Today")
             dateFormatterResult = "Yesterday"
             // Trigger a date change
-            dateTimeObserver.given(DateTimeObserver.Event.DateChanged(Instant.MIN, Instant.now()))
+            dateFormatter.revisions.value++
             // Check there is a new list and it's not the same as the previous one
             val newRoomList = awaitItem()
             assertThat(newRoomList).isNotSameInstanceAs(initialRoomList)
@@ -69,14 +64,13 @@ class RoomListDataSourceTest {
     }
 
     @Test
-    fun `when DateTimeObserver gets a time zone change, the room summaries are refreshed`() = runTest {
+    fun `when a calendar change revises date formatting, the room summaries are refreshed`() = runTest {
         val roomList = FakeDynamicRoomList(summaries = MutableStateFlow(listOf(aRoomSummary())))
         val roomListService = FakeRoomListService(
             createRoomListLambda = { roomList }
         ).apply {
             postState(RoomListService.State.Running)
         }
-        val dateTimeObserver = FakeDateTimeObserver()
         var dateFormatterResult = "Today"
         val dateFormatter = FakeDateFormatter { _, _, _ -> dateFormatterResult }
         val roomListDataSource = createRoomListDataSource(
@@ -84,7 +78,6 @@ class RoomListDataSourceTest {
             roomListRoomSummaryFactory = aRoomListRoomSummaryFactory(
                 dateFormatter = dateFormatter,
             ),
-            dateTimeObserver = dateTimeObserver,
         )
         roomListDataSource.roomSummariesFlow.test {
             // Observe room list items changes
@@ -95,7 +88,7 @@ class RoomListDataSourceTest {
             assertThat(initialRoomList.first().timestamp).isEqualTo("Today")
             dateFormatterResult = "Yesterday"
             // Trigger a timezone change
-            dateTimeObserver.given(DateTimeObserver.Event.TimeZoneChanged)
+            dateFormatter.revisions.value++
             // Check there is a new list and it's not the same as the previous one
             val newRoomList = awaitItem()
             assertThat(newRoomList).isNotSameInstanceAs(initialRoomList)
@@ -161,10 +154,10 @@ class RoomListDataSourceTest {
         ).apply {
             postState(RoomListService.State.Running)
         }
-        val dateTimeObserver = FakeDateTimeObserver()
+        val dateFormatter = FakeDateFormatter()
         val roomListDataSource = createRoomListDataSource(
             roomListService = roomListService,
-            dateTimeObserver = dateTimeObserver,
+            roomListRoomSummaryFactory = aRoomListRoomSummaryFactory(dateFormatter = dateFormatter),
             analyticsService = analyticsService,
         )
 
@@ -174,7 +167,7 @@ class RoomListDataSourceTest {
             assertThat(initial.map { it.roomId }).containsExactly(A_ROOM_ID, A_ROOM_ID_2).inOrder()
 
             // Midnight ticks while the cache holds [A_ROOM_ID, A_ROOM_ID_2]
-            dateTimeObserver.given(DateTimeObserver.Event.DateChanged(Instant.MIN, Instant.now()))
+            dateFormatter.revisions.value++
             val afterMidnight = awaitItem()
             assertThat(afterMidnight.map { it.roomId }).containsExactly(A_ROOM_ID, A_ROOM_ID_2).inOrder()
 
@@ -189,7 +182,7 @@ class RoomListDataSourceTest {
             assertThat(afterMessage.map { it.roomId }.toSet()).hasSize(afterMessage.size)
 
             // Second midnight rebuild after the new message
-            dateTimeObserver.given(DateTimeObserver.Event.DateChanged(Instant.MIN, Instant.now()))
+            dateFormatter.revisions.value++
             val afterSecondMidnight = awaitItem()
             assertThat(afterSecondMidnight.map { it.roomId }).containsExactly(A_ROOM_ID, A_ROOM_ID_2).inOrder()
             assertThat(afterSecondMidnight.map { it.roomId }.toSet()).hasSize(afterSecondMidnight.size)
@@ -199,14 +192,13 @@ class RoomListDataSourceTest {
     }
 
     @Test
-    fun `regression test for race with DateTimeObserver and new items`() = runTest {
+    fun `regression test for race with date formatting and new items`() = runTest {
         val roomList = FakeDynamicRoomList(summaries = MutableStateFlow(listOf(aRoomSummary(), aRoomSummary(A_ROOM_ID_2))))
         val roomListService = FakeRoomListService(
             createRoomListLambda = { roomList }
         ).apply {
             postState(RoomListService.State.Running)
         }
-        val dateTimeObserver = FakeDateTimeObserver()
         var dateFormatterResult = "Today"
         val dateFormatter = FakeDateFormatter { _, _, _ -> dateFormatterResult }
         val roomListDataSource = createRoomListDataSource(
@@ -214,7 +206,6 @@ class RoomListDataSourceTest {
             roomListRoomSummaryFactory = aRoomListRoomSummaryFactory(
                 dateFormatter = dateFormatter,
             ),
-            dateTimeObserver = dateTimeObserver,
         )
         roomListDataSource.roomSummariesFlow.test {
             // Observe room list items changes
@@ -233,7 +224,7 @@ class RoomListDataSourceTest {
             // Trigger a date change and a new item at the same time
             dateFormatterResult = "Yesterday"
             roomList.summaries.tryEmit(listOf(aRoomSummary(roomId = A_ROOM_ID), aRoomSummary(roomId = A_ROOM_ID_3), aRoomSummary(roomId = A_ROOM_ID_2)))
-            dateTimeObserver.given(DateTimeObserver.Event.DateChanged(Instant.MIN, Instant.now()))
+            dateFormatter.revisions.value++
 
             // The race condition would have caused the cache indices to be corrupted and only 2 items would be emitted
             val rebuiltRoomList = awaitItem()
@@ -264,7 +255,6 @@ class RoomListDataSourceTest {
         roomListService: FakeRoomListService = FakeRoomListService(),
         roomListRoomSummaryFactory: RoomListRoomSummaryFactory = aRoomListRoomSummaryFactory(),
         notificationSettingsService: FakeNotificationSettingsService = FakeNotificationSettingsService(),
-        dateTimeObserver: FakeDateTimeObserver = FakeDateTimeObserver(),
         analyticsService: FakeAnalyticsService = FakeAnalyticsService(),
     ) = RoomListDataSource(
         roomListService = roomListService,
@@ -272,7 +262,6 @@ class RoomListDataSourceTest {
         coroutineDispatchers = testCoroutineDispatchers(),
         notificationSettingsService = notificationSettingsService,
         sessionCoroutineScope = backgroundScope,
-        dateTimeObserver = dateTimeObserver,
         analyticsService = analyticsService,
     )
 }

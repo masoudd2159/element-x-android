@@ -27,6 +27,7 @@ import io.element.android.libraries.push.impl.store.DefaultPushDataStore.Compani
 import io.element.android.libraries.push.impl.store.DefaultPushDataStore.Companion.BATTERY_OPTIMIZATION_BANNER_STATE_INIT
 import io.element.android.libraries.push.impl.store.DefaultPushDataStore.Companion.BATTERY_OPTIMIZATION_BANNER_STATE_SHOW
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 @ContributesBinding(AppScope::class)
@@ -81,7 +82,7 @@ class DefaultPushDataStore(
         return pushDatabase.pushHistoryQueries.selectAll()
             .asFlow()
             .mapToList(dispatchers.io)
-            .map { items ->
+            .combine(dateFormatter.revisions) { items, _ ->
                 items.map { pushHistory ->
                     PushHistoryItem(
                         pushDate = pushHistory.pushDate,

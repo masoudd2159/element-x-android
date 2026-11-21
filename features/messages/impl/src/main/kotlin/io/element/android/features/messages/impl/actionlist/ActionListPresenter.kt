@@ -128,8 +128,17 @@ class DefaultActionListPresenter(
             }
         }
 
+        val dateRevision by dateFormatter.revisions.collectAsState()
+        val targetWithDate = remember(target.value, dateRevision) {
+            when (val current = target.value) {
+                is ActionListState.Target.Success -> current.copy(
+                    sentTimeFull = dateFormatter.format(current.event.sentTimeMillis, DateFormatterMode.Full, useRelative = true),
+                )
+                else -> current
+            }
+        }
         return ActionListState(
-            target = target.value,
+            target = targetWithDate,
             eventSink = ::handleEvent,
         )
     }
@@ -159,11 +168,7 @@ class DefaultActionListPresenter(
             val recentEmojis = getRecentEmojis().getOrNull()?.toImmutableList() ?: persistentListOf()
             target.value = ActionListState.Target.Success(
                 event = timelineItem,
-                sentTimeFull = dateFormatter.format(
-                    timelineItem.sentTimeMillis,
-                    DateFormatterMode.Full,
-                    useRelative = true,
-                ),
+                sentTimeFull = "",
                 displayEmojiReactions = displayEmojiReactions,
                 verifiedUserSendFailure = verifiedUserSendFailure,
                 actions = actions.toImmutableList(),

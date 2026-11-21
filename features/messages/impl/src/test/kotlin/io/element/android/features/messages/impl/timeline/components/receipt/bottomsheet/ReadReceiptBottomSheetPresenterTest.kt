@@ -10,6 +10,7 @@ package io.element.android.features.messages.impl.timeline.components.receipt.bo
 
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.messages.impl.timeline.aTimelineItemEvent
+import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.tests.testutils.WarmUpRule
 import io.element.android.tests.testutils.test
 import kotlinx.coroutines.test.runTest
@@ -44,5 +45,5 @@ class ReadReceiptBottomSheetPresenterTest {
         }
     }
 
-    private fun createPresenter() = ReadReceiptBottomSheetPresenter()
+    private fun createPresenter() = ReadReceiptBottomSheetPresenter(FakeDateFormatter())
 }

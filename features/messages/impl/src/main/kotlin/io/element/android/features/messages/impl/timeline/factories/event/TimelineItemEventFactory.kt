@@ -31,6 +31,7 @@ import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.permalink.PermalinkParser
 import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
 import io.element.android.libraries.matrix.api.timeline.item.EventThreadInfo
+import io.element.android.libraries.matrix.api.timeline.item.event.LiveLocationContent
 import io.element.android.libraries.matrix.api.timeline.item.event.getAvatarUrl
 import io.element.android.libraries.matrix.api.timeline.item.event.getDisambiguatedDisplayName
 import io.element.android.libraries.matrix.ui.messages.reply.map
@@ -53,6 +54,8 @@ class TimelineItemEventFactory(
         fun create(config: TimelineItemsFactoryConfig): TimelineItemEventFactory
     }
 
+    val dateRevisions get() = dateFormatter.revisions
+
     suspend fun create(
         currentTimelineItem: MatrixTimelineItem.Event,
         index: Int,
@@ -62,15 +65,6 @@ class TimelineItemEventFactory(
         val groupPosition =
             computeGroupPosition(currentTimelineItem, timelineItems, index)
         val senderProfile = currentTimelineItem.event.senderProfile
-        val sentTime = dateFormatter.format(
-            timestamp = currentTimelineItem.event.timestamp,
-            mode = DateFormatterMode.TimeOnly,
-        )
-        val sentDate = dateFormatter.format(
-            timestamp = currentTimelineItem.event.timestamp,
-            mode = DateFormatterMode.Day,
-            useRelative = true,
-        )
         val senderAvatarData = AvatarData(
             id = currentSender.value,
             name = senderProfile.getDisambiguatedDisplayName(currentSender),
@@ -112,8 +106,8 @@ class TimelineItemEventFactory(
             isEditable = currentTimelineItem.event.isEditable,
             canBeRepliedTo = currentTimelineItem.event.canBeRepliedTo,
             sentTimeMillis = currentTimelineItem.event.timestamp,
-            sentTime = sentTime,
-            sentDate = sentDate,
+            sentTime = formatTime(currentTimelineItem.event.timestamp),
+            sentDate = formatDay(currentTimelineItem.event.timestamp),
             groupPosition = groupPosition,
             reactionsState = currentTimelineItem.computeReactionsState(),
             readReceiptState = currentTimelineItem.computeReadReceiptState(),
@@ -130,6 +124,20 @@ class TimelineItemEventFactory(
             forwarderProfile = currentTimelineItem.event.forwarderProfile,
         )
     }
+
+    suspend fun refreshDates(cached: TimelineItem.Event, item: MatrixTimelineItem.Event): TimelineItem.Event {
+        return cached.copy(
+            sentTime = formatTime(cached.sentTimeMillis),
+            sentDate = formatDay(cached.sentTimeMillis),
+            reactionsState = item.computeReactionsState(),
+            readReceiptState = item.computeReadReceiptState(),
+            content = if (item.event.content is LiveLocationContent) contentFactory.create(item.event) else cached.content,
+        )
+    }
+
+    private fun formatTime(timestamp: Long) = dateFormatter.format(timestamp, DateFormatterMode.TimeOnly)
+
+    private fun formatDay(timestamp: Long) = dateFormatter.format(timestamp, DateFormatterMode.Day, useRelative = true)
 
     private fun MatrixTimelineItem.Event.computeReactionsState(): TimelineItemReactions {
         if (!config.computeReactions) {
@@ -179,6 +187,7 @@ class TimelineItemEventFactory(
                 .map { receipt ->
                     ReadReceiptData(
                         userId = receipt.userId,
+                        timestamp = receipt.timestamp,
                         formattedDate = dateFormatter.format(
                             receipt.timestamp,
                             mode = DateFormatterMode.TimeOrDate,

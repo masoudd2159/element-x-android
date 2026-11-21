@@ -24,6 +24,7 @@ import io.element.android.features.preferences.impl.account.PreferencesAccountSt
 import io.element.android.features.preferences.impl.userstatus.UserStatusState
 import io.element.android.features.preferences.impl.utils.ShowDeveloperSettingsProvider
 import io.element.android.libraries.architecture.Presenter
+import io.element.android.libraries.dateformatter.api.CalendarPreferences
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
@@ -65,6 +66,7 @@ class PreferencesRootPresenter(
     private val sessionStore: SessionStore,
     private val matrixClientProvider: MatrixClientProvider,
     private val appPreferencesStore: AppPreferencesStore,
+    private val calendarPreferences: CalendarPreferences,
     private val userStatusPresenter: Presenter<UserStatusState>,
     private val preferencesAccountPresenter: Presenter<PreferencesAccountState>,
     @SessionCoroutineScope
@@ -96,6 +98,7 @@ class PreferencesRootPresenter(
             appPreferencesStore.getThemeFlow().mapToTheme(isBlackThemeAllowed)
         }.collectAsState(initial = Theme.System)
 
+        val calendarType by calendarPreferences.calendarType.collectAsState()
         val messageTextSize by remember {
             appPreferencesStore.getMessageTextSizeFlow()
         }.collectAsState(initial = MessageTextSize.DEFAULT)
@@ -150,6 +153,7 @@ class PreferencesRootPresenter(
                 PreferencesRootEvent.ToggleOtherAccountsExpanded -> coroutineScope.launch {
                     appPreferencesStore.setOtherAccountsExpanded(!isOtherAccountsSectionExpanded)
                 }
+                is PreferencesRootEvent.SetCalendarType -> calendarPreferences.selectCalendar(event.type)
                 is PreferencesRootEvent.SetTheme -> sessionCoroutineScope.launch {
                     when (event.theme) {
                         ThemeOption.System -> appPreferencesStore.setTheme(Theme.System.name)
@@ -167,6 +171,7 @@ class PreferencesRootPresenter(
             preferencesAccountState = preferencesAccountState,
             theme = themeOption,
             messageTextSize = messageTextSize,
+            calendarType = calendarType,
             availableThemeOptions = availableThemeOptions,
             version = remember { versionFormatter.get() },
             isMultiAccountEnabled = isMultiAccountEnabled,

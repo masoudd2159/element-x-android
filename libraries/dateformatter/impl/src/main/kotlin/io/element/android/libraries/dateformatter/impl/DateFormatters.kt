@@ -8,19 +8,25 @@
 
 package io.element.android.libraries.dateformatter.impl
 
+import android.content.Context
+import android.icu.text.RelativeDateTimeFormatter
+import android.text.format.DateFormat
 import android.text.format.DateUtils
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.element.android.libraries.di.annotations.ApplicationContext
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import timber.log.Timber
 import java.time.Period
 import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @Inject
@@ -29,20 +35,30 @@ class DateFormatters(
     private val clock: Clock,
     private val timeZoneProvider: TimezoneProvider,
     locale: Locale,
+    @ApplicationContext private val context: Context? = null,
 ) : LocaleChangeListener {
     init {
         localeChangeObserver.addListener(this)
     }
 
-    private var dateTimeFormatters: DateTimeFormatters = DateTimeFormatters(locale)
+    @Volatile
+    private var dateTimeFormatters: DateTimeFormatters = DateTimeFormatters(applicationLocale() ?: locale)
 
     override fun onLocaleChange() {
         Timber.w("Locale changed, updating formatters")
-        dateTimeFormatters = DateTimeFormatters(Locale.getDefault())
+        dateTimeFormatters = DateTimeFormatters(applicationLocale() ?: Locale.getDefault())
     }
 
+    internal fun applicationLocale(): Locale? = context?.resources?.configuration?.locales?.get(0)
+
     internal fun formatTime(localDateTime: LocalDateTime): String {
-        return dateTimeFormatters.onlyTimeFormatter.format(localDateTime.toJavaLocalDateTime())
+        val formatters = dateTimeFormatters
+        val formatter = when (context?.let(DateFormat::is24HourFormat)) {
+            true -> formatters.time24HourFormatter
+            false -> formatters.time12HourFormatter
+            null -> formatters.onlyTimeFormatter
+        }
+        return formatter.format(localDateTime.toJavaLocalDateTime())
     }
 
     internal fun formatDateWithMonthAndYear(localDateTime: LocalDateTime): String {
@@ -85,6 +101,21 @@ class DateFormatters(
     }
 
     internal fun getRelativeDay(ts: Long, default: String = ""): String {
+        val appLocale = applicationLocale()
+        if (appLocale != null && appLocale != Locale.getDefault()) {
+            val zone = timeZoneProvider.provide()
+            val today = clock.now().toLocalDateTime(zone).date
+            val day = Instant.fromEpochMilliseconds(ts).toLocalDateTime(zone).date
+            val direction = when (today.toEpochDays() - day.toEpochDays()) {
+                0L -> RelativeDateTimeFormatter.Direction.THIS
+                1L -> RelativeDateTimeFormatter.Direction.LAST
+                -1L -> RelativeDateTimeFormatter.Direction.NEXT
+                else -> null
+            }
+            if (direction != null) {
+                return RelativeDateTimeFormatter.getInstance(appLocale).format(direction, RelativeDateTimeFormatter.AbsoluteUnit.DAY)
+            }
+        }
         return DateUtils.getRelativeTimeSpanString(
             ts,
             clock.now().toEpochMilliseconds(),

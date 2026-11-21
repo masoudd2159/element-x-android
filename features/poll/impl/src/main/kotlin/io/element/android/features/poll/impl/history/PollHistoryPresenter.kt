@@ -29,7 +29,7 @@ import io.element.android.libraries.di.annotations.SessionCoroutineScope
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -47,7 +47,7 @@ class PollHistoryPresenter(
         val timeline = room.liveTimeline
         val paginationState by timeline.backwardPaginationStatus.collectAsState()
         val pollHistoryItemsFlow = remember {
-            timeline.timelineItems.map { items ->
+            timeline.timelineItems.combine(pollHistoryItemFactory.dateRevisions) { items, _ ->
                 pollHistoryItemFactory.create(items)
             }
         }

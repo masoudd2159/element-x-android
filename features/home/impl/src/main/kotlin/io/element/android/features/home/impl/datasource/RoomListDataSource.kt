@@ -13,7 +13,6 @@ import dev.zacsweers.metro.SingleIn
 import io.element.android.features.home.impl.model.RoomListRoomSummary
 import io.element.android.libraries.androidutils.diff.DiffCacheUpdater
 import io.element.android.libraries.androidutils.diff.MutableListDiffCache
-import io.element.android.libraries.androidutils.system.DateTimeObserver
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
@@ -58,14 +57,8 @@ class RoomListDataSource(
     private val notificationSettingsService: NotificationSettingsService,
     @SessionCoroutineScope
     private val sessionCoroutineScope: CoroutineScope,
-    private val dateTimeObserver: DateTimeObserver,
     private val analyticsService: AnalyticsService,
 ) {
-    init {
-        observeNotificationSettings()
-        observeDateTimeChanges()
-    }
-
     private val roomList = roomListService.createRoomList(
         pageSize = PAGE_SIZE,
         source = RoomList.Source.All,
@@ -82,6 +75,15 @@ class RoomListDataSource(
     val roomSummariesFlow: Flow<ImmutableList<RoomListRoomSummary>> = _roomSummariesFlow
 
     val loadingState = roomList.loadingState
+
+    private var appliedDateRevision = roomListRoomSummaryFactory.dateRevisions.value
+
+    init {
+        observeNotificationSettings()
+        roomListRoomSummaryFactory.dateRevisions
+            .onEach { rebuildAllRoomSummaries() }
+            .launchIn(sessionCoroutineScope)
+    }
 
     fun launchIn(coroutineScope: CoroutineScope): Job {
         return roomList
@@ -134,21 +136,12 @@ class RoomListDataSource(
             .launchIn(sessionCoroutineScope)
     }
 
-    private fun observeDateTimeChanges() {
-        dateTimeObserver.changes
-            .onEach { event ->
-                when (event) {
-                    is DateTimeObserver.Event.TimeZoneChanged -> rebuildAllRoomSummaries()
-                    is DateTimeObserver.Event.DateChanged -> rebuildAllRoomSummaries()
-                }
-            }
-            .launchIn(sessionCoroutineScope)
-    }
-
     private suspend fun replaceWith(roomSummaries: List<RoomSummary>) = withContext(coroutineDispatchers.computation) {
         lock.withLock {
             diffCacheUpdater.updateWith(roomSummaries)
-            buildAndEmitAllRooms(roomSummaries)
+            val dateRevision = roomListRoomSummaryFactory.dateRevisions.value
+            buildAndEmitAllRooms(roomSummaries, useCache = appliedDateRevision == dateRevision)
+            appliedDateRevision = dateRevision
         }
     }
 
@@ -209,11 +202,15 @@ class RoomListDataSource(
         return roomListSummary
     }
 
-    private suspend fun rebuildAllRoomSummaries() {
+    private suspend fun rebuildAllRoomSummaries() = withContext(coroutineDispatchers.computation) {
         lock.withLock {
-            roomList.summaries.replayCache.firstOrNull()?.let { roomSummaries ->
-                diffCacheUpdater.updateWith(roomSummaries)
-                buildAndEmitAllRooms(roomSummaries, useCache = false)
+            val dateRevision = roomListRoomSummaryFactory.dateRevisions.value
+            if (appliedDateRevision != dateRevision) {
+                roomList.summaries.replayCache.firstOrNull()?.let { roomSummaries ->
+                    diffCacheUpdater.updateWith(roomSummaries)
+                    buildAndEmitAllRooms(roomSummaries, useCache = false)
+                    appliedDateRevision = dateRevision
+                }
             }
         }
     }

@@ -13,7 +13,6 @@ import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.api.AnnouncementService
 import io.element.android.features.announcement.test.FakeAnnouncementService
-import io.element.android.features.home.impl.FakeDateTimeObserver
 import io.element.android.features.home.impl.datasource.RoomListDataSource
 import io.element.android.features.home.impl.datasource.aRoomListRoomSummaryFactory
 import io.element.android.features.home.impl.filters.RoomListFiltersState
@@ -783,7 +782,6 @@ class RoomListPresenterTest {
             coroutineDispatchers = testCoroutineDispatchers(),
             notificationSettingsService = client.notificationSettingsService,
             sessionCoroutineScope = backgroundScope,
-            dateTimeObserver = FakeDateTimeObserver(),
             analyticsService = FakeAnalyticsService(),
         ),
         searchPresenter = searchPresenter,

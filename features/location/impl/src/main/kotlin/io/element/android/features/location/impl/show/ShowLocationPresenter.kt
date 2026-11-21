@@ -139,7 +139,8 @@ class ShowLocationPresenter(
 
         val locationShares = when (mode) {
             is ShowLocationMode.Static -> {
-                remember {
+                val dateRevision by dateFormatter.revisions.collectAsState()
+                remember(dateRevision) {
                     val relativeTime = dateFormatter.format(timestamp = mode.timestamp, mode = DateFormatterMode.Full, useRelative = true)
                     val formattedTimestamp = stringProvider.getString(
                         R.string.screen_static_location_sheet_timestamp_description,
@@ -169,7 +170,7 @@ class ShowLocationPresenter(
                     val comparator = LiveLocationShareComparator(currentUser = joinedRoom.sessionId)
                     val liveLocationSharesFlow = joinedRoom.subscribeToLiveLocationShares()
                     val membersStateFlow = joinedRoom.membersStateFlow.mapState { it.joinedRoomMembers() }
-                    combine(liveLocationSharesFlow, membersStateFlow) { liveShares, members ->
+                    combine(liveLocationSharesFlow, membersStateFlow, dateFormatter.revisions) { liveShares, members, _ ->
                         liveShares.sortedWith(comparator).mapNotNull { share ->
                             val lastLocation = share.lastLocation ?: return@mapNotNull null
                             val location = Location.fromGeoUri(lastLocation.geoUri) ?: return@mapNotNull null

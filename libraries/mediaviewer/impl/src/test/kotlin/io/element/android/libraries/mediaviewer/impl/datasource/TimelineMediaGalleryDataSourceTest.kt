@@ -271,8 +271,9 @@ class TimelineMediaGalleryDataSourceTest {
                                     senderId = A_USER_ID,
                                     senderName = "alice",
                                     senderAvatar = null,
-                                    dateSent = "0 Day false",
-                                    dateSentFull = "0 Full false",
+                                    dateSent = null,
+                                    dateSentFull = null,
+                                    sentTimestamp = 0L,
                                     waveform = null,
                                     duration = null
                                 ),
@@ -314,7 +315,6 @@ fun TestScope.createTimelineMediaItemsFactory() = TimelineMediaItemsFactory(
     eventItemFactory = EventItemFactory(
         fileSizeFormatter = FakeFileSizeFormatter(),
         fileExtensionExtractor = FileExtensionExtractorWithoutValidation(),
-        dateFormatter = FakeDateFormatter(),
         contentValidationCache = NoopEventContentValidationCache(noopValidationState),
     )
 )

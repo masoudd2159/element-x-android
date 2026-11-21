@@ -49,6 +49,7 @@ setupDependencyInjection()
 dependencies {
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.core)
+    implementation(projects.libraries.dateformatter.api)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.designsystem)

@@ -8,14 +8,26 @@
 
 package io.element.android.libraries.dateformatter.api
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+private val unchangedDateFormat = MutableStateFlow(0L).asStateFlow()
+
 /**
  * Formats timestamps for display, in the user's locale and time zone.
  */
 interface DateFormatter {
+    /** Changes when cached date labels must be refreshed. */
+    val revisions: StateFlow<Long> get() = unchangedDateFormat
+
+    /** Identifies a local calendar month independently of its display label. */
+    fun monthKey(timestamp: Long): Long? = null
+
     /**
      * Formats a timestamp according to [mode].
      *
-     * @param timestamp milliseconds since the epoch; a `null` value yields an empty string, so callers need no null check of their own.
+     * @param timestamp milliseconds since the epoch; a `null` value yields an empty string. Dates can also be empty while settings load.
      * @param mode how much of the date and time to include; see [DateFormatterMode] for examples of each.
      * @param useRelative true to prefer wording relative to today, such as "Today" or "This month", where the mode allows it.
      */

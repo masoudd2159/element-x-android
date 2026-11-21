@@ -24,11 +24,14 @@ import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
 import io.element.android.libraries.matrix.api.timeline.item.event.EventTimelineItem
 import io.element.android.libraries.matrix.api.timeline.item.event.MessageContent
 import io.element.android.libraries.matrix.api.timeline.item.event.OtherMessageType
+import io.element.android.libraries.matrix.api.timeline.item.virtual.VirtualTimelineItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -65,16 +68,38 @@ class TimelineItemsFactory(
         }
     }
 
-    val timelineItems: Flow<ImmutableList<TimelineItem>> = _timelineItems.distinctUntilChanged()
+    private val dateRevisions = eventItemFactory.dateRevisions
+    private var appliedDateRevision = dateRevisions.value
+    private var latestTimelineItems: List<MatrixTimelineItem>? = null
+
+    val timelineItems: Flow<ImmutableList<TimelineItem>> = channelFlow {
+        launch { _timelineItems.collect { send(it) } }
+        dateRevisions.collect { refreshDates() }
+    }.distinctUntilChanged()
+
+    private suspend fun refreshDates() = withContext(dispatchers.computation) {
+        lock.withLock {
+            val revision = dateRevisions.value
+            val items = latestTimelineItems
+            if (items != null && appliedDateRevision != revision) {
+                buildAndEmitTimelineItemStates(items, revision)
+                appliedDateRevision = revision
+            }
+        }
+    }
 
     suspend fun replaceWith(timelineItems: List<MatrixTimelineItem>) = withContext(dispatchers.computation) {
         lock.withLock {
             diffCacheUpdater.updateWith(timelineItems)
-            buildAndEmitTimelineItemStates(timelineItems)
+            latestTimelineItems = timelineItems
+            val revision = dateRevisions.value
+            buildAndEmitTimelineItemStates(timelineItems, revision)
+            appliedDateRevision = revision
         }
     }
 
-    private suspend fun buildAndEmitTimelineItemStates(timelineItems: List<MatrixTimelineItem>) {
+    private suspend fun buildAndEmitTimelineItemStates(timelineItems: List<MatrixTimelineItem>, revision: Long) {
+        val refreshDates = appliedDateRevision != revision
         val newTimelineItemStates = ArrayList<TimelineItem>()
         for (index in diffCache.indices().reversed()) {
             val cacheItem = diffCache.get(index)
@@ -83,13 +108,26 @@ class TimelineItemsFactory(
                     newTimelineItemStates.add(timelineItemState)
                 }
             } else {
-                newTimelineItemStates.add(cacheItem)
+                val updatedItem = if (refreshDates) {
+                    refreshCachedDate(cacheItem, timelineItems[index]).also { diffCache[index] = it }
+                } else {
+                    cacheItem
+                }
+                newTimelineItemStates.add(updatedItem)
             }
         }
+        if (dateRevisions.value != revision) return
+
         val result = timelineItemGrouper.group(newTimelineItemStates)
             .withoutReadMarkerAtTheBottom()
             .toImmutableList()
         this._timelineItems.emit(result)
+    }
+
+    private suspend fun refreshCachedDate(cached: TimelineItem, item: MatrixTimelineItem): TimelineItem = when {
+        cached is TimelineItem.Event && item is MatrixTimelineItem.Event -> eventItemFactory.refreshDates(cached, item)
+        item is MatrixTimelineItem.Virtual && item.virtual is VirtualTimelineItem.DayDivider -> virtualItemFactory.create(item)
+        else -> cached
     }
 
     /**

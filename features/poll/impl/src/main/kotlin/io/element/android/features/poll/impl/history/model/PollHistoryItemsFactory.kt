@@ -24,6 +24,8 @@ class PollHistoryItemsFactory(
     private val dateFormatter: DateFormatter,
     private val dispatchers: CoroutineDispatchers,
 ) {
+    val dateRevisions get() = dateFormatter.revisions
+
     suspend fun create(timelineItems: List<MatrixTimelineItem>): PollHistoryItems = withContext(dispatchers.computation) {
         val past = ArrayList<PollHistoryItem>()
         val ongoing = ArrayList<PollHistoryItem>()

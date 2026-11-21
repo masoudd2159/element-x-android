@@ -10,8 +10,10 @@ package io.element.android.libraries.dateformatter.test
 
 import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.dateformatter.api.DateFormatterMode
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeDateFormatter(
+    override val revisions: MutableStateFlow<Long> = MutableStateFlow(0L),
     private val formatLambda: (Long?, DateFormatterMode, Boolean) -> String = { timestamp, mode, useRelative ->
         "$timestamp $mode $useRelative"
     },

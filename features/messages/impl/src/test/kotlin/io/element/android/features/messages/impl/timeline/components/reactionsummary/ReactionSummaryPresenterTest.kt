@@ -10,6 +10,7 @@ package io.element.android.features.messages.impl.timeline.components.reactionsu
 
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.messages.impl.timeline.model.anAggregatedReaction
+import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.matrix.api.room.RoomMembersState
 import io.element.android.libraries.matrix.test.AN_AVATAR_URL
 import io.element.android.libraries.matrix.test.AN_EVENT_ID
@@ -34,7 +35,7 @@ class ReactionSummaryPresenterTest {
     private val room = FakeBaseRoom().apply {
         givenRoomMembersState(RoomMembersState.Ready(persistentListOf(roomMember)))
     }
-    private val presenter = ReactionSummaryPresenter(room)
+    private val presenter = ReactionSummaryPresenter(room, FakeDateFormatter())
 
     @Test
     fun `present - handle showing and hiding the reaction summary`() = runTest {

@@ -10,8 +10,6 @@ package io.element.android.libraries.mediaviewer.impl.datasource
 
 import dev.zacsweers.metro.Inject
 import io.element.android.libraries.androidutils.filesize.FileSizeFormatter
-import io.element.android.libraries.dateformatter.api.DateFormatter
-import io.element.android.libraries.dateformatter.api.DateFormatterMode
 import io.element.android.libraries.dateformatter.api.toHumanReadableDuration
 import io.element.android.libraries.matrix.api.core.UniqueId
 import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
@@ -56,21 +54,12 @@ import timber.log.Timber
 class EventItemFactory(
     private val fileSizeFormatter: FileSizeFormatter,
     private val fileExtensionExtractor: FileExtensionExtractor,
-    private val dateFormatter: DateFormatter,
     private val contentValidationCache: EventContentValidationCache,
 ) {
     fun create(
         currentTimelineItem: MatrixTimelineItem.Event,
     ): List<MediaItem.Event> {
         val event = currentTimelineItem.event
-        val dateSent = dateFormatter.format(
-            currentTimelineItem.event.timestamp,
-            mode = DateFormatterMode.Day,
-        )
-        val dateSentFull = dateFormatter.format(
-            timestamp = currentTimelineItem.event.timestamp,
-            mode = DateFormatterMode.Full,
-        )
         val validationState = currentTimelineItem.eventId?.let { contentValidationCache[it] }
             ?: NoopContentValidationState()
         return when (val content = event.content) {
@@ -117,8 +106,6 @@ class EventItemFactory(
                                             mimeType = c.info?.mimetype.orEmpty(),
                                             fileExtension = c.filename,
                                             event = event,
-                                            dateSent = dateSent,
-                                            dateSentFull = dateSentFull,
                                         ),
                                         mediaSource = c.source,
                                         thumbnailSource = c.info?.thumbnailSource,
@@ -138,8 +125,6 @@ class EventItemFactory(
                                             mimeType = c.info?.mimetype.orEmpty(),
                                             fileExtension = c.filename,
                                             event = event,
-                                            dateSent = dateSent,
-                                            dateSentFull = dateSentFull,
                                             duration = c.info?.duration?.inWholeMilliseconds?.toHumanReadableDuration(),
                                         ),
                                         mediaSource = c.source,
@@ -160,8 +145,6 @@ class EventItemFactory(
                                             mimeType = c.info?.mimetype.orEmpty(),
                                             fileExtension = c.filename,
                                             event = event,
-                                            dateSent = dateSent,
-                                            dateSentFull = dateSentFull,
                                         ),
                                         mediaSource = c.source,
                                         validationState = validationState,
@@ -179,8 +162,6 @@ class EventItemFactory(
                                             mimeType = c.info?.mimetype.orEmpty(),
                                             fileExtension = c.filename,
                                             event = event,
-                                            dateSent = dateSent,
-                                            dateSentFull = dateSentFull,
                                         ),
                                         mediaSource = c.source,
                                         validationState = validationState,
@@ -204,8 +185,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = null,
                             duration = null,
                         ),
@@ -226,8 +206,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = null,
                             duration = null,
                         ),
@@ -249,8 +228,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = null,
                             duration = null,
                         ),
@@ -273,8 +251,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = null,
                             duration = null,
                         ),
@@ -297,8 +274,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = null,
                             duration = type.info?.duration?.inWholeMilliseconds?.toHumanReadableDuration(),
                         ),
@@ -321,8 +297,7 @@ class EventItemFactory(
                             senderId = event.sender,
                             senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
                             senderAvatar = event.senderProfile.getAvatarUrl(),
-                            dateSent = dateSent,
-                            dateSentFull = dateSentFull,
+                            sentTimestamp = event.timestamp,
                             waveform = type.details?.waveform.orEmpty(),
                             duration = type.info?.duration?.inWholeMilliseconds?.toHumanReadableDuration(),
                         ),
@@ -342,8 +317,6 @@ class EventItemFactory(
         mimeType: String,
         fileExtension: String,
         event: io.element.android.libraries.matrix.api.timeline.item.event.EventTimelineItem,
-        dateSent: String,
-        dateSentFull: String,
         waveform: List<Float>? = null,
         duration: String? = null,
     ) = MediaInfo(
@@ -357,8 +330,7 @@ class EventItemFactory(
         senderId = event.sender,
         senderName = event.senderProfile.getDisambiguatedDisplayName(event.sender),
         senderAvatar = event.senderProfile.getAvatarUrl(),
-        dateSent = dateSent,
-        dateSentFull = dateSentFull,
+        sentTimestamp = event.timestamp,
         waveform = waveform,
         duration = duration,
     )

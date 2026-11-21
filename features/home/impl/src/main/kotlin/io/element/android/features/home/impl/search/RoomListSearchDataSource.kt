@@ -24,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 
 private const val PAGE_SIZE = 30
 
@@ -49,7 +49,7 @@ class RoomListSearchDataSource(
     val loadingState = roomList.loadingState
 
     val roomSummaries: Flow<ImmutableList<RoomListRoomSummary>> = roomList.summaries
-        .map { roomSummaries ->
+        .combine(roomSummaryFactory.dateRevisions) { roomSummaries, _ ->
             roomSummaries
                 .map(roomSummaryFactory::create)
                 .toImmutableList()

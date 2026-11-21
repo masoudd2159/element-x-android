@@ -87,8 +87,6 @@ import io.element.android.libraries.architecture.overlay.Overlay
 import io.element.android.libraries.architecture.overlay.operation.hide
 import io.element.android.libraries.architecture.overlay.operation.show
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
-import io.element.android.libraries.dateformatter.api.DateFormatter
-import io.element.android.libraries.dateformatter.api.DateFormatterMode
 import io.element.android.libraries.dateformatter.api.toHumanReadableDuration
 import io.element.android.libraries.designsystem.components.async.AsyncIndicator
 import io.element.android.libraries.designsystem.components.async.AsyncIndicatorHost
@@ -153,7 +151,6 @@ class MessagesFlowNode(
     private val pinnedEventsTimelineProvider: DefaultPinnedEventsTimelineProvider,
     private val timelineController: TimelineController,
     private val knockRequestsListEntryPoint: KnockRequestsListEntryPoint,
-    private val dateFormatter: DateFormatter,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val hasVulkanSupport: DeviceHasVulkanSupport,
 ) : BaseFlowNode<MessagesFlowNode.NavTarget>(
@@ -852,14 +849,7 @@ class MessagesFlowNode(
                     senderId = event.senderId,
                     senderName = event.safeSenderName,
                     senderAvatar = event.senderAvatar.url,
-                    dateSent = dateFormatter.format(
-                        event.sentTimeMillis,
-                        mode = DateFormatterMode.Day,
-                    ),
-                    dateSentFull = dateFormatter.format(
-                        timestamp = event.sentTimeMillis,
-                        mode = DateFormatterMode.Full,
-                    ),
+                    sentTimestamp = event.sentTimeMillis,
                     initialIndex = galleryItemIndex,
                 )
                 val galleryItems = event.content.items.map { galleryItem ->
@@ -886,14 +876,7 @@ class MessagesFlowNode(
                     senderId = event.senderId,
                     senderName = event.safeSenderName,
                     senderAvatar = event.senderAvatar.url,
-                    dateSent = dateFormatter.format(
-                        event.sentTimeMillis,
-                        mode = DateFormatterMode.Day,
-                    ),
-                    dateSentFull = dateFormatter.format(
-                        timestamp = event.sentTimeMillis,
-                        mode = DateFormatterMode.Full,
-                    ),
+                    sentTimestamp = event.sentTimeMillis,
                     initialIndex = galleryItemIndex,
                 )
                 val galleryItems = event.content.attachments.map { attachment ->
@@ -957,14 +940,7 @@ class MessagesFlowNode(
                 senderId = event.senderId,
                 senderName = event.safeSenderName,
                 senderAvatar = event.senderAvatar.url,
-                dateSent = dateFormatter.format(
-                    event.sentTimeMillis,
-                    mode = DateFormatterMode.Day,
-                ),
-                dateSentFull = dateFormatter.format(
-                    timestamp = event.sentTimeMillis,
-                    mode = DateFormatterMode.Full,
-                ),
+                sentTimestamp = event.sentTimeMillis,
                 waveform = (content as? TimelineItemVoiceContent)?.waveform,
                 duration = content.duration()?.toHumanReadableDuration(),
             ),

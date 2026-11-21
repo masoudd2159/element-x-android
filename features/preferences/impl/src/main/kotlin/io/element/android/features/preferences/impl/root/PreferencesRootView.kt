@@ -230,6 +230,9 @@ private fun AppSettingsSection(
                 state.eventSink(PreferencesRootEvent.SetTheme(themeOption))
             }
         )
+        CalendarPreferenceDropdown(state.calendarType) { type ->
+            state.eventSink(PreferencesRootEvent.SetCalendarType(type))
+        }
         ListItem(
             content = { Text(stringResource(id = R.string.screen_settings_message_text_size_title)) },
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.TextFormatting())),

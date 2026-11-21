@@ -34,7 +34,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.datastore.preferences)
+    implementation(projects.libraries.androidutils)
     implementation(projects.libraries.core)
+    implementation(projects.libraries.preferences.api)
     implementation(projects.libraries.designsystem)
     implementation(projects.libraries.di)
     implementation(projects.services.toolbox.api)

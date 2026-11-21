@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_settings_calendar_type">نوع تقویم</string>
+    <string name="screen_settings_calendar_persian">شمسی</string>
+    <string name="screen_settings_calendar_gregorian">میلادی</string>
+    <string name="screen_settings_calendar_hijri">قمری</string>
+</resources>

@@ -14,6 +14,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,7 @@ import io.element.android.features.messages.api.timeline.TextPillificator
 import io.element.android.libraries.androidutils.text.safeLinkify
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.architecture.Presenter
+import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
@@ -48,6 +50,7 @@ import io.element.android.libraries.mediaviewer.api.MediaViewerEntryPoint
 import io.element.android.libraries.mediaviewer.api.local.LocalMedia
 import io.element.android.libraries.mediaviewer.impl.R
 import io.element.android.libraries.mediaviewer.impl.details.MediaBottomSheetState
+import io.element.android.libraries.mediaviewer.impl.details.withCalendarDates
 import io.element.android.libraries.mediaviewer.impl.local.LocalMediaActions
 import io.element.android.libraries.mediaviewer.impl.model.MediaPermissions
 import io.element.android.libraries.mediaviewer.impl.model.mediaPermissions
@@ -57,6 +60,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.jsoup.nodes.Document
 import io.element.android.libraries.androidutils.R as UtilsR
@@ -73,6 +77,7 @@ class MediaViewerPresenter(
     private val textPillificator: TextPillificator,
     private val htmlMessageParser: HtmlMessageParser,
     private val featureFlagService: FeatureFlagService,
+    private val dateFormatter: DateFormatter,
 ) : Presenter<MediaViewerState> {
     @AssistedFactory
     fun interface Factory {
@@ -108,12 +113,19 @@ class MediaViewerPresenter(
             mutableIntStateOf(firstIndex)
         }
         val data = dataSource.produceState { flow ->
-            flow.collectLatest { items ->
+            flow.combine(dateFormatter.revisions) { items, _ -> items }.collectLatest { items ->
                 val isComposeRendererEnabled = featureFlagService.isFeatureEnabled(FeatureFlags.NewTimelineEventRenderer)
-                val new = items.map { it.withFormattedCaption(isComposeRendererEnabled) }
+                val new = items.map { item ->
+                    val withCaption = item.withFormattedCaption(isComposeRendererEnabled)
+                    if (withCaption is MediaViewerPageData.MediaViewerData) {
+                        withCaption.copy(mediaInfo = withCaption.mediaInfo.withCalendarDates(dateFormatter))
+                    } else {
+                        withCaption
+                    }
+                }
                 val existingItem = value.getOrNull(currentIndex.intValue)
                 val newItem = new.getOrNull(currentIndex.intValue)
-                if (existingItem is MediaViewerPageData.MediaViewerData && existingItem.eventId == eventId && newItem != existingItem) {
+                if (existingItem is MediaViewerPageData.MediaViewerData && existingItem.eventId == eventId && newItem?.pagerKey != existingItem.pagerKey) {
                     currentIndex.intValue = dataSource.findEventIndex(eventId, mediaSource) ?: 0
                 } else if (currentIndex.intValue > 0 && value.firstOrNull() is MediaViewerPageData.Loading &&
                     new.firstOrNull() !is MediaViewerPageData.Loading) {
@@ -211,13 +223,14 @@ class MediaViewerPresenter(
             }
         }
 
+        val dateRevision by dateFormatter.revisions.collectAsState()
         return MediaViewerState(
             initiallySelectedEventId = eventId,
             listData = data.value,
             currentIndex = currentIndex.intValue,
             snackbarMessage = snackbarMessage,
             canShowInfo = inputs !is MediaViewerEntryPoint.Params.Avatar,
-            mediaBottomSheetState = mediaBottomSheetState,
+            mediaBottomSheetState = mediaBottomSheetState.withCalendarDates(dateFormatter, dateRevision),
             currentUserId = room.sessionId,
             eventSink = ::handleEvent,
         )

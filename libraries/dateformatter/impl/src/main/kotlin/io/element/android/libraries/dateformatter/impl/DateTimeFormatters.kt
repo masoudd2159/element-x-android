@@ -20,8 +20,16 @@ class DateTimeFormatters(
         DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
     }
 
+    val time24HourFormatter: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(bestDateTimePattern("Hm"), locale)
+    }
+
+    val time12HourFormatter: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(bestDateTimePattern("hm"), locale)
+    }
+
     val dateWithMonthAndYearFormatter: DateTimeFormatter by lazy {
-        val pattern = bestDateTimePattern("MMMM YYYY")
+        val pattern = bestDateTimePattern("yMMMM")
         DateTimeFormatter.ofPattern(pattern, locale)
     }
 

@@ -20,9 +20,10 @@ data class GalleryInfo(
     val senderId: UserId?,
     val senderName: String?,
     val senderAvatar: String?,
-    val dateSent: String?,
-    val dateSentFull: String?,
+    val dateSent: String? = null,
+    val dateSentFull: String? = null,
     val initialIndex: Int,
+    val sentTimestamp: Long? = null,
 ) : Parcelable
 
 @Parcelize
@@ -42,10 +43,11 @@ data class MediaInfo(
     val senderId: UserId?,
     val senderName: String?,
     val senderAvatar: String?,
-    val dateSent: String?,
-    val dateSentFull: String?,
+    val dateSent: String? = null,
+    val dateSentFull: String? = null,
     val waveform: List<Float>?,
     val duration: String?,
+    val sentTimestamp: Long? = null,
 ) : Parcelable
 
 fun anImageMediaInfo(

@@ -9,15 +9,22 @@
 package io.element.android.libraries.mediaviewer.impl.datasource
 
 import dev.zacsweers.metro.Inject
+import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.mediaviewer.impl.model.GroupedMediaItems
 import io.element.android.libraries.mediaviewer.impl.model.MediaItem
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Inject
-class MediaItemsPostProcessor {
+class MediaItemsPostProcessor(private val dateFormatter: DateFormatter? = null) {
+    val dateRevisions = dateFormatter?.revisions ?: MutableStateFlow(0L)
+
     fun process(
         mediaItems: List<MediaItem>,
     ): GroupedMediaItems {
+        if (dateFormatter != null) {
+            return dateFormatter.groupMediaByMonth(mediaItems)
+        }
         val imageAndVideoItems = mutableListOf<MediaItem>()
         val fileItems = mutableListOf<MediaItem>()
 

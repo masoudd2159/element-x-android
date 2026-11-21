@@ -9,6 +9,8 @@
 package io.element.android.libraries.mediaviewer.impl.datasource
 
 import com.google.common.truth.Truth.assertThat
+import io.element.android.libraries.dateformatter.api.DateFormatter
+import io.element.android.libraries.dateformatter.api.DateFormatterMode
 import io.element.android.libraries.matrix.api.core.UniqueId
 import io.element.android.libraries.mediaviewer.impl.model.GroupedMediaItems
 import io.element.android.libraries.mediaviewer.impl.model.MediaItem
@@ -42,6 +44,35 @@ class MediaItemsPostProcessorTest {
     private val date2 = aMediaItemDateSeparator(id = UniqueId("2"))
     private val date3 = aMediaItemDateSeparator(id = UniqueId("3"))
     private val loading1 = aMediaItemLoadingIndicator(id = UniqueId("1"))
+
+    @Test
+    fun `missing dates do not interrupt calendar grouping of cached events`() {
+        var splitMonths = false
+        val formatter = object : DateFormatter {
+            override fun monthKey(timestamp: Long): Long = if (splitMonths) timestamp else 1L
+
+            override fun format(timestamp: Long?, mode: DateFormatterMode, useRelative: Boolean): String = "Month ${monthKey(requireNotNull(timestamp))}"
+        }
+        val processor = MediaItemsPostProcessor(formatter)
+        val newer = image1.copy(mediaInfo = image1.mediaInfo.copy(sentTimestamp = 2L))
+        val older = image2.copy(mediaInfo = image2.mediaInfo.copy(sentTimestamp = 1L))
+        val items = listOf(newer, image3, file1, loading1, older, date1)
+
+        val before = processor.process(items).imageAndVideoItems
+        splitMonths = true
+        val after = processor.process(items)
+
+        assertThat(before.filterIsInstance<MediaItem.DateSeparator>().map { it.formattedDate }).containsExactly("Month 1")
+        assertThat(after.imageAndVideoItems).containsExactly(
+            MediaItem.DateSeparator(UniqueId("calendar-month-1"), "Month 2"),
+            newer,
+            image3,
+            loading1,
+            MediaItem.DateSeparator(UniqueId("calendar-month-2"), "Month 1"),
+            older,
+        ).inOrder()
+        assertThat(after.fileItems).containsExactly(file1, loading1).inOrder()
+    }
 
     @Test
     fun `process Empty`() {

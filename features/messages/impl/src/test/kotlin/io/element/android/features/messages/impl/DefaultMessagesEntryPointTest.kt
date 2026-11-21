@@ -24,7 +24,6 @@ import io.element.android.features.messages.impl.pinned.banner.createPinnedEvent
 import io.element.android.features.messages.impl.timeline.createTimelineController
 import io.element.android.features.poll.test.create.FakeCreatePollEntryPoint
 import io.element.android.libraries.androidutils.system.DeviceHasVulkanSupport
-import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
@@ -85,7 +84,6 @@ class DefaultMessagesEntryPointTest {
                 pinnedEventsTimelineProvider = createPinnedEventsTimelineProvider(),
                 timelineController = createTimelineController(),
                 knockRequestsListEntryPoint = FakeKnockRequestsListEntryPoint(),
-                dateFormatter = FakeDateFormatter(),
                 coroutineDispatchers = testCoroutineDispatchers(),
                 hasVulkanSupport = DeviceHasVulkanSupport(mockk(relaxed = true))
             )

@@ -52,6 +52,7 @@ class AndroidLocalMediaFactory(
         dateSentFull = mediaInfo.dateSentFull,
         waveform = mediaInfo.waveform,
         duration = mediaInfo.duration,
+        sentTimestamp = mediaInfo.sentTimestamp,
     )
 
     override fun createFromUri(
@@ -87,6 +88,7 @@ class AndroidLocalMediaFactory(
         dateSentFull: String?,
         waveform: List<Float>?,
         duration: String?,
+        sentTimestamp: Long? = null,
     ): LocalMedia {
         val fileName = name ?: context.getFileName(uri).orEmpty()
         val resolvedMimeType = resolveMimeType(
@@ -114,6 +116,7 @@ class AndroidLocalMediaFactory(
                 dateSentFull = dateSentFull,
                 waveform = waveform,
                 duration = duration,
+                sentTimestamp = sentTimestamp,
             )
         )
     }

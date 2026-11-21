@@ -57,6 +57,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -157,7 +158,8 @@ class GlobalSearchPresenter(
                     combine(
                         currentMessageSearch.results,
                         currentMessageSearch.paginationState,
-                    ) { results, paginationState ->
+                        dateFormatter.revisions,
+                    ) { results, paginationState, _ ->
                         Pair(results, paginationState)
                     }.collectLatest { (results, paginationState) ->
                         Timber.d("Message search found ${results.size} items, pagination state: $paginationState")
@@ -170,24 +172,24 @@ class GlobalSearchPresenter(
 
                         // Try processing the results in parallel to speed up the processing time, since we have to wait until we get the room info for each
                         // result, which can be slow if we have a lot of results. The original order is kept by using `awaitAll()`.
-                        val mappedResults = results.map { result ->
-                            async(coroutineDispatchers.computation) {
-                                val roomInfo = matrixClient.getRoomInfo(result.roomId).getOrNull() ?: return@async null
-                                val formattedTimestamp = dateFormatter.format(
-                                    timestamp = result.timestamp,
-                                    mode = DateFormatterMode.TimeOrDate,
-                                    useRelative = true
-                                )
+                        val mappedResults = coroutineScope {
+                            results.map { result ->
+                                async(coroutineDispatchers.computation) {
+                                    val roomInfo = matrixClient.getRoomInfo(result.roomId).getOrNull() ?: return@async null
+                                    val formattedTimestamp = dateFormatter.format(
+                                        timestamp = result.timestamp,
+                                        mode = DateFormatterMode.TimeOrDate,
+                                        useRelative = true
+                                    )
 
-                                if (!result.content.isMediaContent()) {
-                                    mapMessageContent(result, roomInfo, formattedTimestamp)
-                                } else {
-                                    mapMediaContent(result, roomInfo, formattedTimestamp)
+                                    if (!result.content.isMediaContent()) {
+                                        mapMessageContent(result, roomInfo, formattedTimestamp)
+                                    } else {
+                                        mapMediaContent(result, roomInfo, formattedTimestamp)
+                                    }
                                 }
-                            }
+                            }.awaitAll().filterNotNull()
                         }
-                            .awaitAll()
-                            .mapNotNull { it }
 
                         searchResults = when {
                             queryState.text.isEmpty() -> AsyncData.Uninitialized

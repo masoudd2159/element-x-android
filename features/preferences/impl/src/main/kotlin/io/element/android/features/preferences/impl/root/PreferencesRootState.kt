@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import io.element.android.features.preferences.impl.R
 import io.element.android.features.preferences.impl.account.PreferencesAccountState
 import io.element.android.features.preferences.impl.userstatus.UserStatusState
+import io.element.android.libraries.dateformatter.api.CalendarType
 import io.element.android.libraries.designsystem.components.preferences.DropdownOption
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.matrix.api.user.MatrixUser
@@ -37,6 +38,7 @@ data class PreferencesRootState(
     val showLocationSettings: Boolean,
     val snackbarMessage: SnackbarMessage?,
     val eventSink: (PreferencesRootEvent) -> Unit,
+    val calendarType: CalendarType? = CalendarType.PERSIAN,
 )
 
 enum class ThemeOption : DropdownOption {

@@ -26,6 +26,7 @@ import io.element.android.libraries.matrix.api.room.threads.ThreadListPagination
 import io.element.android.libraries.matrix.ui.model.getAvatarData
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -45,6 +46,7 @@ class ThreadsListPresenter(
         val threads by produceState(initialValue = persistentListOf(), key1 = threadsListService) {
             threadsListService.subscribeToItemUpdates()
                 .onStart { threadsListService.paginate() }
+                .combine(dateFormatter.revisions) { items, _ -> items }
                 .collect { items ->
                     Timber.d("Received thread list update with ${items.size} items")
                     value = items.map { item ->

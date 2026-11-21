@@ -30,6 +30,7 @@ import io.element.android.features.messages.test.timeline.FakeHtmlConverterProvi
 import io.element.android.features.messages.test.timeline.FakeTextPillificator
 import io.element.android.features.poll.test.pollcontent.FakePollContentStateFactory
 import io.element.android.libraries.androidutils.filesize.FakeFileSizeFormatter
+import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.eventformatter.api.TimelineEventFormatter
 import io.element.android.libraries.featureflag.test.FakeFeatureFlagService
@@ -83,6 +84,7 @@ internal fun aTimelineItemContentFactory(
 
 internal fun TestScope.aTimelineItemsFactory(
     config: TimelineItemsFactoryConfig,
+    dateFormatter: DateFormatter = FakeDateFormatter(),
 ): TimelineItemsFactory {
     val matrixClient = FakeMatrixClient()
     return TimelineItemsFactory(
@@ -94,7 +96,7 @@ internal fun TestScope.aTimelineItemsFactory(
                         matrixClient = matrixClient,
                     ),
                     matrixClient = matrixClient,
-                    dateFormatter = FakeDateFormatter(),
+                    dateFormatter = dateFormatter,
                     permalinkParser = FakePermalinkParser(),
                     config = config,
                     summaryFormatter = FakeMessageSummaryFormatter(),
@@ -102,9 +104,7 @@ internal fun TestScope.aTimelineItemsFactory(
             }
         },
         virtualItemFactory = TimelineItemVirtualFactory(
-            daySeparatorFactory = TimelineItemDaySeparatorFactory(
-                FakeDateFormatter()
-            ),
+            daySeparatorFactory = TimelineItemDaySeparatorFactory(dateFormatter),
         ),
         timelineItemGrouper = TimelineItemGrouper(),
         config = config

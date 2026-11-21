@@ -25,6 +25,7 @@ import io.element.android.libraries.androidutils.R
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.extensions.mapCatchingExceptions
+import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
@@ -36,6 +37,7 @@ import io.element.android.libraries.mediaviewer.api.local.LocalMedia
 import io.element.android.libraries.mediaviewer.api.local.LocalMediaFactory
 import io.element.android.libraries.mediaviewer.impl.datasource.MediaGalleryDataSource
 import io.element.android.libraries.mediaviewer.impl.details.MediaBottomSheetState
+import io.element.android.libraries.mediaviewer.impl.details.withCalendarDates
 import io.element.android.libraries.mediaviewer.impl.local.LocalMediaActions
 import io.element.android.libraries.mediaviewer.impl.model.GroupedMediaItems
 import io.element.android.libraries.mediaviewer.impl.model.MediaItem
@@ -56,6 +58,7 @@ class MediaGalleryPresenter(
     @Assisted private val navigator: MediaGalleryNavigator,
     private val room: BaseRoom,
     private val mediaGalleryDataSource: MediaGalleryDataSource,
+    private val dateFormatter: DateFormatter,
     private val localMediaFactory: LocalMediaFactory,
     private val mediaLoader: MatrixMediaLoader,
     private val localMediaActions: LocalMediaActions,
@@ -175,11 +178,12 @@ class MediaGalleryPresenter(
             }
         }
 
+        val dateRevision by dateFormatter.revisions.collectAsState()
         return MediaGalleryState(
             roomName = roomInfo.name.orEmpty(),
             mode = mode,
             groupedMediaItems = groupedMediaItems,
-            mediaBottomSheetState = mediaBottomSheetState,
+            mediaBottomSheetState = mediaBottomSheetState.withCalendarDates(dateFormatter, dateRevision),
             snackbarMessage = snackbarMessage,
             eventSink = ::handleEvent,
         )

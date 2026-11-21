@@ -18,4 +18,5 @@ data class TimelineItemReadReceipts(
 data class ReadReceiptData(
     val userId: UserId,
     val formattedDate: String,
+    val timestamp: Long? = null,
 )

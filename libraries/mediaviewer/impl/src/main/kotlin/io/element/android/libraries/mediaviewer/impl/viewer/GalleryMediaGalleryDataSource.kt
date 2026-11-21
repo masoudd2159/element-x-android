@@ -55,6 +55,7 @@ class GalleryMediaGalleryDataSource(
                     senderAvatar = galleryInfo.senderAvatar,
                     dateSent = galleryInfo.dateSent,
                     dateSentFull = galleryInfo.dateSentFull,
+                    sentTimestamp = galleryInfo.sentTimestamp,
                     waveform = null,
                     duration = null,
                 )

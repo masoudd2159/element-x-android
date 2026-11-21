@@ -14,6 +14,7 @@ import io.element.android.features.preferences.impl.account.aPreferencesAccountS
 import io.element.android.features.preferences.impl.userstatus.UserStatusPickerState
 import io.element.android.features.preferences.impl.userstatus.UserStatusState
 import io.element.android.features.preferences.impl.userstatus.aUserStatusState
+import io.element.android.libraries.dateformatter.api.CalendarType
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.matrix.api.user.DisplayedStatus
 import io.element.android.libraries.matrix.api.user.MatrixUser
@@ -84,6 +85,9 @@ open class PreferencesRootStatePreviewParam : PreviewParameterProvider<Preferenc
             ),
             // Message text at the largest size
             aPreferencesRootState(messageTextSize = MessageTextSize.MAX),
+            aPreferencesRootState(calendarType = CalendarType.GREGORIAN),
+            aPreferencesRootState(calendarType = CalendarType.HIJRI),
+            aPreferencesRootState(calendarType = null),
         )
 }
 
@@ -104,6 +108,7 @@ fun aPreferencesRootState(
     userStatusState: UserStatusState? = aUserStatusState(),
     snackbarMessage: SnackbarMessage? = null,
     eventSink: (PreferencesRootEvent) -> Unit = {},
+    calendarType: CalendarType? = CalendarType.PERSIAN,
 ) = PreferencesRootState(
     myUser = myUser,
     preferencesAccountState = preferencesAccountState,
@@ -121,4 +126,5 @@ fun aPreferencesRootState(
     userStatusState = userStatusState,
     snackbarMessage = snackbarMessage,
     eventSink = eventSink,
+    calendarType = calendarType,
 )

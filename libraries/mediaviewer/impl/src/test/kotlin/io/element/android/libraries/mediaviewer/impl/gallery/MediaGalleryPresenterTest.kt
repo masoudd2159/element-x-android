@@ -14,6 +14,7 @@ import android.net.Uri
 import app.cash.turbine.ReceiveTurbine
 import com.google.common.truth.Truth.assertThat
 import io.element.android.libraries.architecture.AsyncData
+import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.matrix.api.core.EventId
@@ -527,6 +528,7 @@ class MediaGalleryPresenterTest {
         ),
     ): MediaGalleryPresenter {
         return MediaGalleryPresenter(
+            dateFormatter = FakeDateFormatter(),
             navigator = navigator,
             room = room,
             mediaGalleryDataSource = mediaGalleryDataSource,

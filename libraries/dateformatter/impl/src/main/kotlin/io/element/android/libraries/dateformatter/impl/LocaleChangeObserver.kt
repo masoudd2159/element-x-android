@@ -17,6 +17,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import io.element.android.libraries.di.annotations.ApplicationContext
+import java.util.concurrent.CopyOnWriteArraySet
 
 fun interface LocaleChangeObserver {
     fun addListener(listener: LocaleChangeListener)
@@ -31,6 +32,8 @@ interface LocaleChangeListener {
 class DefaultLocaleChangeObserver(
     @ApplicationContext private val context: Context,
 ) : LocaleChangeObserver {
+    private val listeners = CopyOnWriteArraySet<LocaleChangeListener>()
+
     init {
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -38,8 +41,6 @@ class DefaultLocaleChangeObserver(
             }
         })
     }
-
-    private val listeners = mutableSetOf<LocaleChangeListener>()
 
     override fun addListener(listener: LocaleChangeListener) {
         listeners.add(listener)

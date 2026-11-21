@@ -16,6 +16,7 @@ import io.element.android.features.messages.impl.timeline.model.TimelineItemThre
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemTextContent
 import io.element.android.features.messages.impl.timeline.model.virtual.TimelineItemReadMarkerModel
 import io.element.android.libraries.architecture.AsyncData
+import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.matrix.api.core.UniqueId
 import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
 import io.element.android.libraries.matrix.api.timeline.item.EventThreadInfo
@@ -34,6 +35,39 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class TimelineItemsFactoryTest {
+    @Test
+    fun `refreshes cached event and divider dates without another timeline update`() = runTest {
+        var dateLabel = "18 November"
+        val formatter = FakeDateFormatter { _, _, _ -> dateLabel }
+        val factory = aTimelineItemsFactory(
+            config = TimelineItemsFactoryConfig(computeReadReceipts = false, computeReactions = false),
+            dateFormatter = formatter,
+        )
+        val eventId = UniqueId("event")
+        val dividerId = UniqueId("divider")
+        val items = listOf(
+            MatrixTimelineItem.Virtual(dividerId, VirtualTimelineItem.DayDivider(0L)),
+            MatrixTimelineItem.Event(eventId, anEventTimelineItem(content = aMessageContent(body = "Hello"), timestamp = 0L)),
+        )
+
+        factory.timelineItems.test {
+            factory.replaceWith(items)
+            val before = awaitItem()
+            assertThat(before.map { it.formattedDate() }).containsExactly("18 November", "18 November")
+
+            dateLabel = "27 Aban"
+            formatter.revisions.value++
+
+            val after = awaitItem()
+            assertThat(after.map { it.formattedDate() }).containsExactly("27 Aban", "27 Aban")
+            assertThat(after.map { it.identifier() }).containsExactly(eventId, dividerId).inOrder()
+            val previousEvent = before.filterIsInstance<TimelineItem.Event>().single()
+            val updatedEvent = after.filterIsInstance<TimelineItem.Event>().single()
+            assertThat(updatedEvent.eventId).isEqualTo(previousEvent.eventId)
+            assertThat(updatedEvent.content).isSameInstanceAs(previousEvent.content)
+        }
+    }
+
     @Test
     fun `messages sent close together are grouped`() = runTest {
         val positions = groupPositionsOf(

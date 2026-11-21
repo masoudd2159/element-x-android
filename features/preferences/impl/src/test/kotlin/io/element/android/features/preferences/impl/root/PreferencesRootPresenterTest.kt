@@ -19,6 +19,8 @@ import io.element.android.features.preferences.impl.account.aPreferencesAccountS
 import io.element.android.features.preferences.impl.userstatus.aUserStatusState
 import io.element.android.features.preferences.impl.utils.ShowDeveloperSettingsProvider
 import io.element.android.libraries.core.meta.BuildType
+import io.element.android.libraries.dateformatter.api.CalendarPreferences
+import io.element.android.libraries.dateformatter.api.CalendarType
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
@@ -50,6 +52,7 @@ import io.element.android.tests.testutils.test
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -411,6 +414,13 @@ class PreferencesRootPresenterTest {
         sessionStore = sessionStore,
         matrixClientProvider = matrixClientProvider,
         appPreferencesStore = appPreferencesStore,
+        calendarPreferences = object : CalendarPreferences {
+            override val calendarType = MutableStateFlow<CalendarType?>(CalendarType.PERSIAN)
+
+            override fun selectCalendar(type: CalendarType) {
+                calendarType.value = type
+            }
+        },
         userStatusPresenter = { aUserStatusState() },
         preferencesAccountPresenter = { aPreferencesAccountState() },
         sessionCoroutineScope = this,

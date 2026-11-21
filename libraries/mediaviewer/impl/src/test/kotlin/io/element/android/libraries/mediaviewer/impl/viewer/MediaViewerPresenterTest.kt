@@ -18,6 +18,7 @@ import io.element.android.features.messages.api.timeline.TextPillificator
 import io.element.android.features.messages.test.timeline.FakeHtmlConverterProvider
 import io.element.android.features.messages.test.timeline.FakeTextPillificator
 import io.element.android.libraries.architecture.AsyncData
+import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.featureflag.test.FakeFeatureFlagService
 import io.element.android.libraries.htmlrenderer.api.DocumentNode
@@ -1008,6 +1009,7 @@ internal fun TestScope.createMediaViewerPresenter(
         is MediaViewerEntryPoint.Params.RoomMedia -> actualInputs.mode
     }
     return MediaViewerPresenter(
+        dateFormatter = FakeDateFormatter(),
         inputs = actualInputs,
         navigator = mediaViewerNavigator,
         dataSource = MediaViewerDataSource(

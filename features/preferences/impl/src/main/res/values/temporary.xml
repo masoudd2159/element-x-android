@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_settings_calendar_type">Calendar type</string>
+    <string name="screen_settings_calendar_persian">Persian</string>
+    <string name="screen_settings_calendar_gregorian">Gregorian</string>
+    <string name="screen_settings_calendar_hijri">Hijri</string>
+</resources>

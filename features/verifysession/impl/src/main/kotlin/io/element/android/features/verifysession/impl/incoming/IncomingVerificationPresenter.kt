@@ -94,7 +94,8 @@ class IncomingVerificationPresenter(
             }
         }
 
-        val formattedSignInTime = remember {
+        val dateRevision by dateFormatter.revisions.collectAsState()
+        val formattedSignInTime = remember(dateRevision) {
             dateFormatter.format(
                 timestamp = verificationRequest.details.firstSeenTimestamp,
                 mode = DateFormatterMode.TimeOrDate,
@@ -105,7 +106,7 @@ class IncomingVerificationPresenter(
                 sessions.find { it.userId == sessionId.value }?.toMatrixUser()
             }
         }.collectAsState(MatrixUser(sessionId))
-        val step by remember {
+        val step by remember(formattedSignInTime) {
             derivedStateOf {
                 stateAndDispatch.state.value.toVerificationStep(
                     currentUser = currentUser,
