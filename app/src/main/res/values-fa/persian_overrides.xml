@@ -1035,7 +1035,6 @@
     <string name="screen_change_server_title_register">"ارائه‌دهندهٔ حساب را انتخاب کنید"</string>
     <string name="screen_create_account_title">"ساخت حساب"</string>
     <string name="screen_identity_confirmation_cannot_confirm">"نمی‌توانید تأیید کنید؟"</string>
-    <string name="screen_identity_confirmation_create_new_recovery_key">"ایجاد کلید بازیابی جدید"</string>
     <string name="screen_identity_confirmation_subtitle">"روش تأیید را برای راه‌اندازی پیام‌رسانی امن انتخاب کنید."</string>
     <string name="screen_identity_confirmation_title">"هویت دیجیتال خود را تأیید کنید"</string>
     <string name="screen_identity_confirmation_use_another_device">"استفاده از دستگاهی دیگر"</string>
@@ -1897,7 +1896,6 @@
     <string name="screen_recovery_key_change_generate_key_description">"این کلید را با کسی به اشتراک نگذارید."</string>
     <string name="screen_recovery_key_change_success">"کلید بازیابی تغییر کرد"</string>
     <string name="screen_recovery_key_change_title">"تغییر کلید بازیابی؟"</string>
-    <string name="screen_recovery_key_confirm_create_new_recovery_key">"ایجاد کلید بازیابی جدید"</string>
     <string name="screen_recovery_key_confirm_description">"مطمئن شوید کسی صفحه را نمی‌بیند."</string>
     <string name="screen_recovery_key_confirm_error_content">"کلید بازیابی را بررسی و دوباره وارد کنید."</string>
     <string name="screen_recovery_key_confirm_error_title">"کلید بازیابی اشتباه"</string>
