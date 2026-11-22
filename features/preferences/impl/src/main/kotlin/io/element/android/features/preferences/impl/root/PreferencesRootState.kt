@@ -11,6 +11,7 @@ package io.element.android.features.preferences.impl.root
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
+import io.element.android.appconfig.AppFont
 import io.element.android.features.preferences.impl.R
 import io.element.android.features.preferences.impl.account.PreferencesAccountState
 import io.element.android.features.preferences.impl.userstatus.UserStatusState
@@ -25,6 +26,7 @@ data class PreferencesRootState(
     val myUser: MatrixUser,
     val theme: ThemeOption,
     val messageTextSize: Int,
+    val appFont: AppFont,
     val preferencesAccountState: PreferencesAccountState,
     val availableThemeOptions: ImmutableList<ThemeOption>,
     val userStatusState: UserStatusState?,

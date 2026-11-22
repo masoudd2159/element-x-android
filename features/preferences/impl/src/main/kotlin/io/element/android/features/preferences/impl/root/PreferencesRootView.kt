@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.theme.Theme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.preferences.impl.R
 import io.element.android.features.preferences.impl.account.PreferencesAccountView
@@ -233,6 +234,9 @@ private fun AppSettingsSection(
         CalendarPreferenceDropdown(state.calendarType) { type ->
             state.eventSink(PreferencesRootEvent.SetCalendarType(type))
         }
+        FontPreferenceDropdown(state.appFont) { font ->
+            state.eventSink(PreferencesRootEvent.SetAppFont(font))
+        }
         ListItem(
             content = { Text(stringResource(id = R.string.screen_settings_message_text_size_title)) },
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.TextFormatting())),
@@ -341,28 +345,34 @@ internal fun PreferencesRootViewDarkPreview(@PreviewParameter(PreferencesRootSta
 @ExcludeFromCoverage
 @Composable
 private fun ContentToPreview(state: PreferencesRootState) {
-    PreferencesRootView(
-        state = state,
-        emojiPickerRenderer = NoOpEmojiPickerRenderer,
-        onBackClick = {},
-        onAddAccountClick = {},
-        onSwitchToSession = {},
-        onOpenAnalytics = {},
-        onOpenDeveloperSettings = {},
-        onOpenLocationSettings = {},
-        onOpenMediaSettings = {},
-        onOpenLabs = {},
-        onOpenAbout = {},
-        onOpenMessageTextSize = {},
-        onOpenLockScreenSettings = {},
-        onEditProfileClick = {},
-        onSecureBackupClick = {},
-        onManageAccountClick = {},
-        onLinkNewDeviceClick = {},
-        onOpenRageShake = {},
-        onModerationAndSafetyClick = {},
-        onOpenNotificationSettings = {},
-        onSignOutClick = {},
-        onDeactivateClick = {},
-    )
+    ElementTheme(
+        theme = if (ElementTheme.isLightTheme) Theme.Light else Theme.Dark,
+        applySystemBarsUpdate = false,
+        appFont = state.appFont,
+    ) {
+        PreferencesRootView(
+            state = state,
+            emojiPickerRenderer = NoOpEmojiPickerRenderer,
+            onBackClick = {},
+            onAddAccountClick = {},
+            onSwitchToSession = {},
+            onOpenAnalytics = {},
+            onOpenDeveloperSettings = {},
+            onOpenLocationSettings = {},
+            onOpenMediaSettings = {},
+            onOpenLabs = {},
+            onOpenAbout = {},
+            onOpenMessageTextSize = {},
+            onOpenLockScreenSettings = {},
+            onEditProfileClick = {},
+            onSecureBackupClick = {},
+            onManageAccountClick = {},
+            onLinkNewDeviceClick = {},
+            onOpenRageShake = {},
+            onModerationAndSafetyClick = {},
+            onOpenNotificationSettings = {},
+            onSignOutClick = {},
+            onDeactivateClick = {},
+        )
+    }
 }

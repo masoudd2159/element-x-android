@@ -17,6 +17,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import dev.zacsweers.metro.Inject
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.compound.theme.Theme
 import io.element.android.compound.theme.mapToTheme
 import io.element.android.features.location.api.LocationService
@@ -52,6 +53,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Inject
@@ -99,6 +102,9 @@ class PreferencesRootPresenter(
         }.collectAsState(initial = Theme.System)
 
         val calendarType by calendarPreferences.calendarType.collectAsState()
+        val appFont by remember(appPreferencesStore) {
+            appPreferencesStore.getAppFontFlow()
+        }.collectAsState(initial = CustomAppConfig.Appearance.FONT)
         val messageTextSize by remember {
             appPreferencesStore.getMessageTextSizeFlow()
         }.collectAsState(initial = MessageTextSize.DEFAULT)
@@ -154,6 +160,13 @@ class PreferencesRootPresenter(
                     appPreferencesStore.setOtherAccountsExpanded(!isOtherAccountsSectionExpanded)
                 }
                 is PreferencesRootEvent.SetCalendarType -> calendarPreferences.selectCalendar(event.type)
+                is PreferencesRootEvent.SetAppFont -> sessionCoroutineScope.launch {
+                    try {
+                        appPreferencesStore.setAppFont(event.font)
+                    } catch (error: IOException) {
+                        Timber.w(error, "Could not save the app font preference")
+                    }
+                }
                 is PreferencesRootEvent.SetTheme -> sessionCoroutineScope.launch {
                     when (event.theme) {
                         ThemeOption.System -> appPreferencesStore.setTheme(Theme.System.name)
@@ -172,6 +185,7 @@ class PreferencesRootPresenter(
             theme = themeOption,
             messageTextSize = messageTextSize,
             calendarType = calendarType,
+            appFont = appFont,
             availableThemeOptions = availableThemeOptions,
             version = remember { versionFormatter.get() },
             isMultiAccountEnabled = isMultiAccountEnabled,

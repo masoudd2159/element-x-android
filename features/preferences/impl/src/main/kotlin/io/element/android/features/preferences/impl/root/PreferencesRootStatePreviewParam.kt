@@ -9,6 +9,8 @@
 package io.element.android.features.preferences.impl.root
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import io.element.android.appconfig.AppFont
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.features.preferences.impl.account.PreferencesAccountState
 import io.element.android.features.preferences.impl.account.aPreferencesAccountState
 import io.element.android.features.preferences.impl.userstatus.UserStatusPickerState
@@ -88,6 +90,7 @@ open class PreferencesRootStatePreviewParam : PreviewParameterProvider<Preferenc
             aPreferencesRootState(calendarType = CalendarType.GREGORIAN),
             aPreferencesRootState(calendarType = CalendarType.HIJRI),
             aPreferencesRootState(calendarType = null),
+            aPreferencesRootState(appFont = AppFont.IRAN_SANS_X),
         )
 }
 
@@ -109,6 +112,7 @@ fun aPreferencesRootState(
     snackbarMessage: SnackbarMessage? = null,
     eventSink: (PreferencesRootEvent) -> Unit = {},
     calendarType: CalendarType? = CalendarType.PERSIAN,
+    appFont: AppFont = CustomAppConfig.Appearance.FONT,
 ) = PreferencesRootState(
     myUser = myUser,
     preferencesAccountState = preferencesAccountState,
@@ -127,4 +131,5 @@ fun aPreferencesRootState(
     snackbarMessage = snackbarMessage,
     eventSink = eventSink,
     calendarType = calendarType,
+    appFont = appFont,
 )

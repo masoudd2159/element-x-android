@@ -54,6 +54,7 @@ object ElementRichTextEditorStyle {
     @Composable
     private fun common(fontScale: Float = 1f): RichTextEditorStyle {
         val colors = ElementTheme.colors
+        val textStyle = LocalTextStyle.current
         val codeCornerRadius = 4.dp
         val codeBorderWidth = 1.dp
         return RichTextEditorDefaults.style(
@@ -61,11 +62,12 @@ object ElementRichTextEditorStyle {
                 bulletGapWidth = 8.dp,
             ),
             text = RichTextEditorDefaults.textStyle(
-                color = LocalTextStyle.current.color.takeIf { it.isSpecified } ?: LocalContentColor.current,
-                fontStyle = LocalTextStyle.current.fontStyle,
+                color = textStyle.color.takeIf { it.isSpecified } ?: LocalContentColor.current,
+                fontFamily = textStyle.fontFamily ?: ElementTheme.typography.fontBodyLgRegular.fontFamily,
+                fontStyle = textStyle.fontStyle,
                 // `EditorStyledText` resolves these `sp` values against the Android configuration, not Compose's density, so scale them here.
-                lineHeight = LocalTextStyle.current.lineHeight.scaleBy(fontScale),
-                fontSize = LocalTextStyle.current.fontSize.scaleBy(fontScale),
+                lineHeight = textStyle.lineHeight.scaleBy(fontScale),
+                fontSize = textStyle.fontSize.scaleBy(fontScale),
                 includeFontPadding = false,
             ),
             cursor = RichTextEditorDefaults.cursorStyle(

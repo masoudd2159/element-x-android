@@ -37,6 +37,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -297,6 +298,8 @@ private fun TextBlock(
 }
 
 /** Maps an `<h1>`–`<h6>` [level] to a Compound typography style, largest first. */
+@Composable
+@ReadOnlyComposable
 private fun headerTextStyle(level: Int): TextStyle = when (level) {
     // For safety reasons, use the same style for H1 and H2, to avoid people using H1 for 'shouting' spam that fills the timeline with huge text
     1, 2 -> ElementTheme.typography.fontHeadingLgBold

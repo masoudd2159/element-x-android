@@ -9,12 +9,12 @@ package io.element.android.libraries.htmlrenderer.api.spans
 
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
-import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.tokens.generated.TypographyTokens
 
 /**
  * The style for inline code spans.
  */
 val InlineCodeSpanStyle: SpanStyle = SpanStyle(
     fontFamily = FontFamily.Monospace,
-    fontSize = ElementTheme.typography.fontBodySmRegular.fontSize,
+    fontSize = TypographyTokens.fontBodySmRegular.fontSize,
 )

@@ -16,7 +16,7 @@ package io.element.android.appconfig
 object CustomAppConfig {
     object Appearance {
         /**
-         * The application-wide font. Change only this value to switch fonts.
+         * The default application font when no valid preference has been saved.
          */
         val FONT = AppFont.YEKAN_BAKH
     }

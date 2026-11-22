@@ -13,6 +13,7 @@ import io.element.android.call.ui.theme.ElementCallColors
 import io.element.android.call.ui.theme.ElementCallIcons
 import io.element.android.call.ui.theme.ElementCallStyle
 import io.element.android.call.ui.theme.ElementCallTypography
+import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.components.avatar.Avatar
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarSize
@@ -26,17 +27,28 @@ import io.element.android.libraries.designsystem.components.avatar.AvatarType
  * `ElementTheme` would buy no visual change and a lot of mapping to keep in step. The call also stays
  * dark in a light-themed app on purpose: it is a video surface, as it is in Element Call on the web.
  *
- * What the component genuinely cannot do is turn an `mxc://` URL into a picture, because that needs a
- * Matrix media loader. So the avatar is the one thing overridden here, and it is what makes faces
- * appear on the tiles rather than initials.
+ * The host supplies the user's font and a Matrix-aware avatar that can load `mxc://` URLs.
  */
 @Composable
 fun rememberElementXCallStyle(): ElementCallStyle {
     val icons = ElementCallIcons.default()
-    return remember(icons) {
+    val fontFamily = ElementTheme.typography.fontBodyMdRegular.fontFamily
+    return remember(icons, fontFamily) {
+        val typography = with(ElementCallTypography.Default) {
+            copy(
+                headingMdBold = headingMdBold.copy(fontFamily = fontFamily),
+                bodyLgMedium = bodyLgMedium.copy(fontFamily = fontFamily),
+                bodyMdMedium = bodyMdMedium.copy(fontFamily = fontFamily),
+                bodyMdRegular = bodyMdRegular.copy(fontFamily = fontFamily),
+                bodySmMedium = bodySmMedium.copy(fontFamily = fontFamily),
+                bodySmRegular = bodySmRegular.copy(fontFamily = fontFamily),
+                bodyXsMedium = bodyXsMedium.copy(fontFamily = fontFamily),
+                bodyXsRegular = bodyXsRegular.copy(fontFamily = fontFamily),
+            )
+        }
         ElementCallStyle(
             colors = ElementCallColors.Dark,
-            typography = ElementCallTypography.Default,
+            typography = typography,
             icons = icons,
             avatar = { data, size ->
                 Avatar(

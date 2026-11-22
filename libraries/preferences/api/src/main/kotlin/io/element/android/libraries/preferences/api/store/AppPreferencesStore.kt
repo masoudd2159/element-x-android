@@ -8,6 +8,7 @@
 
 package io.element.android.libraries.preferences.api.store
 
+import io.element.android.appconfig.AppFont
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
 import io.element.android.libraries.matrix.api.tracing.LogLevel
 import io.element.android.libraries.matrix.api.tracing.TraceLogPack
@@ -43,6 +44,11 @@ interface AppPreferencesStore {
 
     /** The name of the chosen theme, or `null` when the user has not picked one and the system setting should be followed. */
     fun getThemeFlow(): Flow<String?>
+
+    suspend fun setAppFont(font: AppFont)
+
+    /** The chosen application font, or the configured default when no valid choice is saved. */
+    fun getAppFontFlow(): Flow<AppFont>
 
     /**
      * @param sizeSp the size in sp of the message text in the timeline, within [MessageTextSize.range].

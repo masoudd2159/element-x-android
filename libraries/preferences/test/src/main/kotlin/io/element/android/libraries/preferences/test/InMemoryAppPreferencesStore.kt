@@ -8,6 +8,8 @@
 
 package io.element.android.libraries.preferences.test
 
+import io.element.android.appconfig.AppFont
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
 import io.element.android.libraries.matrix.api.tracing.LogLevel
 import io.element.android.libraries.matrix.api.tracing.TraceLogPack
@@ -38,11 +40,13 @@ class InMemoryAppPreferencesStore(
     callRingtone: NotificationSound = NotificationSound.SystemDefault,
     callRingtoneChannelVersion: Int = 0,
     callRingtoneDisplayName: String? = null,
+    appFont: AppFont = CustomAppConfig.Appearance.FONT,
 ) : AppPreferencesStore {
     private val isDeveloperModeEnabled = MutableStateFlow(isDeveloperModeEnabled)
     private val isOtherAccountsExpanded = MutableStateFlow(isOtherAccountsExpanded)
     private val customElementCallBaseUrl = MutableStateFlow(customElementCallBaseUrl)
     private val theme = MutableStateFlow(theme)
+    private val appFont = MutableStateFlow(appFont)
     private val messageTextSize = MutableStateFlow(messageTextSize)
     private val liveLocationMinimumDistanceUpdate = MutableStateFlow(liveLocationMinimumDistanceUpdate)
     private val logLevel = MutableStateFlow(logLevel)
@@ -88,6 +92,12 @@ class InMemoryAppPreferencesStore(
     override fun getThemeFlow(): Flow<String?> {
         return theme
     }
+
+    override suspend fun setAppFont(font: AppFont) {
+        appFont.value = font
+    }
+
+    override fun getAppFontFlow(): Flow<AppFont> = appFont
 
     override suspend fun setMessageTextSize(sizeSp: Int) {
         messageTextSize.value = sizeSp
@@ -193,6 +203,6 @@ class InMemoryAppPreferencesStore(
     }
 
     override suspend fun reset() {
-        // No op
+        appFont.value = CustomAppConfig.Appearance.FONT
     }
 }

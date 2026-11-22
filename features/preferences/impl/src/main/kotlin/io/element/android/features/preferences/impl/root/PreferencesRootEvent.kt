@@ -8,11 +8,13 @@
 
 package io.element.android.features.preferences.impl.root
 
+import io.element.android.appconfig.AppFont
 import io.element.android.libraries.dateformatter.api.CalendarType
 
 sealed interface PreferencesRootEvent {
     data object OnVersionInfoClick : PreferencesRootEvent
     data object ToggleOtherAccountsExpanded : PreferencesRootEvent
     data class SetCalendarType(val type: CalendarType) : PreferencesRootEvent
+    data class SetAppFont(val font: AppFont) : PreferencesRootEvent
     data class SetTheme(val theme: ThemeOption) : PreferencesRootEvent
 }

@@ -15,6 +15,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
+import io.element.android.appconfig.AppFont
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
@@ -26,13 +28,21 @@ import io.element.android.libraries.preferences.api.store.NotificationSound
 import io.element.android.libraries.preferences.api.store.NotificationSound.Companion.toStored
 import io.element.android.libraries.preferences.api.store.NotificationSoundChannelConfig
 import io.element.android.libraries.preferences.api.store.PreferenceDataStoreFactory
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
+import timber.log.Timber
+import java.io.IOException
+import kotlin.time.Duration.Companion.seconds
 
 private val developerModeKey = booleanPreferencesKey("developerMode")
 private val customElementCallBaseUrlKey = stringPreferencesKey("elementCallBaseUrl")
 private val themeKey = stringPreferencesKey("theme")
+private val appFontKey = stringPreferencesKey("appFont")
 private val messageTextSizeKey = intPreferencesKey("messageTextSize")
 private val hideInviteAvatarsKey = booleanPreferencesKey("hideInviteAvatars")
 private val otherAccountsExpandedKey = booleanPreferencesKey("otherAccountsExpanded")
@@ -51,6 +61,7 @@ private val callRingtoneDisplayNameKey = stringPreferencesKey("notificationCallR
 // URLs never contain a newline, so it is a safe delimiter to persist an ordered list in a single String.
 private const val HOMESERVER_HISTORY_DELIMITER = "\n"
 private const val MAX_HOMESERVER_HISTORY_SIZE = 20
+private const val APP_FONT_READ_RETRIES = 2L
 
 @ContributesBinding(AppScope::class)
 class DefaultAppPreferencesStore(
@@ -98,6 +109,31 @@ class DefaultAppPreferencesStore(
         return store.data.map { prefs ->
             prefs[themeKey]
         }
+    }
+
+    override suspend fun setAppFont(font: AppFont) {
+        store.edit { prefs ->
+            prefs[appFontKey] = font.name
+        }
+    }
+
+    override fun getAppFontFlow(): Flow<AppFont> {
+        return store.data
+            .map { prefs ->
+                val savedFont = prefs[appFontKey]
+                AppFont.entries.firstOrNull { it.name == savedFont } ?: CustomAppConfig.Appearance.FONT
+            }
+            .retry(APP_FONT_READ_RETRIES) { error ->
+                if (error !is IOException) return@retry false
+                delay(1.seconds)
+                true
+            }
+            .catch { error ->
+                if (error !is IOException) throw error
+                Timber.w(error, "Could not read the app font preference after retrying")
+                emit(CustomAppConfig.Appearance.FONT)
+            }
+            .distinctUntilChanged()
     }
 
     override suspend fun setMessageTextSize(sizeSp: Int) {

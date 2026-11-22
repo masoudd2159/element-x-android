@@ -28,14 +28,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import io.element.android.appconfig.AppFont
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.tokens.ElementTypography
 import io.element.android.compound.tokens.PoopakTypography
+import io.element.android.compound.tokens.compoundTypography
 import io.element.android.compound.tokens.generated.SemanticColors
 import io.element.android.compound.tokens.generated.compoundColorsDark
 import io.element.android.compound.tokens.generated.compoundColorsLight
@@ -67,7 +72,10 @@ object ElementTheme {
     /**
      * Compound [Typography] tokens. In Figma, these have the `Android/font/` prefix.
      */
-    val typography: ElementTypography = PoopakTypography.element
+    val typography: ElementTypography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalCompoundTypography.current
 
     /**
      * Returns whether the theme version used is the light or the dark one.
@@ -80,6 +88,8 @@ object ElementTheme {
 
 // Global variables (application level)
 internal val LocalCompoundColors = staticCompositionLocalOf { compoundColorsLight }
+private val LocalAppFont = compositionLocalOf { CustomAppConfig.Appearance.FONT }
+private val LocalCompoundTypography = compositionLocalOf { PoopakTypography(CustomAppConfig.Appearance.FONT).element }
 
 /**
  * Sets up the theme for the application, or a part of it.
@@ -93,7 +103,8 @@ internal val LocalCompoundColors = staticCompositionLocalOf { compoundColorsLigh
  * @param compoundDark the [SemanticColors] to use in dark theme.
  * @param materialColorsLight the Material 3 [ColorScheme] to use in light theme.
  * @param materialColorsDark the Material 3 [ColorScheme] to use in dark theme.
- * @param typography the Material 3 [Typography] tokens to use. It'll use [PoopakTypography.material] by default.
+ * @param typography the Material 3 [Typography] tokens to use with the selected font family.
+ * @param appFont the application font to use. Defaults to the enclosing theme's font or the configured application default.
  * @param content the content to apply the theme to.
  */
 @OptIn(CoreColorToken::class)
@@ -108,9 +119,11 @@ fun ElementTheme(
     compoundDark: SemanticColors = compoundColorsDark,
     materialColorsLight: ColorScheme = compoundLight.toMaterialColorScheme(),
     materialColorsDark: ColorScheme = compoundDark.toMaterialColorScheme(),
-    typography: Typography = PoopakTypography.material,
+    typography: Typography = compoundTypography,
+    appFont: AppFont = LocalAppFont.current,
     content: @Composable () -> Unit,
 ) {
+    val appTypography = remember(appFont, typography) { PoopakTypography(appFont, typography) }
     val darkTheme = theme.isDark()
     val currentCompoundColor = when {
         darkTheme -> if (theme == Theme.Black) {
@@ -168,6 +181,8 @@ fun ElementTheme(
         }
     }
     CompositionLocalProvider(
+        LocalAppFont provides appFont,
+        LocalCompoundTypography provides appTypography.element,
         LocalCompoundColors provides currentCompoundColor,
         LocalContentColor provides colorScheme.onSurface,
         // Configure the keyboard focus style: Draw a blue inset ring around the focused component.
@@ -193,7 +208,7 @@ fun ElementTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = typography,
+            typography = appTypography.material,
             content = content
         )
     }

@@ -12,6 +12,7 @@ package io.element.android.features.preferences.impl.root
 
 import app.cash.turbine.ReceiveTurbine
 import com.google.common.truth.Truth.assertThat
+import io.element.android.appconfig.AppFont
 import io.element.android.compound.theme.Theme
 import io.element.android.features.location.api.LocationService
 import io.element.android.features.location.test.FakeLocationService
@@ -136,6 +137,33 @@ class PreferencesRootPresenterTest {
             with(awaitItem()) {
                 assertThat(theme).isEqualTo(ThemeOption.System)
             }
+        }
+    }
+
+    @Test
+    fun `present - the stored font is exposed and font selection updates storage and state`() = runTest {
+        val appPreferencesStore = InMemoryAppPreferencesStore(appFont = AppFont.IRAN_SANS_X)
+        createPreferencesRootPresenter(appPreferencesStore = appPreferencesStore).test {
+            val loadedState = consumeItemsUntilPredicate { it.appFont == AppFont.IRAN_SANS_X }.last()
+
+            loadedState.eventSink(PreferencesRootEvent.SetAppFont(AppFont.YEKAN_BAKH))
+            consumeItemsUntilPredicate { it.appFont == AppFont.YEKAN_BAKH }
+            assertThat(appPreferencesStore.getAppFontFlow().first()).isEqualTo(AppFont.YEKAN_BAKH)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `present - changing the theme preserves the selected font`() = runTest {
+        val appPreferencesStore = InMemoryAppPreferencesStore(appFont = AppFont.IRAN_SANS_X)
+        createPreferencesRootPresenter(appPreferencesStore = appPreferencesStore).test {
+            val loadedState = consumeItemsUntilPredicate { it.appFont == AppFont.IRAN_SANS_X }.last()
+
+            loadedState.eventSink(PreferencesRootEvent.SetTheme(ThemeOption.Dark))
+            val state = consumeItemsUntilPredicate { it.theme == ThemeOption.Dark }.last()
+            assertThat(state.appFont).isEqualTo(AppFont.IRAN_SANS_X)
+            assertThat(appPreferencesStore.getAppFontFlow().first()).isEqualTo(AppFont.IRAN_SANS_X)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

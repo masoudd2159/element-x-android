@@ -15,6 +15,7 @@ import android.graphics.Typeface
 import android.text.TextPaint
 import android.text.TextUtils
 import android.text.style.ReplacementSpan
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.core.text.getSpans
@@ -38,7 +39,9 @@ class MentionSpan(
     private var textColor: Int = 0
     private var startPadding: Int = 0
     private var endPadding: Int = 0
-    private var typeface: Typeface = Typeface.DEFAULT
+    private var themeTypeface: State<Typeface>? = null
+    private val typeface: Typeface
+        get() = themeTypeface?.value ?: Typeface.DEFAULT
 
     /**
      * The widest the pill is allowed to be, in pixels. A pill wider than this is truncated, so that
@@ -82,7 +85,7 @@ class MentionSpan(
         val (startPaddingPx, endPaddingPx) = mentionSpanTheme.paddingValuesPx.value
         startPadding = startPaddingPx
         endPadding = endPaddingPx
-        typeface = mentionSpanTheme.typeface.value
+        themeTypeface = mentionSpanTheme.typeface
     }
 
     /**

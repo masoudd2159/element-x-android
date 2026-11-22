@@ -10,19 +10,14 @@ package io.element.android.compound.tokens
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import io.element.android.appconfig.AppFont
 import io.element.android.compound.theme.fonts.resolveAppFont
 import io.element.android.compound.tokens.generated.TypographyTokens
 
-/**
- * Immutable application-wide typography for the font selected in CustomAppConfig.
- *
- * Initialization is independent of composition, so top-level styles and nested themes use the
- * same font. Font selection is fixed for the process; changing configuration requires a rebuild.
- */
-internal object PoopakTypography {
-    private val fontFamily = resolveAppFont()
+internal class PoopakTypography(appFont: AppFont, baseTypography: Typography = compoundTypography) {
+    private val fontFamily = resolveAppFont(appFont)
     val element = elementTypography(fontFamily)
-    val material = compoundTypography.withFontFamily(fontFamily)
+    val material = baseTypography.withFontFamily(fontFamily)
 }
 
 /**

@@ -11,8 +11,12 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
+import io.element.android.appconfig.CustomAppConfig
 import io.element.android.call.api.ElementCallController
 import io.element.android.call.impl.ElementCallPictureInPicture
 import io.element.android.call.ui.theme.ElementCallStyle
@@ -21,6 +25,7 @@ import io.element.android.compound.theme.Theme
 import io.element.android.features.callnative.api.NativeCallScreenHost
 import io.element.android.features.lockscreen.api.LockScreenService
 import io.element.android.features.lockscreen.api.handleSecureFlag
+import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 
 /**
  * App-scoped, like the call screen it serves: that screen can open over the lock screen with no
@@ -30,6 +35,7 @@ import io.element.android.features.lockscreen.api.handleSecureFlag
 class DefaultNativeCallScreenHost(
     private val controllers: ElementCallControllers,
     private val lockScreenService: LockScreenService,
+    private val appPreferencesStore: AppPreferencesStore,
 ) : NativeCallScreenHost {
     override val elementCallController: ElementCallController?
         get() = controllers.withRunningCall()
@@ -51,7 +57,10 @@ class DefaultNativeCallScreenHost(
     @Composable
     override fun CallScreenContent(content: @Composable (style: ElementCallStyle?) -> Unit) {
         // The call is always dark, and the style's avatars are drawn with Compound's colours.
-        ElementTheme(theme = Theme.Dark, applySystemBarsUpdate = false) {
+        val appFont by remember(appPreferencesStore) {
+            appPreferencesStore.getAppFontFlow()
+        }.collectAsState(initial = CustomAppConfig.Appearance.FONT)
+        ElementTheme(theme = Theme.Dark, applySystemBarsUpdate = false, appFont = appFont) {
             content(rememberElementXCallStyle())
         }
     }

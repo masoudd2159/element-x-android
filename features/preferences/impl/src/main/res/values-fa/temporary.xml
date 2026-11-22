@@ -4,4 +4,7 @@
     <string name="screen_settings_calendar_persian">شمسی</string>
     <string name="screen_settings_calendar_gregorian">میلادی</string>
     <string name="screen_settings_calendar_hijri">قمری</string>
+    <string name="screen_settings_app_font">فونت برنامه</string>
+    <string name="screen_settings_font_yekan_bakh">یکان‌بخ</string>
+    <string name="screen_settings_font_iran_sans_x">ایران‌سنس</string>
 </resources>

@@ -10,15 +10,20 @@
 
 package io.element.android.libraries.textcomposer.impl.components.markdown
 
+import android.graphics.Typeface
+import android.text.style.StyleSpan
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.widget.EditText
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.AndroidComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runAndroidComposeUiTest
 import androidx.core.text.getSpans
+import androidx.core.text.set
 import com.google.common.truth.Truth.assertThat
+import io.element.android.appconfig.AppFont
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.matrix.api.permalink.PermalinkData
 import io.element.android.libraries.matrix.test.A_SESSION_ID
@@ -29,6 +34,7 @@ import io.element.android.libraries.textcomposer.ElementRichTextEditorStyle
 import io.element.android.libraries.textcomposer.components.markdown.MarkdownTextInput
 import io.element.android.libraries.textcomposer.impl.mentions.aMentionSpanProvider
 import io.element.android.libraries.textcomposer.mentions.MentionSpan
+import io.element.android.libraries.textcomposer.mentions.MentionType
 import io.element.android.libraries.textcomposer.mentions.ResolvedSuggestion
 import io.element.android.libraries.textcomposer.model.MarkdownTextEditorState
 import io.element.android.libraries.textcomposer.model.Suggestion
@@ -189,24 +195,58 @@ class MarkdownTextInputTest : RobolectricTest() {
         assertThat(mentionSpans).isNotEmpty()
     }
 
+    @Test
+    fun `switching fonts keeps the same focused editor with its draft and spans`() = runAndroidComposeUiTest {
+        val draft = "سلام Hello"
+        val state = aMarkdownTextEditorState(initialText = draft)
+        val appFont = mutableStateOf(AppFont.YEKAN_BAKH)
+        setMarkdownTextInput(state = state, appFont = { appFont.value })
+
+        val editor = activity!!.findEditor()
+        val originalTypeface = editor.typeface
+        val span = StyleSpan(Typeface.BOLD)
+        val mention = MentionSpan(MentionType.Everyone)
+        runOnIdle {
+            editor.requestFocusFromTouch()
+            editor.editableText[0..3] = span
+            editor.editableText[5..9] = mention
+            editor.setSelection(2, 6)
+            assertThat(editor.hasFocus()).isTrue()
+            appFont.value = AppFont.IRAN_SANS_X
+        }
+        runOnIdle {
+            assertThat(activity!!.findEditor()).isSameInstanceAs(editor)
+            assertThat(editor.typeface).isNotSameInstanceAs(originalTypeface)
+            assertThat(editor.editableText.toString()).isEqualTo(draft)
+            assertThat(editor.editableText.getSpans<StyleSpan>(0, draft.length)).asList().contains(span)
+            assertThat(editor.editableText.getSpans<MentionSpan>(0, draft.length)).asList().contains(mention)
+            assertThat(editor.selectionStart).isEqualTo(2)
+            assertThat(editor.selectionEnd).isEqualTo(6)
+            assertThat(editor.hasFocus()).isTrue()
+        }
+    }
+
     private fun AndroidComposeUiTest<ComponentActivity>.setMarkdownTextInput(
         state: MarkdownTextEditorState = aMarkdownTextEditorState(),
         onTyping: (Boolean) -> Unit = {},
         onSuggestionReceived: (Suggestion?) -> Unit = {},
         onSendMessage: (() -> Unit) = {},
+        appFont: () -> AppFont = { AppFont.YEKAN_BAKH },
     ) {
         setContent {
-            val style = ElementRichTextEditorStyle.composerStyle(hasFocus = state.hasFocus)
-            MarkdownTextInput(
-                state = state,
-                placeholder = "Placeholder",
-                placeholderColor = ElementTheme.colors.textSecondary,
-                onTyping = onTyping,
-                onReceiveSuggestion = onSuggestionReceived,
-                richTextEditorStyle = style,
-                onSelectRichContent = null,
-                onSendMessage = onSendMessage,
-            )
+            ElementTheme(appFont = appFont(), applySystemBarsUpdate = false) {
+                val style = ElementRichTextEditorStyle.composerStyle(hasFocus = state.hasFocus)
+                MarkdownTextInput(
+                    state = state,
+                    placeholder = "Placeholder",
+                    placeholderColor = ElementTheme.colors.textSecondary,
+                    onTyping = onTyping,
+                    onReceiveSuggestion = onSuggestionReceived,
+                    richTextEditorStyle = style,
+                    onSelectRichContent = null,
+                    onSendMessage = onSendMessage,
+                )
+            }
         }
     }
 

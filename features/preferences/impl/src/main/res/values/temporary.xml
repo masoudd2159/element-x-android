@@ -4,4 +4,7 @@
     <string name="screen_settings_calendar_persian">Persian</string>
     <string name="screen_settings_calendar_gregorian">Gregorian</string>
     <string name="screen_settings_calendar_hijri">Hijri</string>
+    <string name="screen_settings_app_font">App font</string>
+    <string name="screen_settings_font_yekan_bakh">Yekan Bakh</string>
+    <string name="screen_settings_font_iran_sans_x">Iran Sans X</string>
 </resources>

@@ -11,22 +11,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import com.google.common.truth.Truth.assertThat
 import io.element.android.appconfig.AppFont
-import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.theme.fonts.resolveAppFont
 import io.element.android.compound.tokens.generated.TypographyTokens
 import org.junit.Test
 
-// A top-level initializer deliberately exercises upstream's non-Composable typography contract.
-private val topLevelBodyStyle = ElementTheme.typography.fontBodySmRegular
-
 class ElementTypographyTest {
-    @Test
-    fun `static theme typography uses the configured application font`() {
-        assertThat(ElementTheme.typography).isSameInstanceAs(PoopakTypography.element)
-        assertThat(topLevelBodyStyle.fontFamily).isSameInstanceAs(resolveAppFont())
-        assertThat(PoopakTypography.material.bodyLarge.fontFamily).isSameInstanceAs(resolveAppFont())
-    }
-
     @Test
     fun `both app fonts cover every generated token without changing other properties`() {
         val tokenGetters = TypographyTokens::class.java.methods.filter { it.returnType == TextStyle::class.java }
