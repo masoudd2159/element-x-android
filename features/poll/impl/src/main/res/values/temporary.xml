@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_poll_end_fallback">"The poll with event id: %1$s has ended."</string>
+</resources>

@@ -1,0 +1,5 @@
+{
+  ":features:login:impl/string/screen_change_server_error_element_pro_required_action_android": "Google Play is a product name and uses the same spelling in Persian.",
+  ":features:login:impl/string/screen_change_server_textfield_placeholder": "example.com is a literal example hostname.",
+  ":libraries:ui-strings/string/test_untranslated_default_language_identifier": "en is a locale identifier used by resource fallback tests."
+}

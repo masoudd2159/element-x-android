@@ -12,6 +12,7 @@ import dev.zacsweers.metro.ContributesIntoSet
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.pushproviders.unifiedpush.R
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushApiFactory
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushConfig
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushSessionPushConfigProvider
@@ -19,6 +20,7 @@ import io.element.android.libraries.troubleshoot.api.test.NotificationTroublesho
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestDelegate
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
 import io.element.android.libraries.troubleshoot.api.test.TestFilterData
+import io.element.android.services.toolbox.api.strings.StringProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -30,11 +32,12 @@ class UnifiedPushMatrixGatewayTest(
     private val unifiedPushApiFactory: UnifiedPushApiFactory,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val unifiedPushSessionPushConfigProvider: UnifiedPushSessionPushConfigProvider,
+    private val stringProvider: StringProvider,
 ) : NotificationTroubleshootTest {
     override val order = 450
     private val delegate = NotificationTroubleshootTestDelegate(
-        defaultName = "Test push gateway",
-        defaultDescription = "Ensure that the push gateway is valid.",
+        defaultName = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_gateway_title),
+        defaultDescription = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_gateway_description),
         visibleWhenIdle = false,
         fakeDelay = NotificationTroubleshootTestDelegate.SHORT_DELAY,
     )
@@ -49,7 +52,7 @@ class UnifiedPushMatrixGatewayTest(
         val config = unifiedPushSessionPushConfigProvider.provide(sessionId)
         if (config == null) {
             delegate.updateState(
-                description = "No current push provider",
+                description = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_gateway_no_provider),
                 status = NotificationTroubleshootTestState.Status.Failure()
             )
         } else {
@@ -61,12 +64,12 @@ class UnifiedPushMatrixGatewayTest(
                     val discoveryResponse = api.discover()
                     if (discoveryResponse.unifiedpush.gateway == "matrix") {
                         delegate.updateState(
-                            description = "${config.url} is a Matrix gateway.",
+                            description = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_gateway_success, config.url),
                             status = NotificationTroubleshootTestState.Status.Success
                         )
                     } else {
                         delegate.updateState(
-                            description = "${config.url} is not a Matrix gateway.",
+                            description = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_gateway_invalid, config.url),
                             status = NotificationTroubleshootTestState.Status.Failure()
                         )
                     }
@@ -74,7 +77,11 @@ class UnifiedPushMatrixGatewayTest(
                     throw e
                 } catch (throwable: Throwable) {
                     delegate.updateState(
-                        description = "Fail to check the gateway ${config.url}: ${throwable.localizedMessage}",
+                        description = stringProvider.getString(
+                            R.string.troubleshoot_notifications_test_unified_push_gateway_error,
+                            config.url,
+                            throwable.localizedMessage,
+                        ),
                         status = NotificationTroubleshootTestState.Status.Failure()
                     )
                 }

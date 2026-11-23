@@ -58,7 +58,7 @@ class FetchPushForegroundService : Service() {
         NotificationManagerCompat.from(this).createNotificationChannelsCompat(
             listOf(
                 NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-                    .setName(getString(CommonStrings.common_fetching_notifications_title_android).ifEmpty { "Syncing notifications…" })
+                    .setName(getString(CommonStrings.common_fetching_notifications_title_android))
                     .setVibrationEnabled(false)
                     .setSound(null, null)
                     .build()
@@ -73,7 +73,7 @@ class FetchPushForegroundService : Service() {
         // Start the foreground service as soon as possible
         val notificationCompat = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(CommonDrawables.ic_notification)
-            .setContentTitle(getString(CommonStrings.common_fetching_notifications_title_android).ifEmpty { "Syncing notifications…" })
+            .setContentTitle(getString(CommonStrings.common_fetching_notifications_title_android))
             .setProgress(0, 0, true)
             .setVibrate(longArrayOf(0))
             .setSound(null)

@@ -11,11 +11,9 @@ The application uses the upstream `checkDependencies=false` configuration.
 Android Lint's TranslationDetector excludes non-reporting library resources in
 `ignoreFile`; it therefore cannot see library defaults when checking app overlays.
 Its reporting code uses `ExtraTranslation` for strings and `MissingDefaultResource`
-for plurals. Investigating each category independently found **1,870 strings and
-45 plurals, all with unqualified defaults in the actual Hoopoe Release merger**.
-None required an invented fallback. Their format argument indices and conversions
-match the defaults. Duplicate names already provided by multiple upstream modules
-are retained; no new duplicate definition is introduced.
+for plurals. Every overlay must have an unqualified default in an active project
+and compatible format arguments. A shared Localazy key provided by multiple
+upstream modules needs just one app overlay.
 
 Full release lint additionally treats these app overlays as unused because their
 call sites use the owning libraries' R classes. The upstream lint configuration
@@ -27,28 +25,46 @@ catalogue entries are currently unused. It does not assert that every key has a 
 Only these three checks are suppressed **on this XML file**. All other checks,
 Release lint, `abortOnError`, and checks on other files retain their existing behavior.
 
-## The replacement guard
+## Variant coverage and overlay guard
 
 The custom `poopak.android-localization` convention registers
 `verify<Variant>PersianTranslations` before variant lint, vital lint, assemble and
-bundle tasks. It uses the public AGP runtime configuration and Gradle component
-graph to restrict default owners to that variant's active project dependencies.
-It requires a matching type/name in `src/main/res/values`, checks every format
-argument, requires `other` plural fallbacks, and rejects duplicate Persian keys
-and overrides of non-translatable defaults (which `ExtraTranslation` suppression
-can also mask in TranslationDetector).
-An English-only qualified resource or a default in an inactive project is insufficient.
-Changing/removing a default invalidates the task; missing defaults still fail the build.
-No APK resources or source sets are rewritten by this check.
+bundle tasks. The existing branding workflow therefore verifies coverage for
+both brands on the same jobs that assemble their APKs.
 
-Audit receipts under `app/build/localizationVerification/<variant>.json` list every
-affected resource's type, exact name and default source files. These are generated
-evidence, not source catalogues to maintain or commit. New default resource owners
-outside project `src/main/res/values` require explicitly extending the validator;
-failure is preferable to silently granting another lint exception.
+- The app uses the configured Android source set directories for the selected
+  flavor, build type and variant. Libraries use the selected Android variants
+  from Gradle's runtime dependency graph, including build-type fallbacks, and
+  their conventional `src/<sourceSet>/res` directories.
+- Each translatable `string` and `plurals` entry in unqualified `values` needs a
+  translation in `values-fa` or its equivalent `values-b+fa`. Persian resources
+  in the app take precedence over library values. Higher-priority source sets
+  within each project take precedence over its `main` resources.
+- The guard reports missing translations with the resource type, key, owning
+  module and default XML file. It checks formatted argument indices and
+  conversions, rejects blank replacements of nonempty text and checks plural
+  quantities and `other` fallbacks. Duplicate definitions at the same source set
+  priority fail validation. Existing shared Localazy keys can have multiple
+  owners and one merged Persian value.
+- `translatable="false"` excludes technical values and brand names. The
+  [exact-key exceptions](persian-exclusions.json) document locale-neutral text
+  whose spelling is intentionally shared with the default. Keep exceptions
+  specific to the owning module and include a reason.
+
+Inactive dependencies, test source sets, generated resources, external AARs
+and configuration-qualified resources beyond the base Persian locale are
+outside the source guard. If a library configures custom resource directories,
+extend the source directory collection when introducing them. Hardcoded UI copy
+still requires source review and Android Lint.
+
+Audit receipts under `app/build/localizationVerification/<variant>.json` list
+checked keys, their types and their active default XML files. Android's resource
+merger and AAPT2 can independently verify that the expected Persian value is
+packaged for each brand.
 
 ```
 python3 -m unittest discover -s tools/localization -p 'test_*.py'
+./gradlew :app:verifyApPoopakDebugPersianTranslations :app:verifyApHoopoeDebugPersianTranslations
 ./gradlew :app:verifyApHoopoeReleasePersianTranslations --configuration-cache
 ./gradlew :app:lintApHoopoeRelease :app:assembleApHoopoeRelease
 ```

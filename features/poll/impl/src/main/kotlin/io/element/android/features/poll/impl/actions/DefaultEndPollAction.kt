@@ -11,19 +11,22 @@ package io.element.android.features.poll.impl.actions
 import dev.zacsweers.metro.ContributesBinding
 import im.vector.app.features.analytics.plan.PollEnd
 import io.element.android.features.poll.api.actions.EndPollAction
+import io.element.android.features.poll.impl.R
 import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.services.analytics.api.AnalyticsService
+import io.element.android.services.toolbox.api.strings.StringProvider
 
 @ContributesBinding(RoomScope::class)
 class DefaultEndPollAction(
     private val analyticsService: AnalyticsService,
+    private val stringProvider: StringProvider,
 ) : EndPollAction {
     override suspend fun execute(timeline: Timeline, pollStartId: EventId): Result<Unit> {
         return timeline.endPoll(
             pollStartId = pollStartId,
-            text = "The poll with event id: $pollStartId has ended."
+            text = stringProvider.getString(R.string.common_poll_end_fallback, pollStartId),
         ).onSuccess {
             analyticsService.capture(PollEnd())
         }

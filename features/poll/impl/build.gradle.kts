@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.designsystem)
     implementation(projects.services.analytics.api)
+    implementation(projects.services.toolbox.api)
     implementation(projects.features.messages.api)
     implementation(projects.libraries.dateformatter.api)
     implementation(projects.libraries.uiStrings)

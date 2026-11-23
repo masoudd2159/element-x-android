@@ -21,6 +21,7 @@ import io.element.android.libraries.pushproviders.unifiedpush.network.DiscoveryR
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
 import io.element.android.libraries.troubleshoot.api.test.TestFilterData
 import io.element.android.libraries.troubleshoot.test.runAndTestState
+import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import io.element.android.tests.testutils.testCoroutineDispatchers
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -102,6 +103,7 @@ class UnifiedPushMatrixGatewayTestTest {
             sessionId = sessionId,
             unifiedPushApiFactory = FakeUnifiedPushApiFactory(discoveryResponse),
             coroutineDispatchers = testCoroutineDispatchers(),
+            stringProvider = FakeStringProvider(),
             unifiedPushSessionPushConfigProvider = FakeUnifiedPushSessionPushConfigProvider(
                 config = { config }
             ),

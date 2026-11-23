@@ -182,7 +182,7 @@ class DefaultNotificationChannels(
                 SILENT_NOTIFICATION_CHANNEL_ID,
                 NotificationManagerCompat.IMPORTANCE_LOW
             )
-                .setName(stringProvider.getString(R.string.notification_channel_silent).ifEmpty { "Silent notifications" })
+                .setName(stringProvider.getString(R.string.notification_channel_silent))
                 .setDescription(stringProvider.getString(R.string.notification_channel_silent))
                 .setSound(null, null)
                 .setLightsEnabled(true)
@@ -196,7 +196,7 @@ class DefaultNotificationChannels(
                 CALL_NOTIFICATION_CHANNEL_ID,
                 NotificationManagerCompat.IMPORTANCE_HIGH
             )
-                .setName(stringProvider.getString(R.string.notification_channel_call).ifEmpty { "Call" })
+                .setName(stringProvider.getString(R.string.notification_channel_call))
                 .setDescription(stringProvider.getString(R.string.notification_channel_call))
                 .setVibrationEnabled(true)
                 .setLightsEnabled(true)
@@ -218,7 +218,7 @@ class DefaultNotificationChannels(
 
     private fun buildNoisyChannel(channelId: String, soundUri: Uri?, accentColor: Int): NotificationChannelCompat {
         val builder = NotificationChannelCompat.Builder(channelId, NotificationManagerCompat.IMPORTANCE_DEFAULT)
-            .setName(stringProvider.getString(R.string.notification_channel_noisy).ifEmpty { "Noisy notifications" })
+            .setName(stringProvider.getString(R.string.notification_channel_noisy))
             .setDescription(stringProvider.getString(R.string.notification_channel_noisy))
             .setVibrationEnabled(true)
             .setLightsEnabled(true)
@@ -239,7 +239,7 @@ class DefaultNotificationChannels(
 
     private fun buildRingingCallChannel(channelId: String, soundUri: Uri?, accentColor: Int): NotificationChannelCompat {
         val builder = NotificationChannelCompat.Builder(channelId, NotificationManagerCompat.IMPORTANCE_MAX)
-            .setName(stringProvider.getString(R.string.notification_channel_ringing_calls).ifEmpty { "Ringing calls" })
+            .setName(stringProvider.getString(R.string.notification_channel_ringing_calls))
             .setDescription(stringProvider.getString(R.string.notification_channel_ringing_calls))
             .setVibrationEnabled(true)
             .setLightsEnabled(true)
